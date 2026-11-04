@@ -1,7 +1,7 @@
 {
   "active": true,
   "activeVersion": {
-    "versionId": "538b89ba-457f-4a99-ac0c-2545a5b5308a",
+    "versionId": "2b30e7c2-fb88-4c1d-8307-56584a3063af",
     "workflowId": "q18smbXTzfEfGSsQ",
     "nodes": [
       {
@@ -117,6 +117,7 @@
           "eventId": "={{ $json.event_id }}",
           "updateFields": {
             "color": "3",
+            "description": "={{ ($json.tipo_tramite || $json.nombre_cliente) ? (($json.tipo_tramite || 'Trámite') + ' - ' + ($json.nombre_cliente || 'Cliente')) : undefined }} {{ $json.tramite }}",
             "end": "={{ ($json.fecha_final && $json.fecha_final.trim() !== '') ? $json.fecha_final : undefined }}",
             "start": "={{ ($json.fecha_inicio && $json.fecha_inicio.trim() !== '') ? $json.fecha_inicio : undefined }}",
             "summary": "={{ ($json.tipo_tramite || $json.nombre_cliente) ? (($json.tipo_tramite || 'Trámite') + ' - ' + ($json.nombre_cliente || 'Cliente')) : undefined }}"
@@ -381,13 +382,13 @@
     },
     "nodeGroups": [],
     "authors": "Marco Antonio Martínez Guerrero",
-    "name": "Version 538b89ba",
+    "name": "Version 2b30e7c2",
     "description": "",
     "autosaved": true,
-    "createdAt": "2026-10-10T10:03:28.890Z",
-    "updatedAt": "2026-10-10T10:03:53.000Z"
+    "createdAt": "2026-11-04T22:10:56.831Z",
+    "updatedAt": "2026-11-04T22:11:01.000Z"
   },
-  "activeVersionId": "538b89ba-457f-4a99-ac0c-2545a5b5308a",
+  "activeVersionId": "2b30e7c2-fb88-4c1d-8307-56584a3063af",
   "connections": {
     "Al ejecutarse el flujo": {
       "main": [
@@ -610,6 +611,7 @@
         "eventId": "={{ $json.event_id }}",
         "updateFields": {
           "color": "3",
+          "description": "={{ ($json.tipo_tramite || $json.nombre_cliente) ? (($json.tipo_tramite || 'Trámite') + ' - ' + ($json.nombre_cliente || 'Cliente')) : undefined }} {{ $json.tramite }}",
           "end": "={{ ($json.fecha_final && $json.fecha_final.trim() !== '') ? $json.fecha_final : undefined }}",
           "start": "={{ ($json.fecha_inicio && $json.fecha_inicio.trim() !== '') ? $json.fecha_inicio : undefined }}",
           "summary": "={{ ($json.tipo_tramite || $json.nombre_cliente) ? (($json.tipo_tramite || 'Trámite') + ' - ' + ($json.nombre_cliente || 'Cliente')) : undefined }}"
@@ -789,6 +791,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-10-10T10:03:28.888Z",
-  "versionId": "538b89ba-457f-4a99-ac0c-2545a5b5308a"
+  "updatedAt": "2026-11-04T22:10:56.828Z",
+  "versionId": "2b30e7c2-fb88-4c1d-8307-56584a3063af"
 }
