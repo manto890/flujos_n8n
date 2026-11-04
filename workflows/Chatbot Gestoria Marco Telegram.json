@@ -1,0 +1,3246 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "a905bb2b-759a-4c95-8d06-2e65736b6356",
+    "workflowId": "A4sXRn01VJR21OFJ",
+    "nodes": [
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $json.message.text }}",
+          "options": {
+            "systemMessage": "=Eres el recepcionista virtual de una gestoría especializada en trámites de extranjería. Tu objetivo es ayudar a los clientes de forma amable, profesional, precisa y concisa.\n\nFECHA ACTUAL DEL SISTEMA: {{ $now }}\n\n### TUS RESPONSABILIDADES:\n1. Responder dudas generales sobre trámites de extranjería.\n2. Gestionar la reserva, consulta y cancelación de citas.\n3. Solicitar y recopilar información/documentación para trámites en curso.\n\n---\n\n### DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES (CAG):\nConsulta estas duraciones oficiales para calcular la hora final de las citas:\n- Declaración de Renta: 60 minutos\n- Nacionalidad: 60 minutos\n- Agrupación Familiar: 60 minutos\n- Renovación de NIE: 30 minutos\n- Consulta General / Asesoría: 30 minutos\n- Cualquier otro trámite no especificado: 30 minutos\n\n---\n\n### REGLA OBLIGATORIA DE LLAMADA A HERRAMIENTAS:\nSIEMPRE que ejecutes una herramienta (`gestionar_citas` o `gestionar_tramites_docs`), envía los 5 argumentos requeridos en el objeto JSON de la herramienta:\n- `accion`\n- `nombre_cliente`\n- `tipo_tramite`\n- `fecha_inicio`\n- `event_id`\n\nSi alguno de estos argumentos NO es necesario para la acción actual, envía una cadena vacía `\"\"` como su valor. NUNCA omitas ninguno de los 5 campos.\n\n---\n\n### REGLAS DE USO DE HERRAMIENTAS Y FLUJOS:\n\n1. **AGENDAR CITA (FLUJO OBLIGATORIO EN 3 PASOS)**:\n   - **Paso 1. Recopilar Datos**: Solicita al cliente su Nombre completo y Asunto/Trámite que desea realizar.\n   - **Paso 2. Consultar y Ofrecer Huecos Disponibles (Rango de 1 Semana)**: \n     - En cuanto recibas el nombre y el trámite, NO le preguntes qué día prefiere.\n     - Ejecuta inmediatamente la herramienta `gestionar_citas` con la acción `\"buscar_huecos\"`.\n     - Pasa en `fecha_inicio` la FECHA ACTUAL en formato ISO o YYYY-MM-DD (para que el sistema de citas sepa a partir de qué día buscar los próximos 7 días).\n     - **CRÍTICO:** NO inventes días ni horas. Presenta ÚNICAMENTE la lista exacta de huecos que te devuelva el resultado de la herramienta `gestionar_citas` para los próximos 7 días.\n     - Mientras presentes estos huecos, mantén `\"es_cita\": false` en tu respuesta JSON final.\n   - **Paso 3. Preparar Confirmación**: Cuando el cliente elija una fecha y hora específica de las que le ofreciste:\n     a) Muestra un resumen claro con los datos recopilados (Nombre, Trámite, Fecha y Hora elegida).\n     b) Incluye explícitamente la frase: *\"Por favor, confirma usando los botones de abajo\"*.\n     c) Calcula la `fecha_fin` sumando los minutos correspondientes según el **DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES**.\n     d) Marca `\"es_cita\": true` en tu respuesta JSON final.\n\n2. **CANCELAR CITA**:\n   - Solicita al cliente su nombre completo o correo electrónico.\n   - Ejecuta `gestionar_citas` con la acción `\"buscar\"` para obtener el `event_id`.\n   - Con el `event_id`, ejecuta la herramienta con la acción `\"cancelar\"`.\n   - Confirma al cliente que su cita ha sido anulada con éxito.\n\n3. **GESTIÓN DE TRÁMITES Y DOCUMENTOS (`gestionar_tramites_docs`)**:\n   - Para modificar o consultar un trámite, solicita: Nombre, Apellidos, NIE/Pasaporte y Fecha de nacimiento.\n   - Si se requiere documentación, solicita el domicilio del cliente y el nombre del documento que va a adjuntar.\n\n---\n\n### INSTRUCCIONES DE SALIDA (MUY IMPORTANTE):\n- NO ejecutes ni intentes llamar a ninguna herramienta llamada \"json\".\n- Tus respuestas finales hacia el usuario NO deben activar herramientas.\n- Responde ÚNICAMENTE con un objeto JSON en texto plano (sin comillas invertidas ni bloques ```json).\n- Estructura obligatoria del JSON de respuesta:\n\n{\n  \"respuesta\": \"Texto de tu mensaje para el usuario en Telegram\",\n  \"es_cita\": false,\n  \"nombre_cliente\": \"\",\n  \"tipo_tramite\": \"\",\n  \"fecha_inicio\": \"\",\n  \"fecha_fin\": \"\"\n}\n\n#### EJEMPLOS DE SALIDA FINAL:\n\n- Consulta general: {\"respuesta\": \"¡Hola! ¿En qué puedo ayudarte?\", \"es_cita\": false, \"nombre_cliente\": \"\", \"tipo_tramite\": \"\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n- Ofrecer huecos: {\"respuesta\": \"Para tu Renovación de NIE, estos son los huecos libres para esta semana:\\n- Lunes 28: 10:00, 11:30\\n- Miércoles 30: 16:00\\n¿Cuál prefieres?\", \"es_cita\": false, \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n- Confirmar cita: {\"respuesta\": \"Resumen de tu cita para Renovación de NIE el 28 de Septiembre a las 10:00. Por favor, confirma usando los botones de abajo\", \"es_cita\": true, \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"2026-09-28T10:00:00\", \"fecha_fin\": \"2026-09-28T10:30:00\"}\n\n---\n\n### TONO Y ESTILO:\n- Amable, claro y directo.\n- Evita párrafos excesivamente largos."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          1040,
+          400
+        ],
+        "id": "184ca664-0f3e-4c18-a16f-969cfa56795e",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $json.message.from.id }}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.4,
+        "position": [
+          1048,
+          632
+        ],
+        "id": "9b00a22f-ac64-400f-88a2-96cf6bef6667",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "model": "openai/gpt-oss-120b",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+        "typeVersion": 1,
+        "position": [
+          920,
+          632
+        ],
+        "id": "b4cbef34-86fa-4cdf-98f6-5f4c3f7df935",
+        "name": "Groq Chat Model",
+        "credentials": {
+          "groqApi": {
+            "id": "K0JeClcqfhzdTv6F",
+            "name": "Cuenta Groq"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "updates": [
+            "message",
+            "callback_query"
+          ],
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegramTrigger",
+        "typeVersion": 1.5,
+        "position": [
+          -1328,
+          704
+        ],
+        "id": "9e348e3d-99d8-4c36-b594-f3a3384d1a24",
+        "name": "Disparador",
+        "webhookId": "c80bf39c-0b8e-42b1-8c91-2b8eb3f9e172",
+        "credentials": {
+          "telegramApi": {
+            "id": "ooaLOQVWKbzz9Riv",
+            "name": "Agente recepcionista gestoría"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.message?.text || \"\" }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      },
+                      "id": "8be266e2-933a-407e-ba84-db075bb326b6"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Mensaje"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "4ac4a21d-5166-4bb1-89f0-0bcc7e53f861",
+                      "leftValue": "={{ $json.callback_query?.data || \"\" }}",
+                      "rightValue": "cita",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Callback"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          688,
+          608
+        ],
+        "id": "e5d2f80d-d5ef-46e9-a8bf-cc15c219965f",
+        "name": "Conmutar"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "let rawText = $json.output || \"\";\nrawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n\nlet parsedData = {};\n\ntry {\n  parsedData = JSON.parse(rawText);\n} catch (error) {\n  parsedData = {\n    respuesta: rawText,\n    es_cita: false\n  };\n}\n\nreturn {\n  respuesta: parsedData.respuesta || rawText,\n  es_cita: Boolean(parsedData.es_cita),\n  confirmar_cita: Boolean(parsedData.es_cita), // Necesario para la condición del nodo IF\n  fecha_inicio: parsedData.fecha_inicio || null,\n  tipo_tramite: parsedData.tipo_tramite || null\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1504,
+          512
+        ],
+        "id": "3355a391-593f-412a-b5c5-3761517ef114",
+        "name": "Formatear respuesta"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "7d49fe98-0145-474b-ab3e-fca1949eed11",
+                "leftValue": "={{ $json.es_cita }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          1728,
+          512
+        ],
+        "id": "fe13b415-249e-4189-acd9-c2e5c1d50744",
+        "name": "¿Es una cita?"
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $node[\"Disparador\"].json.message.chat.id }}",
+          "text": "={{ $json.respuesta }}",
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1952,
+          608
+        ],
+        "id": "ebb71f23-028d-4291-902e-3f44f297318d",
+        "name": "Enviar respuesta",
+        "webhookId": "b3f835de-ed59-4a99-9f6e-1762c9905859",
+        "credentials": {
+          "telegramApi": {
+            "id": "ooaLOQVWKbzz9Riv",
+            "name": "Agente recepcionista gestoría"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chatId": "={{ $node[\"Disparador\"].json.message.chat.id }}",
+          "text": "={{ $json.respuesta }}",
+          "replyMarkup": "inlineKeyboard",
+          "inlineKeyboard": {
+            "rows": [
+              {
+                "row": {
+                  "buttons": [
+                    {
+                      "text": "Si, confirmar fecha",
+                      "additionalFields": {
+                        "callback_data": "=confirmar_cita|{{ $json.fecha_inicio }}|{{ $json.tipo_tramite }}"
+                      }
+                    },
+                    {
+                      "text": "No",
+                      "additionalFields": {
+                        "callback_data": "cancelar_cita"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "additionalFields": {
+            "appendAttribution": false
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1952,
+          416
+        ],
+        "id": "4eeed65e-dbae-4e0e-b278-3d31a1121960",
+        "name": "Enviar pregunta 1",
+        "webhookId": "0c153f7a-e254-404d-afae-f65b28cb3061",
+        "credentials": {
+          "telegramApi": {
+            "id": "ooaLOQVWKbzz9Riv",
+            "name": "Agente recepcionista gestoría"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "8392bd82-4a4e-4e1a-8b35-f90288c534c8",
+                      "leftValue": "={{ $json.callback_query.data }}",
+                      "rightValue": "confirmar_cita",
+                      "operator": {
+                        "type": "string",
+                        "operation": "contains"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Confirmar"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "2ad41cd0-b859-4807-a6cf-9c3ffe2315ae",
+                      "leftValue": "={{ $json.callback_query.data }}",
+                      "rightValue": "cancelar_cita",
+                      "operator": {
+                        "type": "string",
+                        "operation": "contains"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Cancelar"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1104,
+          896
+        ],
+        "id": "148ff810-247d-417a-b32a-5b738325e8f8",
+        "name": "Conmutar Callbacks"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// 1. Extraer los datos del callback del botón\nconst callbackData = $json.callback_query?.data || \"\";\nconst partes = callbackData.split('|'); \n\n// Extraer fecha y tipo de trámite pasados en el botón\nconst fechaInicio = partes[1] || \"\";\nconst tipoTramite = partes[2] || \"Trámite de Extranjería\";\n\n// 2. Extraer el nombre del usuario directamente desde su perfil de Telegram\nconst primerNombre = $json.callback_query?.from?.first_name || \"\";\nconst apellido = $json.callback_query?.from?.last_name || \"\";\nconst nombreCompleto = `${primerNombre} ${apellido}`.trim() || \"Cliente Telegram\";\n\n// 3. Devolver la estructura exacta (los 5 campos) para el subflujo de citas\nreturn {\n  accion: \"crear\",\n  nombre_cliente: nombreCompleto,\n  tipo_tramite: tipoTramite,\n  fecha_inicio: fechaInicio,\n  event_id: \"\",\n  // Variables auxiliares para responder a Telegram después\n  callback_query_id: $json.callback_query?.id,\n  chat_id: $json.callback_query?.message?.chat?.id\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1504,
+          800
+        ],
+        "id": "060df420-bb5f-4d7f-b21a-f49e5beb4d73",
+        "name": "Formatear evento"
+      },
+      {
+        "parameters": {
+          "operation": "editMessageText",
+          "chatId": "={{ $node[\"Formatear evento\"].json.chat_id }}",
+          "messageId": "={{ $node[\"Disparador\"].json.callback_query.message.message_id }}",
+          "text": "={{ \"¡Cita confirmada y agendada con éxito en Google Calendar!\\n\\n *Fecha:* \" + $node[\"Formatear evento\"].json.inicio_cita + \"\\n *Trámite:* \" + $node[\"Formatear evento\"].json.titulo_evento }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          2176,
+          800
+        ],
+        "id": "dd0dff75-c4d7-421d-8fc8-1a8ca38ebb06",
+        "name": "Enviar mensaje OK",
+        "webhookId": "bf28b7bc-4776-4d68-8122-87c38bc2664e",
+        "credentials": {
+          "telegramApi": {
+            "id": "ooaLOQVWKbzz9Riv",
+            "name": "Agente recepcionista gestoría"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "editMessageText",
+          "chatId": "={{ $node[\"Disparador\"].json.callback_query.message.chat.id }}",
+          "messageId": "={{ $node[\"Disparador\"].json.callback_query.message.message_id }}",
+          "text": "Has cancelado la cita. No se agendó ninguna cita.",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1728,
+          992
+        ],
+        "id": "7da0dde2-a9af-4fc0-be53-43afd38e67a6",
+        "name": "Enviar cancelacion",
+        "webhookId": "e51de156-5d10-4527-954f-4f9ea131287b",
+        "credentials": {
+          "telegramApi": {
+            "id": "ooaLOQVWKbzz9Riv",
+            "name": "Agente recepcionista gestoría"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "callback",
+          "queryId": "={{ $json.callback_query.id }}",
+          "additionalFields": {
+            "text": "Cita cancelada"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1504,
+          992
+        ],
+        "id": "f966895b-771e-4bfd-9fc6-0562bf3c2548",
+        "name": "Callback cancelacion",
+        "webhookId": "803a44c8-214c-4547-87eb-d70bc33c7fc5",
+        "credentials": {
+          "telegramApi": {
+            "id": "ooaLOQVWKbzz9Riv",
+            "name": "Agente recepcionista gestoría"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "callback",
+          "queryId": "={{ $node[\"Formatear evento\"].json.callback_query_id }}",
+          "additionalFields": {
+            "text": "¡Cita agendada correctamente!"
+          }
+        },
+        "type": "n8n-nodes-base.telegram",
+        "typeVersion": 1.2,
+        "position": [
+          1952,
+          800
+        ],
+        "id": "497652c9-488d-4d81-92a5-01bc2a3f303f",
+        "name": "Callback confirmacion",
+        "webhookId": "803a44c8-214c-4547-87eb-d70bc33c7fc5",
+        "credentials": {
+          "telegramApi": {
+            "id": "ooaLOQVWKbzz9Riv",
+            "name": "Agente recepcionista gestoría"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "q18smbXTzfEfGSsQ",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+            "cachedResultName": "gestionar_citas"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "accion": "crear",
+              "nombre_cliente": "={{ $node[\"Formatear evento\"].json.nombre_cliente }}",
+              "tipo_tramite": "={{ $node[\"Formatear evento\"].json.titulo_evento }}",
+              "fecha_inicio": "={{ $node[\"Formatear evento\"].json.inicio_cita }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_cliente",
+                "displayName": "nombre_cliente",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_tramite",
+                "displayName": "tipo_tramite",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio",
+                "displayName": "fecha_inicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          1728,
+          800
+        ],
+        "id": "5f008e57-3572-4989-be6b-42e15ef1362d",
+        "name": "Call 'gestionar_citas'"
+      },
+      {
+        "parameters": {
+          "description": "Utiliza esta herramienta para gestionar citas del calendario (buscar disponibilidad de huecos libre, crear nuevas citas o cancelar citas existentes).\nFecha de inicio (Opcional. Si no hay fecha, pasa una cadena vacía \"\")\nID del evento (Opcional. Si no aplica, pasa una cadena vacía \"\")",
+          "workflowId": {
+            "__rl": true,
+            "value": "q18smbXTzfEfGSsQ",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+            "cachedResultName": "gestionar_citas"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "fecha_inicio": "={{ $fromAI('fecha_inicio', 'Fecha y hora de inicio en ISO 8601', 'string') }}",
+              "event_id": "={{ $fromAI('event_id', 'ID del evento a cancelar si aplica', 'string') }}",
+              "nombre_cliente": "={{ $fromAI('nombre_cliente', 'Nombre completo del cliente', 'string') }}",
+              "accion": "={{ $fromAI('accion', 'Acción a realizar: buscar_huecos, crear o cancelar', 'string') }}",
+              "tipo_tramite": "={{ $fromAI('tipo_tramite', 'Tipo de trámite solicitado', 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_cliente",
+                "displayName": "nombre_cliente",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_tramite",
+                "displayName": "tipo_tramite",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio",
+                "displayName": "fecha_inicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          1176,
+          632
+        ],
+        "id": "0a182f78-7888-4734-8994-cc9d4b111452",
+        "name": "gestionar_citas"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "nGI9xB6lvLswREf9",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/nGI9xB6lvLswREf9",
+            "cachedResultName": "gestionar_tramites_docs"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {},
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre",
+                "displayName": "nombre",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "apellidos",
+                "displayName": "apellidos",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "asunto",
+                "displayName": "asunto",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "pasaporte_nie",
+                "displayName": "pasaporte_nie",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "telefono",
+                "displayName": "telefono",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nacionalidad",
+                "displayName": "nacionalidad",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_documento",
+                "displayName": "nombre_documento",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "url_archivo",
+                "displayName": "url_archivo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "estado_validacion",
+                "displayName": "estado_validacion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "revisado_ia",
+                "displayName": "revisado_ia",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_subida",
+                "displayName": "fecha_subida",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          1304,
+          632
+        ],
+        "id": "63b2a835-de66-4ab4-b705-73512dac9f44",
+        "name": "gestionar_tramites_docs"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Webhook').item.json.body.data.messageType }}",
+                      "rightValue": "conversation|extendedTextMessage",
+                      "operator": {
+                        "type": "string",
+                        "operation": "regex"
+                      },
+                      "id": "82128113-9a9a-4359-bc7f-e29fa9149306"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "b9db16fc-8d5d-4717-b68c-fca2b55333ae",
+                      "leftValue": "={{ $('Webhook').item.json.body.data.messageType }}",
+                      "rightValue": "audioMessage",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "audio"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "774192ce-31a5-4646-b824-79fe3575bd0e",
+                      "leftValue": "={{ $('Webhook').item.json.body.data.messageType }}",
+                      "rightValue": "imageMessage",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "imagen"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          -656,
+          688
+        ],
+        "id": "40b342a1-e11d-4082-9a58-9392dfc94ccd",
+        "name": "Tipo de mensaje"
+      },
+      {
+        "parameters": {
+          "resource": "chat-api",
+          "operation": "get-media-base64",
+          "instanceName": "gestoria-marco",
+          "messageId": "={{ $('Webhook').item.json.body.data.key.id }}"
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          -432,
+          704
+        ],
+        "id": "1473d6e0-ca1d-48a2-bca1-87e53261d0b5",
+        "name": "Descargar audio",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "chat-api",
+          "operation": "get-media-base64",
+          "instanceName": "gestoria-marco",
+          "messageId": "={{ $('Webhook').item.json.body.data.key.id }}"
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          -432,
+          1088
+        ],
+        "id": "1b97d24e-4980-4c97-9326-1b0a788061e1",
+        "name": "Descargar imagen",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "toBinary",
+          "sourceProperty": "data.base64",
+          "options": {
+            "mimeType": "audio/mp3"
+          }
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          16,
+          608
+        ],
+        "id": "5cc273b5-f9c3-4a7c-a5db-889c0de261a7",
+        "name": "Convertir texto"
+      },
+      {
+        "parameters": {
+          "operation": "toBinary",
+          "sourceProperty": "data.base64",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.convertToFile",
+        "typeVersion": 1.1,
+        "position": [
+          16,
+          992
+        ],
+        "id": "03d0d179-a49a-4fa4-b492-687b8f7c0d24",
+        "name": "Convertir texto 2"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "7ad83a8f-1d51-47f3-bf28-7e0a8c81d4c1",
+                "name": "text",
+                "value": "={{ $('Transcribir audio').item.json.text || $('Transcribir audio').item.json.output || $('Transcribir audio').item.json.content || '' }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          464,
+          608
+        ],
+        "id": "fa458804-1c16-44df-93c7-a0f9e5927990",
+        "name": "Editar texto 2"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "7ad83a8f-1d51-47f3-bf28-7e0a8c81d4c1",
+                "name": "text",
+                "value": "={{ $('Analizar imagen').item.json.text || $('Analizar imagen').item.json.output || $('Analizar imagen').item.json.content || '' }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          464,
+          992
+        ],
+        "id": "f883dbea-a858-4f83-96c7-e3af122de327",
+        "name": "Editar texto 3"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "7ad83a8f-1d51-47f3-bf28-7e0a8c81d4c1",
+                "name": "text",
+                "value": "={{ $('Webhook').item.json.body.data.message.conversation || $('Webhook').item.json.body.data.message.extendedTextMessage?.text || '' }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.5,
+        "position": [
+          240,
+          304
+        ],
+        "id": "016065a6-0b7d-4bfb-8821-c20dece9c800",
+        "name": "Editar texto"
+      },
+      {
+        "parameters": {
+          "resource": "audio",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3.6-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3.6-flash"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          240,
+          608
+        ],
+        "id": "b7aee311-18c5-429d-9631-3c7b725a4327",
+        "name": "Transcribir audio",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "image",
+          "operation": "analyze",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3.6-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3.6-flash"
+          },
+          "text": "Que hay en esta imagen, descríbela super detalladamente",
+          "inputType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          240,
+          992
+        ],
+        "id": "12b589de-254e-4802-8355-4867856994a9",
+        "name": "Analizar imagen",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "729dccea-8ceb-4fb9-a385-2424347eb201",
+                "leftValue": "={{ ($json.payload || []).includes('agente_desactivado') }}",
+                "rightValue": "agente_desactivado",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "false",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.filter",
+        "typeVersion": 2.3,
+        "position": [
+          -880,
+          704
+        ],
+        "id": "48f472ed-c991-4624-aced-307b1b246d0e",
+        "name": "Filter"
+      },
+      {
+        "parameters": {
+          "url": "=http://host.docker.internal:3000/api/v1/accounts/1/conversations/{{ $json.body.data.chatwootConversationId }}/labels",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "api_access_token",
+                "value": "z82VdURuNJJ98mnHjCj2a3Nz"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          -1104,
+          704
+        ],
+        "id": "f2002db3-642f-4590-9e1c-e7c27b3350e4",
+        "name": "Revisar etiqueta del agente",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "JsJk8JjERwnhrC4i",
+            "name": "Header Chatwoot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "5b844b1d-0db7-4ea5-ae41-3682934dac56",
+                "leftValue": "={{ Number($binary.data.fileSize) }}",
+                "rightValue": 2000000,
+                "operator": {
+                  "type": "number",
+                  "operation": "lt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -208,
+          704
+        ],
+        "id": "983fbf8f-5aa0-4349-a1b9-a292ab6ea588",
+        "name": "Filtrar tamaño audio"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "5b844b1d-0db7-4ea5-ae41-3682934dac56",
+                "leftValue": "={{ Number($binary.data.fileSize) }}",
+                "rightValue": 2000000,
+                "operator": {
+                  "type": "number",
+                  "operation": "lt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -208,
+          1088
+        ],
+        "id": "d7518ffc-a0e2-402b-ae7a-b852362f1e11",
+        "name": "Filtrar tamaño imagen"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "Por favor envía un audio más corto o escríbelo por texto",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          16,
+          800
+        ],
+        "id": "6ca7d3c9-0ab1-45c1-b3ec-9625ea511c70",
+        "name": "Avisar audio superado",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "Por favor envía una imagen de menor peso o descripción por texto",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          16,
+          1184
+        ],
+        "id": "4100aa9f-2ab8-4049-8d18-1c1ce8b3d51e",
+        "name": "Avisar imagen superada",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Groq Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Formatear respuesta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Disparador": {
+        "main": [
+          [
+            {
+              "node": "Revisar etiqueta del agente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutar": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Conmutar Callbacks",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear respuesta": {
+        "main": [
+          [
+            {
+              "node": "¿Es una cita?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Es una cita?": {
+        "main": [
+          [
+            {
+              "node": "Enviar pregunta 1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar respuesta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar respuesta": {
+        "main": [
+          []
+        ]
+      },
+      "Enviar pregunta 1": {
+        "main": [
+          []
+        ]
+      },
+      "Conmutar Callbacks": {
+        "main": [
+          [
+            {
+              "node": "Formatear evento",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Callback cancelacion",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear evento": {
+        "main": [
+          [
+            {
+              "node": "Call 'gestionar_citas'",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Callback cancelacion": {
+        "main": [
+          [
+            {
+              "node": "Enviar cancelacion",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Callback confirmacion": {
+        "main": [
+          [
+            {
+              "node": "Enviar mensaje OK",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call 'gestionar_citas'": {
+        "main": [
+          [
+            {
+              "node": "Callback confirmacion",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "gestionar_citas": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "gestionar_tramites_docs": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Tipo de mensaje": {
+        "main": [
+          [
+            {
+              "node": "Editar texto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Descargar audio",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Descargar imagen",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Descargar audio": {
+        "main": [
+          [
+            {
+              "node": "Filtrar tamaño audio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Descargar imagen": {
+        "main": [
+          [
+            {
+              "node": "Filtrar tamaño imagen",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convertir texto": {
+        "main": [
+          [
+            {
+              "node": "Transcribir audio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convertir texto 2": {
+        "main": [
+          [
+            {
+              "node": "Analizar imagen",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Transcribir audio": {
+        "main": [
+          [
+            {
+              "node": "Editar texto 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analizar imagen": {
+        "main": [
+          [
+            {
+              "node": "Editar texto 3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filter": {
+        "main": [
+          [
+            {
+              "node": "Tipo de mensaje",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Revisar etiqueta del agente": {
+        "main": [
+          [
+            {
+              "node": "Filter",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filtrar tamaño audio": {
+        "main": [
+          [
+            {
+              "node": "Convertir texto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Avisar audio superado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Filtrar tamaño imagen": {
+        "main": [
+          [
+            {
+              "node": "Convertir texto 2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Avisar imagen superada",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Editar texto 2": {
+        "main": [
+          [
+            {
+              "node": "Conmutar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Editar texto 3": {
+        "main": [
+          [
+            {
+              "node": "Conmutar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Editar texto": {
+        "main": [
+          [
+            {
+              "node": "Conmutar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Marco Antonio Martínez Guerrero",
+    "name": "Version a905bb2b",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-09T21:12:52.146Z",
+    "updatedAt": "2026-10-09T21:13:04.000Z"
+  },
+  "activeVersionId": "a905bb2b-759a-4c95-8d06-2e65736b6356",
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Formatear respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Disparador": {
+      "main": [
+        [
+          {
+            "node": "Revisar etiqueta del agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutar": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Conmutar Callbacks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear respuesta": {
+      "main": [
+        [
+          {
+            "node": "¿Es una cita?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es una cita?": {
+      "main": [
+        [
+          {
+            "node": "Enviar pregunta 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar respuesta": {
+      "main": [
+        []
+      ]
+    },
+    "Enviar pregunta 1": {
+      "main": [
+        []
+      ]
+    },
+    "Conmutar Callbacks": {
+      "main": [
+        [
+          {
+            "node": "Formatear evento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Callback cancelacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear evento": {
+      "main": [
+        [
+          {
+            "node": "Call 'gestionar_citas'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Callback cancelacion": {
+      "main": [
+        [
+          {
+            "node": "Enviar cancelacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Callback confirmacion": {
+      "main": [
+        [
+          {
+            "node": "Enviar mensaje OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'gestionar_citas'": {
+      "main": [
+        [
+          {
+            "node": "Callback confirmacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gestionar_citas": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gestionar_tramites_docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tipo de mensaje": {
+      "main": [
+        [
+          {
+            "node": "Editar texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Descargar audio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Descargar imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar audio": {
+      "main": [
+        [
+          {
+            "node": "Filtrar tamaño audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar imagen": {
+      "main": [
+        [
+          {
+            "node": "Filtrar tamaño imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convertir texto": {
+      "main": [
+        [
+          {
+            "node": "Transcribir audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convertir texto 2": {
+      "main": [
+        [
+          {
+            "node": "Analizar imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribir audio": {
+      "main": [
+        [
+          {
+            "node": "Editar texto 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analizar imagen": {
+      "main": [
+        [
+          {
+            "node": "Editar texto 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Tipo de mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revisar etiqueta del agente": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar tamaño audio": {
+      "main": [
+        [
+          {
+            "node": "Convertir texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar audio superado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar tamaño imagen": {
+      "main": [
+        [
+          {
+            "node": "Convertir texto 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar imagen superada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editar texto 2": {
+      "main": [
+        [
+          {
+            "node": "Conmutar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editar texto 3": {
+      "main": [
+        [
+          {
+            "node": "Conmutar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Editar texto": {
+      "main": [
+        [
+          {
+            "node": "Conmutar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-10T19:42:21.725Z",
+  "id": "A4sXRn01VJR21OFJ",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Chatbot Gestoria Marco Telegram",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=Eres el recepcionista virtual de una gestoría especializada en trámites de extranjería. Tu objetivo es ayudar a los clientes de forma amable, profesional, precisa y concisa.\n\nFECHA ACTUAL DEL SISTEMA: {{ $now }}\n\n### TUS RESPONSABILIDADES:\n1. Responder dudas generales sobre trámites de extranjería.\n2. Gestionar la reserva, consulta y cancelación de citas.\n3. Solicitar y recopilar información/documentación para trámites en curso.\n\n---\n\n### DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES (CAG):\nConsulta estas duraciones oficiales para calcular la hora final de las citas:\n- Declaración de Renta: 60 minutos\n- Nacionalidad: 60 minutos\n- Agrupación Familiar: 60 minutos\n- Renovación de NIE: 30 minutos\n- Consulta General / Asesoría: 30 minutos\n- Cualquier otro trámite no especificado: 30 minutos\n\n---\n\n### REGLA OBLIGATORIA DE LLAMADA A HERRAMIENTAS:\nSIEMPRE que ejecutes una herramienta (`gestionar_citas` o `gestionar_tramites_docs`), envía los 5 argumentos requeridos en el objeto JSON de la herramienta:\n- `accion`\n- `nombre_cliente`\n- `tipo_tramite`\n- `fecha_inicio`\n- `event_id`\n\nSi alguno de estos argumentos NO es necesario para la acción actual, envía una cadena vacía `\"\"` como su valor. NUNCA omitas ninguno de los 5 campos.\n\n---\n\n### REGLAS DE USO DE HERRAMIENTAS Y FLUJOS:\n\n1. **AGENDAR CITA (FLUJO OBLIGATORIO EN 3 PASOS)**:\n   - **Paso 1. Recopilar Datos**: Solicita al cliente su Nombre completo y Asunto/Trámite que desea realizar.\n   - **Paso 2. Consultar y Ofrecer Huecos Disponibles (Rango de 1 Semana)**: \n     - En cuanto recibas el nombre y el trámite, NO le preguntes qué día prefiere.\n     - Ejecuta inmediatamente la herramienta `gestionar_citas` con la acción `\"buscar_huecos\"`.\n     - Pasa en `fecha_inicio` la FECHA ACTUAL en formato ISO o YYYY-MM-DD (para que el sistema de citas sepa a partir de qué día buscar los próximos 7 días).\n     - **CRÍTICO:** NO inventes días ni horas. Presenta ÚNICAMENTE la lista exacta de huecos que te devuelva el resultado de la herramienta `gestionar_citas` para los próximos 7 días.\n     - Mientras presentes estos huecos, mantén `\"es_cita\": false` en tu respuesta JSON final.\n   - **Paso 3. Preparar Confirmación**: Cuando el cliente elija una fecha y hora específica de las que le ofreciste:\n     a) Muestra un resumen claro con los datos recopilados (Nombre, Trámite, Fecha y Hora elegida).\n     b) Incluye explícitamente la frase: *\"Por favor, confirma usando los botones de abajo\"*.\n     c) Calcula la `fecha_fin` sumando los minutos correspondientes según el **DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES**.\n     d) Marca `\"es_cita\": true` en tu respuesta JSON final.\n\n2. **CANCELAR CITA**:\n   - Solicita al cliente su nombre completo o correo electrónico.\n   - Ejecuta `gestionar_citas` con la acción `\"buscar\"` para obtener el `event_id`.\n   - Con el `event_id`, ejecuta la herramienta con la acción `\"cancelar\"`.\n   - Confirma al cliente que su cita ha sido anulada con éxito.\n\n3. **GESTIÓN DE TRÁMITES Y DOCUMENTOS (`gestionar_tramites_docs`)**:\n   - Para modificar o consultar un trámite, solicita: Nombre, Apellidos, NIE/Pasaporte y Fecha de nacimiento.\n   - Si se requiere documentación, solicita el domicilio del cliente y el nombre del documento que va a adjuntar.\n\n---\n\n### INSTRUCCIONES DE SALIDA (MUY IMPORTANTE):\n- NO ejecutes ni intentes llamar a ninguna herramienta llamada \"json\".\n- Tus respuestas finales hacia el usuario NO deben activar herramientas.\n- Responde ÚNICAMENTE con un objeto JSON en texto plano (sin comillas invertidas ni bloques ```json).\n- Estructura obligatoria del JSON de respuesta:\n\n{\n  \"respuesta\": \"Texto de tu mensaje para el usuario en Telegram\",\n  \"es_cita\": false,\n  \"nombre_cliente\": \"\",\n  \"tipo_tramite\": \"\",\n  \"fecha_inicio\": \"\",\n  \"fecha_fin\": \"\"\n}\n\n#### EJEMPLOS DE SALIDA FINAL:\n\n- Consulta general: {\"respuesta\": \"¡Hola! ¿En qué puedo ayudarte?\", \"es_cita\": false, \"nombre_cliente\": \"\", \"tipo_tramite\": \"\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n- Ofrecer huecos: {\"respuesta\": \"Para tu Renovación de NIE, estos son los huecos libres para esta semana:\\n- Lunes 28: 10:00, 11:30\\n- Miércoles 30: 16:00\\n¿Cuál prefieres?\", \"es_cita\": false, \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n- Confirmar cita: {\"respuesta\": \"Resumen de tu cita para Renovación de NIE el 28 de Septiembre a las 10:00. Por favor, confirma usando los botones de abajo\", \"es_cita\": true, \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"2026-09-28T10:00:00\", \"fecha_fin\": \"2026-09-28T10:30:00\"}\n\n---\n\n### TONO Y ESTILO:\n- Amable, claro y directo.\n- Evita párrafos excesivamente largos."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1040,
+        400
+      ],
+      "id": "184ca664-0f3e-4c18-a16f-969cfa56795e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.from.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1048,
+        632
+      ],
+      "id": "9b00a22f-ac64-400f-88a2-96cf6bef6667",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        920,
+        632
+      ],
+      "id": "b4cbef34-86fa-4cdf-98f6-5f4c3f7df935",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "K0JeClcqfhzdTv6F",
+          "name": "Cuenta Groq"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -1328,
+        704
+      ],
+      "id": "9e348e3d-99d8-4c36-b594-f3a3384d1a24",
+      "name": "Disparador",
+      "webhookId": "c80bf39c-0b8e-42b1-8c91-2b8eb3f9e172",
+      "credentials": {
+        "telegramApi": {
+          "id": "ooaLOQVWKbzz9Riv",
+          "name": "Agente recepcionista gestoría"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message?.text || \"\" }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    },
+                    "id": "8be266e2-933a-407e-ba84-db075bb326b6"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mensaje"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4ac4a21d-5166-4bb1-89f0-0bcc7e53f861",
+                    "leftValue": "={{ $json.callback_query?.data || \"\" }}",
+                    "rightValue": "cita",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Callback"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        608
+      ],
+      "id": "e5d2f80d-d5ef-46e9-a8bf-cc15c219965f",
+      "name": "Conmutar"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "let rawText = $json.output || \"\";\nrawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n\nlet parsedData = {};\n\ntry {\n  parsedData = JSON.parse(rawText);\n} catch (error) {\n  parsedData = {\n    respuesta: rawText,\n    es_cita: false\n  };\n}\n\nreturn {\n  respuesta: parsedData.respuesta || rawText,\n  es_cita: Boolean(parsedData.es_cita),\n  confirmar_cita: Boolean(parsedData.es_cita), // Necesario para la condición del nodo IF\n  fecha_inicio: parsedData.fecha_inicio || null,\n  tipo_tramite: parsedData.tipo_tramite || null\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        512
+      ],
+      "id": "3355a391-593f-412a-b5c5-3761517ef114",
+      "name": "Formatear respuesta"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7d49fe98-0145-474b-ab3e-fca1949eed11",
+              "leftValue": "={{ $json.es_cita }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1728,
+        512
+      ],
+      "id": "fe13b415-249e-4189-acd9-c2e5c1d50744",
+      "name": "¿Es una cita?"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Disparador\"].json.message.chat.id }}",
+        "text": "={{ $json.respuesta }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1952,
+        608
+      ],
+      "id": "ebb71f23-028d-4291-902e-3f44f297318d",
+      "name": "Enviar respuesta",
+      "webhookId": "b3f835de-ed59-4a99-9f6e-1762c9905859",
+      "credentials": {
+        "telegramApi": {
+          "id": "ooaLOQVWKbzz9Riv",
+          "name": "Agente recepcionista gestoría"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $node[\"Disparador\"].json.message.chat.id }}",
+        "text": "={{ $json.respuesta }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Si, confirmar fecha",
+                    "additionalFields": {
+                      "callback_data": "=confirmar_cita|{{ $json.fecha_inicio }}|{{ $json.tipo_tramite }}"
+                    }
+                  },
+                  {
+                    "text": "No",
+                    "additionalFields": {
+                      "callback_data": "cancelar_cita"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1952,
+        416
+      ],
+      "id": "4eeed65e-dbae-4e0e-b278-3d31a1121960",
+      "name": "Enviar pregunta 1",
+      "webhookId": "0c153f7a-e254-404d-afae-f65b28cb3061",
+      "credentials": {
+        "telegramApi": {
+          "id": "ooaLOQVWKbzz9Riv",
+          "name": "Agente recepcionista gestoría"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8392bd82-4a4e-4e1a-8b35-f90288c534c8",
+                    "leftValue": "={{ $json.callback_query.data }}",
+                    "rightValue": "confirmar_cita",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Confirmar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2ad41cd0-b859-4807-a6cf-9c3ffe2315ae",
+                    "leftValue": "={{ $json.callback_query.data }}",
+                    "rightValue": "cancelar_cita",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cancelar"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        896
+      ],
+      "id": "148ff810-247d-417a-b32a-5b738325e8f8",
+      "name": "Conmutar Callbacks"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// 1. Extraer los datos del callback del botón\nconst callbackData = $json.callback_query?.data || \"\";\nconst partes = callbackData.split('|'); \n\n// Extraer fecha y tipo de trámite pasados en el botón\nconst fechaInicio = partes[1] || \"\";\nconst tipoTramite = partes[2] || \"Trámite de Extranjería\";\n\n// 2. Extraer el nombre del usuario directamente desde su perfil de Telegram\nconst primerNombre = $json.callback_query?.from?.first_name || \"\";\nconst apellido = $json.callback_query?.from?.last_name || \"\";\nconst nombreCompleto = `${primerNombre} ${apellido}`.trim() || \"Cliente Telegram\";\n\n// 3. Devolver la estructura exacta (los 5 campos) para el subflujo de citas\nreturn {\n  accion: \"crear\",\n  nombre_cliente: nombreCompleto,\n  tipo_tramite: tipoTramite,\n  fecha_inicio: fechaInicio,\n  event_id: \"\",\n  // Variables auxiliares para responder a Telegram después\n  callback_query_id: $json.callback_query?.id,\n  chat_id: $json.callback_query?.message?.chat?.id\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1504,
+        800
+      ],
+      "id": "060df420-bb5f-4d7f-b21a-f49e5beb4d73",
+      "name": "Formatear evento"
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $node[\"Formatear evento\"].json.chat_id }}",
+        "messageId": "={{ $node[\"Disparador\"].json.callback_query.message.message_id }}",
+        "text": "={{ \"¡Cita confirmada y agendada con éxito en Google Calendar!\\n\\n *Fecha:* \" + $node[\"Formatear evento\"].json.inicio_cita + \"\\n *Trámite:* \" + $node[\"Formatear evento\"].json.titulo_evento }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2176,
+        800
+      ],
+      "id": "dd0dff75-c4d7-421d-8fc8-1a8ca38ebb06",
+      "name": "Enviar mensaje OK",
+      "webhookId": "bf28b7bc-4776-4d68-8122-87c38bc2664e",
+      "credentials": {
+        "telegramApi": {
+          "id": "ooaLOQVWKbzz9Riv",
+          "name": "Agente recepcionista gestoría"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "editMessageText",
+        "chatId": "={{ $node[\"Disparador\"].json.callback_query.message.chat.id }}",
+        "messageId": "={{ $node[\"Disparador\"].json.callback_query.message.message_id }}",
+        "text": "Has cancelado la cita. No se agendó ninguna cita.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1728,
+        992
+      ],
+      "id": "7da0dde2-a9af-4fc0-be53-43afd38e67a6",
+      "name": "Enviar cancelacion",
+      "webhookId": "e51de156-5d10-4527-954f-4f9ea131287b",
+      "credentials": {
+        "telegramApi": {
+          "id": "ooaLOQVWKbzz9Riv",
+          "name": "Agente recepcionista gestoría"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $json.callback_query.id }}",
+        "additionalFields": {
+          "text": "Cita cancelada"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1504,
+        992
+      ],
+      "id": "f966895b-771e-4bfd-9fc6-0562bf3c2548",
+      "name": "Callback cancelacion",
+      "webhookId": "803a44c8-214c-4547-87eb-d70bc33c7fc5",
+      "credentials": {
+        "telegramApi": {
+          "id": "ooaLOQVWKbzz9Riv",
+          "name": "Agente recepcionista gestoría"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $node[\"Formatear evento\"].json.callback_query_id }}",
+        "additionalFields": {
+          "text": "¡Cita agendada correctamente!"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1952,
+        800
+      ],
+      "id": "497652c9-488d-4d81-92a5-01bc2a3f303f",
+      "name": "Callback confirmacion",
+      "webhookId": "803a44c8-214c-4547-87eb-d70bc33c7fc5",
+      "credentials": {
+        "telegramApi": {
+          "id": "ooaLOQVWKbzz9Riv",
+          "name": "Agente recepcionista gestoría"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "q18smbXTzfEfGSsQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+          "cachedResultName": "gestionar_citas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "accion": "crear",
+            "nombre_cliente": "={{ $node[\"Formatear evento\"].json.nombre_cliente }}",
+            "tipo_tramite": "={{ $node[\"Formatear evento\"].json.titulo_evento }}",
+            "fecha_inicio": "={{ $node[\"Formatear evento\"].json.inicio_cita }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_cliente",
+              "displayName": "nombre_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_tramite",
+              "displayName": "tipo_tramite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio",
+              "displayName": "fecha_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1728,
+        800
+      ],
+      "id": "5f008e57-3572-4989-be6b-42e15ef1362d",
+      "name": "Call 'gestionar_citas'"
+    },
+    {
+      "parameters": {
+        "description": "Utiliza esta herramienta para gestionar citas del calendario (buscar disponibilidad de huecos libre, crear nuevas citas o cancelar citas existentes).\nFecha de inicio (Opcional. Si no hay fecha, pasa una cadena vacía \"\")\nID del evento (Opcional. Si no aplica, pasa una cadena vacía \"\")",
+        "workflowId": {
+          "__rl": true,
+          "value": "q18smbXTzfEfGSsQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+          "cachedResultName": "gestionar_citas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fecha_inicio": "={{ $fromAI('fecha_inicio', 'Fecha y hora de inicio en ISO 8601', 'string') }}",
+            "event_id": "={{ $fromAI('event_id', 'ID del evento a cancelar si aplica', 'string') }}",
+            "nombre_cliente": "={{ $fromAI('nombre_cliente', 'Nombre completo del cliente', 'string') }}",
+            "accion": "={{ $fromAI('accion', 'Acción a realizar: buscar_huecos, crear o cancelar', 'string') }}",
+            "tipo_tramite": "={{ $fromAI('tipo_tramite', 'Tipo de trámite solicitado', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_cliente",
+              "displayName": "nombre_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_tramite",
+              "displayName": "tipo_tramite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio",
+              "displayName": "fecha_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1176,
+        632
+      ],
+      "id": "0a182f78-7888-4734-8994-cc9d4b111452",
+      "name": "gestionar_citas"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "nGI9xB6lvLswREf9",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/nGI9xB6lvLswREf9",
+          "cachedResultName": "gestionar_tramites_docs"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "apellidos",
+              "displayName": "apellidos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "asunto",
+              "displayName": "asunto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "pasaporte_nie",
+              "displayName": "pasaporte_nie",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nacionalidad",
+              "displayName": "nacionalidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_documento",
+              "displayName": "nombre_documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "url_archivo",
+              "displayName": "url_archivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "estado_validacion",
+              "displayName": "estado_validacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "revisado_ia",
+              "displayName": "revisado_ia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_subida",
+              "displayName": "fecha_subida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        1304,
+        632
+      ],
+      "id": "63b2a835-de66-4ab4-b705-73512dac9f44",
+      "name": "gestionar_tramites_docs"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Webhook').item.json.body.data.messageType }}",
+                    "rightValue": "conversation|extendedTextMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    },
+                    "id": "82128113-9a9a-4359-bc7f-e29fa9149306"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b9db16fc-8d5d-4717-b68c-fca2b55333ae",
+                    "leftValue": "={{ $('Webhook').item.json.body.data.messageType }}",
+                    "rightValue": "audioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "774192ce-31a5-4646-b824-79fe3575bd0e",
+                    "leftValue": "={{ $('Webhook').item.json.body.data.messageType }}",
+                    "rightValue": "imageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "imagen"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -656,
+        688
+      ],
+      "id": "40b342a1-e11d-4082-9a58-9392dfc94ccd",
+      "name": "Tipo de mensaje"
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "get-media-base64",
+        "instanceName": "gestoria-marco",
+        "messageId": "={{ $('Webhook').item.json.body.data.key.id }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        704
+      ],
+      "id": "1473d6e0-ca1d-48a2-bca1-87e53261d0b5",
+      "name": "Descargar audio",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "get-media-base64",
+        "instanceName": "gestoria-marco",
+        "messageId": "={{ $('Webhook').item.json.body.data.key.id }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        1088
+      ],
+      "id": "1b97d24e-4980-4c97-9326-1b0a788061e1",
+      "name": "Descargar imagen",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data.base64",
+        "options": {
+          "mimeType": "audio/mp3"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        608
+      ],
+      "id": "5cc273b5-f9c3-4a7c-a5db-889c0de261a7",
+      "name": "Convertir texto"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data.base64",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        992
+      ],
+      "id": "03d0d179-a49a-4fa4-b492-687b8f7c0d24",
+      "name": "Convertir texto 2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ad83a8f-1d51-47f3-bf28-7e0a8c81d4c1",
+              "name": "text",
+              "value": "={{ $('Transcribir audio').item.json.text || $('Transcribir audio').item.json.output || $('Transcribir audio').item.json.content || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        464,
+        608
+      ],
+      "id": "fa458804-1c16-44df-93c7-a0f9e5927990",
+      "name": "Editar texto 2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ad83a8f-1d51-47f3-bf28-7e0a8c81d4c1",
+              "name": "text",
+              "value": "={{ $('Analizar imagen').item.json.text || $('Analizar imagen').item.json.output || $('Analizar imagen').item.json.content || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        464,
+        992
+      ],
+      "id": "f883dbea-a858-4f83-96c7-e3af122de327",
+      "name": "Editar texto 3"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7ad83a8f-1d51-47f3-bf28-7e0a8c81d4c1",
+              "name": "text",
+              "value": "={{ $('Webhook').item.json.body.data.message.conversation || $('Webhook').item.json.body.data.message.extendedTextMessage?.text || '' }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        240,
+        304
+      ],
+      "id": "016065a6-0b7d-4bfb-8821-c20dece9c800",
+      "name": "Editar texto"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.6-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.6-flash"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        608
+      ],
+      "id": "b7aee311-18c5-429d-9631-3c7b725a4327",
+      "name": "Transcribir audio",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.6-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.6-flash"
+        },
+        "text": "Que hay en esta imagen, descríbela super detalladamente",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        992
+      ],
+      "id": "12b589de-254e-4802-8355-4867856994a9",
+      "name": "Analizar imagen",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "729dccea-8ceb-4fb9-a385-2424347eb201",
+              "leftValue": "={{ ($json.payload || []).includes('agente_desactivado') }}",
+              "rightValue": "agente_desactivado",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -880,
+        704
+      ],
+      "id": "48f472ed-c991-4624-aced-307b1b246d0e",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:3000/api/v1/accounts/1/conversations/{{ $json.body.data.chatwootConversationId }}/labels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "z82VdURuNJJ98mnHjCj2a3Nz"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -1104,
+        704
+      ],
+      "id": "f2002db3-642f-4590-9e1c-e7c27b3350e4",
+      "name": "Revisar etiqueta del agente",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JsJk8JjERwnhrC4i",
+          "name": "Header Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5b844b1d-0db7-4ea5-ae41-3682934dac56",
+              "leftValue": "={{ Number($binary.data.fileSize) }}",
+              "rightValue": 2000000,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -208,
+        704
+      ],
+      "id": "983fbf8f-5aa0-4349-a1b9-a292ab6ea588",
+      "name": "Filtrar tamaño audio"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5b844b1d-0db7-4ea5-ae41-3682934dac56",
+              "leftValue": "={{ Number($binary.data.fileSize) }}",
+              "rightValue": 2000000,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -208,
+        1088
+      ],
+      "id": "d7518ffc-a0e2-402b-ae7a-b852362f1e11",
+      "name": "Filtrar tamaño imagen"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "Por favor envía un audio más corto o escríbelo por texto",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        16,
+        800
+      ],
+      "id": "6ca7d3c9-0ab1-45c1-b3ec-9625ea511c70",
+      "name": "Avisar audio superado",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "Por favor envía una imagen de menor peso o descripción por texto",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        16,
+        1184
+      ],
+      "id": "4100aa9f-2ab8-4049-8d18-1c1ce8b3d51e",
+      "name": "Avisar imagen superada",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "A4sXRn01VJR21OFJ",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-09-10T19:42:21.735Z",
+      "updatedAt": "2026-09-10T19:42:21.735Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-10-09T21:12:52.143Z",
+  "versionId": "a905bb2b-759a-4c95-8d06-2e65736b6356"
+}
