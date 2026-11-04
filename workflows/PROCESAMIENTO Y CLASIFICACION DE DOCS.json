@@ -1,7 +1,7 @@
 {
   "active": true,
   "activeVersion": {
-    "versionId": "1f5b81ed-6a65-474d-8ae0-f6249ba47752",
+    "versionId": "48cfa710-c277-48cc-b8dd-e41b9dcce76d",
     "workflowId": "nxC0gqZZhZTQWAjg",
     "nodes": [
       {
@@ -218,9 +218,7 @@
         }
       },
       {
-        "parameters": {
-          "numberInputs": 4
-        },
+        "parameters": {},
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3.2,
         "position": [
@@ -626,8 +624,8 @@
         "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
         "typeVersion": 1,
         "position": [
-          2392,
-          -136
+          2400,
+          -144
         ],
         "id": "a05cb6f9-33a6-4860-916e-bc33cbdcaaae",
         "name": "Embeddings Google Gemini",
@@ -646,8 +644,8 @@
         "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
         "typeVersion": 1.1,
         "position": [
-          2520,
-          -136
+          2528,
+          -144
         ],
         "id": "404dd1bf-3a34-4d46-8017-683d53da649c",
         "name": "Default Data Loader"
@@ -659,8 +657,8 @@
         "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
         "typeVersion": 1,
         "position": [
-          2600,
-          72
+          2608,
+          80
         ],
         "id": "07ba3202-b97b-4a45-8463-46963029b8be",
         "name": "Recursive Character Text Splitter"
@@ -865,9 +863,7 @@
         }
       },
       {
-        "parameters": {
-          "numberInputs": 4
-        },
+        "parameters": {},
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3.2,
         "position": [
@@ -1273,8 +1269,8 @@
         "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
         "typeVersion": 1,
         "position": [
-          2392,
-          872
+          2400,
+          880
         ],
         "id": "211c1bec-a771-4405-b485-f7e9d766c346",
         "name": "Embeddings Google Gemini1",
@@ -1293,8 +1289,8 @@
         "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
         "typeVersion": 1.1,
         "position": [
-          2520,
-          872
+          2528,
+          880
         ],
         "id": "54dd1f5b-72ae-4d1d-ba9e-460287f298d5",
         "name": "Default Data Loader1"
@@ -1306,8 +1302,8 @@
         "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
         "typeVersion": 1,
         "position": [
-          2600,
-          1080
+          2608,
+          1088
         ],
         "id": "adb55a2d-0ccc-49b9-8f67-82e52b4e5e09",
         "name": "Recursive Character Text Splitter1"
@@ -1399,7 +1395,7 @@
             {
               "node": "Unificar",
               "type": "main",
-              "index": 2
+              "index": 0
             }
           ]
         ]
@@ -1410,7 +1406,7 @@
             {
               "node": "Unificar",
               "type": "main",
-              "index": 3
+              "index": 1
             }
           ]
         ]
@@ -1647,7 +1643,7 @@
             {
               "node": "Unificar1",
               "type": "main",
-              "index": 2
+              "index": 0
             }
           ]
         ]
@@ -1658,7 +1654,7 @@
             {
               "node": "Unificar1",
               "type": "main",
-              "index": 3
+              "index": 1
             }
           ]
         ]
@@ -1863,13 +1859,13 @@
     },
     "nodeGroups": [],
     "authors": "Marco Antonio Martínez Guerrero",
-    "name": "Version 1f5b81ed",
+    "name": "Version 48cfa710",
     "description": "",
     "autosaved": true,
-    "createdAt": "2026-10-29T19:54:03.411Z",
-    "updatedAt": "2026-10-29T19:54:23.000Z"
+    "createdAt": "2026-11-04T20:49:50.996Z",
+    "updatedAt": "2026-11-04T20:49:55.000Z"
   },
-  "activeVersionId": "1f5b81ed-6a65-474d-8ae0-f6249ba47752",
+  "activeVersionId": "48cfa710-c277-48cc-b8dd-e41b9dcce76d",
   "connections": {
     "Enviar mensaje chat": {
       "main": [
@@ -1928,7 +1924,7 @@
           {
             "node": "Unificar",
             "type": "main",
-            "index": 2
+            "index": 0
           }
         ]
       ]
@@ -1939,7 +1935,7 @@
           {
             "node": "Unificar",
             "type": "main",
-            "index": 3
+            "index": 1
           }
         ]
       ]
@@ -2176,7 +2172,7 @@
           {
             "node": "Unificar1",
             "type": "main",
-            "index": 2
+            "index": 0
           }
         ]
       ]
@@ -2187,7 +2183,7 @@
           {
             "node": "Unificar1",
             "type": "main",
-            "index": 3
+            "index": 1
           }
         ]
       ]
@@ -2613,9 +2609,7 @@
       }
     },
     {
-      "parameters": {
-        "numberInputs": 4
-      },
+      "parameters": {},
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
@@ -3021,8 +3015,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        2392,
-        -136
+        2400,
+        -144
       ],
       "id": "a05cb6f9-33a6-4860-916e-bc33cbdcaaae",
       "name": "Embeddings Google Gemini",
@@ -3041,8 +3035,8 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        2520,
-        -136
+        2528,
+        -144
       ],
       "id": "404dd1bf-3a34-4d46-8017-683d53da649c",
       "name": "Default Data Loader"
@@ -3054,8 +3048,8 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        2600,
-        72
+        2608,
+        80
       ],
       "id": "07ba3202-b97b-4a45-8463-46963029b8be",
       "name": "Recursive Character Text Splitter"
@@ -3260,9 +3254,7 @@
       }
     },
     {
-      "parameters": {
-        "numberInputs": 4
-      },
+      "parameters": {},
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
@@ -3668,8 +3660,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        2392,
-        872
+        2400,
+        880
       ],
       "id": "211c1bec-a771-4405-b485-f7e9d766c346",
       "name": "Embeddings Google Gemini1",
@@ -3688,8 +3680,8 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        2520,
-        872
+        2528,
+        880
       ],
       "id": "54dd1f5b-72ae-4d1d-ba9e-460287f298d5",
       "name": "Default Data Loader1"
@@ -3701,8 +3693,8 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        2600,
-        1080
+        2608,
+        1088
       ],
       "id": "adb55a2d-0ccc-49b9-8f67-82e52b4e5e09",
       "name": "Recursive Character Text Splitter1"
@@ -3753,16 +3745,20 @@
   "staticData": {
     "node:Enviar correo": {
       "Enviar correo": {
-        "lastTimeChecked": 1793805508,
+        "lastTimeChecked": 1793816407,
         "pendingMessageIds": [],
         "possibleDuplicates": [
-          "1a1a723df06ab417"
+          "1a1a7ca2e50cdde7",
+          "1a1a7a1718e19300",
+          "1a1a78e19d4d0c0a",
+          "1a1a766dac0f8d87",
+          "1a1a82d9c157de29"
         ]
       }
     }
   },
   "tags": [],
   "triggerCount": 2,
-  "updatedAt": "2026-10-29T19:54:03.400Z",
-  "versionId": "1f5b81ed-6a65-474d-8ae0-f6249ba47752"
+  "updatedAt": "2026-11-04T20:49:50.993Z",
+  "versionId": "48cfa710-c277-48cc-b8dd-e41b9dcce76d"
 }
