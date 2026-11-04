@@ -1,0 +1,458 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "8dd550a9-ca42-4a62-bd4f-b309e7308188",
+    "workflowId": "L7eHu3wRpwDNcVCW",
+    "nodes": [
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "buscar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "19d285ea-b761-4e95-b5ba-2984bd753761"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Buscar"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "353e00d2-84a8-4128-8445-b7c9b816c6d3",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "consultar_documentos",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Buscar_docs"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "283d11b1-2b56-4cb4-8921-038321234afd",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "actualizar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Actualizar"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          192,
+          -128
+        ],
+        "id": "111f3545-79a7-437a-9099-1f011d2ee832",
+        "name": "Conmutar"
+      },
+      {
+        "parameters": {
+          "inputSource": "jsonExample",
+          "jsonExample": "{\n  \"accion\": \"={{ $fromAI('accion', 'Acción a realizar: crear, consultar, actualizar, etc.', 'string') }}\",\n  \"nombre_cliente\": \"={{ $fromAI('nombre', 'Nombre de pila del cliente', 'string') }}\",\n  \"tipo_tramite\": \"={{ $fromAI('tipo_tramite', 'Asunto o tipo de trámite (ej: Empadronamiento, Arraigo, etc.)', 'string') }}\",\n  \"pasaporte_nie\": \"={{ $fromAI('pasaporte_nie', 'Número de NIE o Pasaporte del cliente', 'string') }}\",\n  \"estado\": \"={{ $fromAI('estado', 'Estado del tramite', 'string') }}\",\n  \"historial\": \"={{ $fromAI('historial', 'Historial del tramite desde comienzo hasta la actualidad', 'string') }}\",\n  \"fecha_inicio\": \"={{ $fromAI('fecha_inicio', 'Fecha inicio del tramite', 'string') }}\",\n  \"event_id\": \"={{ $fromAI('event_id', 'ID del evento de Google Calendar', 'string') }}\"\n}"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -32,
+          -112
+        ],
+        "id": "88e81cac-c2cf-469f-bbad-5bbc7dec2bfc",
+        "name": "Al ejecutar el flujo"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT tipo_tramite, estado, observaciones \nFROM tramites \nWHERE pasaporte_nie = '{{ $json.pasaporte_nie }}' \nORDER BY fecha_ultima_actualizacion DESC LIMIT 1;",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          448,
+          -288
+        ],
+        "id": "20a04545-40d3-4747-b79d-d16540efd91f",
+        "name": "Buscar tramites",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT d.nombre_documento, d.ruta_archivo \nFROM tramites AS t\nJOIN documentos d ON t.pasaporte_nie = d.pasaporte_nie\nWHERE t.pasaporte_nie = '{{ $json.pasaporte_nie }}';",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          448,
+          -112
+        ],
+        "id": "20c097a9-6e48-4d8b-8a9e-5382277ed863",
+        "name": "Buscar docs",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "UPDATE tramites\nSET estado = '{{ $json.estado }}',\n    fecha_ultima_actualizacion = NOW()\nWHERE pasaporte_nie = '{{ $json.pasaporte_nie }}';",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          448,
+          64
+        ],
+        "id": "d47fd615-d704-4042-8fc7-dc558cb57429",
+        "name": "Actualizar estado",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Conmutar": {
+        "main": [
+          [
+            {
+              "node": "Buscar tramites",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Buscar docs",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Actualizar estado",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Al ejecutar el flujo": {
+        "main": [
+          [
+            {
+              "node": "Conmutar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Marco Antonio Martínez Guerrero",
+    "name": "Version 8dd550a9",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-09T22:13:26.794Z",
+    "updatedAt": "2026-11-03T20:30:06.000Z"
+  },
+  "activeVersionId": "8dd550a9-ca42-4a62-bd4f-b309e7308188",
+  "connections": {
+    "Conmutar": {
+      "main": [
+        [
+          {
+            "node": "Buscar tramites",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar docs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar estado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Al ejecutar el flujo": {
+      "main": [
+        [
+          {
+            "node": "Conmutar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-05T10:25:09.213Z",
+  "id": "L7eHu3wRpwDNcVCW",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "gestionar_tramites",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "buscar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "19d285ea-b761-4e95-b5ba-2984bd753761"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Buscar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "353e00d2-84a8-4128-8445-b7c9b816c6d3",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "consultar_documentos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Buscar_docs"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "283d11b1-2b56-4cb4-8921-038321234afd",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "actualizar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Actualizar"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        192,
+        -128
+      ],
+      "id": "111f3545-79a7-437a-9099-1f011d2ee832",
+      "name": "Conmutar"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"accion\": \"={{ $fromAI('accion', 'Acción a realizar: crear, consultar, actualizar, etc.', 'string') }}\",\n  \"nombre_cliente\": \"={{ $fromAI('nombre', 'Nombre de pila del cliente', 'string') }}\",\n  \"tipo_tramite\": \"={{ $fromAI('tipo_tramite', 'Asunto o tipo de trámite (ej: Empadronamiento, Arraigo, etc.)', 'string') }}\",\n  \"pasaporte_nie\": \"={{ $fromAI('pasaporte_nie', 'Número de NIE o Pasaporte del cliente', 'string') }}\",\n  \"estado\": \"={{ $fromAI('estado', 'Estado del tramite', 'string') }}\",\n  \"historial\": \"={{ $fromAI('historial', 'Historial del tramite desde comienzo hasta la actualidad', 'string') }}\",\n  \"fecha_inicio\": \"={{ $fromAI('fecha_inicio', 'Fecha inicio del tramite', 'string') }}\",\n  \"event_id\": \"={{ $fromAI('event_id', 'ID del evento de Google Calendar', 'string') }}\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -112
+      ],
+      "id": "88e81cac-c2cf-469f-bbad-5bbc7dec2bfc",
+      "name": "Al ejecutar el flujo"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT tipo_tramite, estado, observaciones \nFROM tramites \nWHERE pasaporte_nie = '{{ $json.pasaporte_nie }}' \nORDER BY fecha_ultima_actualizacion DESC LIMIT 1;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        448,
+        -288
+      ],
+      "id": "20a04545-40d3-4747-b79d-d16540efd91f",
+      "name": "Buscar tramites",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT d.nombre_documento, d.ruta_archivo \nFROM tramites AS t\nJOIN documentos d ON t.pasaporte_nie = d.pasaporte_nie\nWHERE t.pasaporte_nie = '{{ $json.pasaporte_nie }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "20c097a9-6e48-4d8b-8a9e-5382277ed863",
+      "name": "Buscar docs",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE tramites\nSET estado = '{{ $json.estado }}',\n    fecha_ultima_actualizacion = NOW()\nWHERE pasaporte_nie = '{{ $json.pasaporte_nie }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        448,
+        64
+      ],
+      "id": "d47fd615-d704-4042-8fc7-dc558cb57429",
+      "name": "Actualizar estado",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "L7eHu3wRpwDNcVCW",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-10-05T10:25:09.225Z",
+      "updatedAt": "2026-10-05T10:25:09.225Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-09T22:13:26.791Z",
+  "versionId": "8dd550a9-ca42-4a62-bd4f-b309e7308188"
+}
