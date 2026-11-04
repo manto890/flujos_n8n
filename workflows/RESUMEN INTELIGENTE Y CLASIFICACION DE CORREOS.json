@@ -1,0 +1,1914 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "3dc505b3-f4ce-47fe-92b8-bfc62d39c354",
+    "workflowId": "rjZtNA2QvpctpFJv",
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          240,
+          544
+        ],
+        "id": "0da7b478-f274-42ee-ae79-c50d7544a9ad",
+        "name": "Google Gemini Chat Model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.4,
+        "position": [
+          368,
+          544
+        ],
+        "id": "190e90b3-bf58-479f-9e08-51e589331945",
+        "name": "Postgres Chat Memory",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          224,
+          1360
+        ],
+        "id": "703fefb6-6b69-410e-a9f5-60037fb0266e",
+        "name": "Google Gemini Chat Model1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.4,
+        "position": [
+          352,
+          1360
+        ],
+        "id": "f082eb16-1bba-4052-9de2-95cbcbf7a349",
+        "name": "Postgres Chat Memory1",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "messageId": {
+            "__rl": true,
+            "value": "={{ $('Envio correo Outlook').item.json.id }}",
+            "mode": "id"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DoAAAA=",
+            "mode": "list",
+            "cachedResultName": "documentos",
+            "cachedResultUrl": "https://outlook.office365.com/mail/AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DoAAAA%3D"
+          }
+        },
+        "type": "n8n-nodes-base.microsoftOutlook",
+        "typeVersion": 2,
+        "position": [
+          1248,
+          16
+        ],
+        "id": "781e3cd6-a19e-4006-921f-6dd84aa89c8b",
+        "name": "Actualizar documentos",
+        "webhookId": "2740f8c3-52c6-463b-ae3c-29033195ad5c",
+        "credentials": {
+          "microsoftOutlookOAuth2Api": {
+            "id": "tTpCVUjY3wyioXfb",
+            "name": "Microsoft Outlook account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "messageId": {
+            "__rl": true,
+            "value": "={{ $('Envio correo Outlook').item.json.id }}",
+            "mode": "id"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DwAAAA=",
+            "mode": "list",
+            "cachedResultName": "consultas",
+            "cachedResultUrl": "https://outlook.office365.com/mail/AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DwAAAA%3D"
+          }
+        },
+        "type": "n8n-nodes-base.microsoftOutlook",
+        "typeVersion": 2,
+        "position": [
+          1248,
+          192
+        ],
+        "id": "c04ea20e-24cb-4d81-aa55-ae0550b5292d",
+        "name": "Actualizar consultas",
+        "webhookId": "2740f8c3-52c6-463b-ae3c-29033195ad5c",
+        "credentials": {
+          "microsoftOutlookOAuth2Api": {
+            "id": "tTpCVUjY3wyioXfb",
+            "name": "Microsoft Outlook account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "messageId": {
+            "__rl": true,
+            "value": "={{ $('Envio correo Outlook').item.json.id }}",
+            "mode": "id"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DsAAAA=",
+            "mode": "list",
+            "cachedResultName": "resoluciones",
+            "cachedResultUrl": "https://outlook.office365.com/mail/AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DsAAAA%3D"
+          }
+        },
+        "type": "n8n-nodes-base.microsoftOutlook",
+        "typeVersion": 2,
+        "position": [
+          1248,
+          384
+        ],
+        "id": "0efc8468-bb04-4b37-aa6d-a9c111dbc156",
+        "name": "Actualizar resoluciones",
+        "webhookId": "2740f8c3-52c6-463b-ae3c-29033195ad5c",
+        "credentials": {
+          "microsoftOutlookOAuth2Api": {
+            "id": "tTpCVUjY3wyioXfb",
+            "name": "Microsoft Outlook account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const aiResponse = JSON.parse($input.item.json.output);\n$input.item.json.resumen = aiResponse.resumen;\n$input.item.json.categoria = aiResponse.categoria;\nreturn $input.item;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          576,
+          304
+        ],
+        "id": "4c25596e-ac2a-41e4-b05e-94c3f48d8c00",
+        "name": "Formatear respuesta"
+      },
+      {
+        "parameters": {
+          "toRecipients": "mantoniomg25480@gmail.com",
+          "subject": "Resumen de correo enviado por el cliente",
+          "bodyContent": "=Hola, buenas. Esto es un resumen del correo: {{ $json.output }}",
+          "additionalFields": {}
+        },
+        "type": "n8n-nodes-base.microsoftOutlook",
+        "typeVersion": 2,
+        "position": [
+          800,
+          304
+        ],
+        "id": "8f5b273a-3e38-41cb-ae71-d0c0ee3a150f",
+        "name": "Enviar correo aviso",
+        "webhookId": "1c7d6bc9-df38-4e54-8c9f-d30f90ce00cf",
+        "credentials": {
+          "microsoftOutlookOAuth2Api": {
+            "id": "tTpCVUjY3wyioXfb",
+            "name": "Microsoft Outlook account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "filters": {},
+          "options": {}
+        },
+        "type": "n8n-nodes-base.microsoftOutlookTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          304
+        ],
+        "id": "a28dfe60-ff3c-451e-9540-79d09c9b5c27",
+        "name": "Envio correo Outlook",
+        "credentials": {
+          "microsoftOutlookOAuth2Api": {
+            "id": "tTpCVUjY3wyioXfb",
+            "name": "Microsoft Outlook account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "filters": {}
+        },
+        "type": "n8n-nodes-base.gmailTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          0,
+          1120
+        ],
+        "id": "74bde9e2-9e48-4d56-81a2-60ced4885510",
+        "name": "Envio correo Gmail",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "VmMlET5526MjN801",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "const aiResponse = JSON.parse($input.item.json.output);\n$input.item.json.resumen = aiResponse.resumen;\n$input.item.json.categoria = aiResponse.categoria;\nreturn $input.item;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          576,
+          1120
+        ],
+        "id": "d0ab315b-d09f-4d72-8daf-da11a7d47b6e",
+        "name": "Formatear respuesta 2"
+      },
+      {
+        "parameters": {
+          "sendTo": "mantoniomg25480@gmail.com",
+          "subject": "Resumen de correo enviado por el cliente",
+          "message": "=Hola, buenas. Esto es un resumen del correo: {{ $json.output }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          800,
+          1120
+        ],
+        "id": "088ef925-fe2f-4cb9-a1b9-63270f73d747",
+        "name": "Enviar correo aviso 2",
+        "webhookId": "bbc2d28e-3c19-4daf-9d7b-0acee478c924",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "VmMlET5526MjN801",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "addLabels",
+          "messageId": "={{ $('Envio correo Gmail').item.json.id }}",
+          "labelIds": [
+            "Label_2874650176790050751"
+          ]
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          1248,
+          832
+        ],
+        "id": "cc67ba9a-e655-4e64-8883-7eb4771b1141",
+        "name": "Agregar documentos",
+        "webhookId": "542481b0-1bb9-4f13-a91a-019b54d2cf7d",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "VmMlET5526MjN801",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "addLabels",
+          "messageId": "={{ $('Envio correo Gmail').item.json.id }}",
+          "labelIds": [
+            "Label_1198996818831763399"
+          ]
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          1248,
+          1024
+        ],
+        "id": "427eb39f-47d9-41c1-81cb-1defc3b370b5",
+        "name": "Agregar resoluciones",
+        "webhookId": "db8ec787-478c-41bd-abe4-b1404ae961e8",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "VmMlET5526MjN801",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.categoria }}",
+                      "rightValue": "documentos",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "837f475f-4a05-4f92-abec-56413f82f44c"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "documentos"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "2d3bf8b2-f701-4f7d-8944-1cc61864ec0e",
+                      "leftValue": "={{ $json.categoria }}",
+                      "rightValue": "consultas",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "consultas"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "7efd53a2-95bc-4e66-9d1d-df49afa7d492",
+                      "leftValue": "={{ $json.categoria }}",
+                      "rightValue": "resoluciones",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "resoluciones"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "df32f1fa-66c6-449b-be7a-ef03947c7dfc",
+                      "leftValue": "={{ $json.categoria }}",
+                      "rightValue": "gestiones",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "gestiones"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1024,
+          272
+        ],
+        "id": "6955b605-4620-40da-a37c-c29981c907f8",
+        "name": "Conmutar tipo"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.categoria }}",
+                      "rightValue": "documentos",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "837f475f-4a05-4f92-abec-56413f82f44c"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Documentos"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "2d3bf8b2-f701-4f7d-8944-1cc61864ec0e",
+                      "leftValue": "={{ $json.categoria }}",
+                      "rightValue": "resoluciones",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Resoluciones"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "7efd53a2-95bc-4e66-9d1d-df49afa7d492",
+                      "leftValue": "={{ $json.categoria }}",
+                      "rightValue": "consultas",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Consultas"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "5d611597-37d1-485a-9dff-9412976d5236",
+                      "leftValue": "={{ $json.categoria }}",
+                      "rightValue": "gestiones",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Gestiones"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1024,
+          1088
+        ],
+        "id": "70641eca-572e-4130-b11a-36b7f88e2f4e",
+        "name": "Conmutar tipo 2"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Analiza este correo por favor. {{ $json.body }} Luego clasifícalo en una de estas categorías de tipo de asunto de correo:\n- Documentos\n- Consultas\n- Resoluciones",
+          "options": {
+            "systemMessage": "Eres un asistente y recepcionista virtual experto en gestionar correos electrónicos para una gestoría.\n\nTu tarea es analizar el contenido del correo electrónico recibido y generar dos cosas:\n1. Un resumen claro y profesional del correo para enviárselo al usuario/trabajador.\n2. La clasificación exacta del tipo de tema al que pertenece el correo.\n\n---\n\n### ESTRUCTURA DE LA RESPUESTA (Debes devolver EXACTAMENTE este formato JSON):\n{\n  \"resumen\": \"Hola,\\n\\n[Aquí tu resumen conciso del correo]\\n\\nSaludos,\",\n  \"categoria\": \"[documentos | resoluciones | consultas]\"\n}\n\n---\n\n### REGLAS DE CLASIFICACIÓN PARA 'categoria':\n- Asigna \"documentos\" si el correo adjunta o menciona el envío de archivos como DNI, pasaportes, nóminas, empadronamientos o contratos.\n- Asigna \"resoluciones\" si el correo habla sobre el estado de un trámite, aprobaciones, denegaciones, notificaciones oficiales o cartas de resolución.\n- Asigna \"consultas\" si el cliente solo hace preguntas, pide información, solicita cita o dudas generales.\n\nResponde ÚNICAMENTE en el formato JSON especificado sin añadir texto explicativo adicional."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          224,
+          304
+        ],
+        "id": "0b291c17-c5e0-443e-8228-57dadb72aec0",
+        "name": "Agente redactor"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Analiza este correo por favor. {{ $json.body }} Luego clasifícalo en una de estas categorías de tipo de asunto de correo:\n- Documentos\n- Consultas\n- Resoluciones",
+          "options": {
+            "systemMessage": "Eres un asistente y recepcionista virtual experto en gestionar correos electrónicos para una gestoría.\n\nTu tarea es analizar el contenido del correo electrónico recibido y generar dos cosas:\n1. Un resumen claro y profesional del correo para enviárselo al usuario/trabajador.\n2. La clasificación exacta del tipo de tema al que pertenece el correo.\n\n---\n\n### ESTRUCTURA DE LA RESPUESTA (Debes devolver EXACTAMENTE este formato JSON):\n{\n  \"resumen\": \"Hola,\\n\\n[Aquí tu resumen conciso del correo]\\n\\nSaludos,\",\n  \"categoria\": \"[documentos | resoluciones | consultas]\"\n}\n\n---\n\n### REGLAS DE CLASIFICACIÓN PARA 'categoria':\n- Asigna \"documentos\" si el correo adjunta o menciona el envío de archivos como DNI, pasaportes, nóminas, empadronamientos o contratos.\n- Asigna \"resoluciones\" si el correo habla sobre el estado de un trámite, aprobaciones, denegaciones, notificaciones oficiales o cartas de resolución.\n- Asigna \"consultas\" si el cliente solo hace preguntas, pide información, solicita cita o dudas generales.\n\nResponde ÚNICAMENTE en el formato JSON especificado sin añadir texto explicativo adicional."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          224,
+          1120
+        ],
+        "id": "33821922-f6a7-473b-a530-12eaa019c83a",
+        "name": "Agente redactor 2"
+      },
+      {
+        "parameters": {
+          "operation": "addLabels",
+          "messageId": "={{ $('Envio correo Gmail').item.json.id }}",
+          "labelIds": [
+            "Label_4145550550519444880"
+          ]
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          1248,
+          1216
+        ],
+        "id": "3818d5b9-3868-4ae9-9c3a-aa1fde48552e",
+        "name": "Agregar consultas",
+        "webhookId": "81c95268-2898-4ad9-ad02-b9f090ad3885",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "VmMlET5526MjN801",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "messageId": {
+            "__rl": true,
+            "value": "={{ $('Envio correo Outlook').item.json.id }}",
+            "mode": "id"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3D4AAAA=",
+            "mode": "list",
+            "cachedResultName": "gestiones",
+            "cachedResultUrl": "https://outlook.office365.com/mail/AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3D4AAAA%3D"
+          }
+        },
+        "type": "n8n-nodes-base.microsoftOutlook",
+        "typeVersion": 2,
+        "position": [
+          1248,
+          576
+        ],
+        "id": "94821fe7-d5b0-41cd-95b7-4c68ffcd15a6",
+        "name": "Actualizar gestiones",
+        "webhookId": "23bb6671-14e1-42b5-b377-ec32e033b362",
+        "credentials": {
+          "microsoftOutlookOAuth2Api": {
+            "id": "tTpCVUjY3wyioXfb",
+            "name": "Microsoft Outlook account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "addLabels",
+          "messageId": "={{ $('Envio correo Gmail').item.json.id }}",
+          "labelIds": [
+            "Label_8755556239395242396"
+          ]
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          1248,
+          1408
+        ],
+        "id": "d396f61b-7b90-47c8-bdab-4cb32e227598",
+        "name": "Agregar gestiones",
+        "webhookId": "ab34dcfb-141a-4656-a61d-eb05b8ebb935",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "VmMlET5526MjN801",
+            "name": "Gmail account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente redactor",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "Agente redactor",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Agente redactor 2",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory1": {
+        "ai_memory": [
+          [
+            {
+              "node": "Agente redactor 2",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Actualizar documentos": {
+        "main": [
+          []
+        ]
+      },
+      "Actualizar consultas": {
+        "main": [
+          []
+        ]
+      },
+      "Actualizar resoluciones": {
+        "main": [
+          []
+        ]
+      },
+      "Formatear respuesta": {
+        "main": [
+          [
+            {
+              "node": "Enviar correo aviso",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar correo aviso": {
+        "main": [
+          [
+            {
+              "node": "Conmutar tipo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envio correo Outlook": {
+        "main": [
+          [
+            {
+              "node": "Agente redactor",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Envio correo Gmail": {
+        "main": [
+          [
+            {
+              "node": "Agente redactor 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear respuesta 2": {
+        "main": [
+          [
+            {
+              "node": "Enviar correo aviso 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar correo aviso 2": {
+        "main": [
+          [
+            {
+              "node": "Conmutar tipo 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agregar documentos": {
+        "main": [
+          []
+        ]
+      },
+      "Agregar resoluciones": {
+        "main": [
+          []
+        ]
+      },
+      "Conmutar tipo": {
+        "main": [
+          [
+            {
+              "node": "Actualizar documentos",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Actualizar consultas",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Actualizar resoluciones",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Actualizar gestiones",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutar tipo 2": {
+        "main": [
+          [
+            {
+              "node": "Agregar documentos",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Agregar resoluciones",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Agregar consultas",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Agregar gestiones",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente redactor": {
+        "main": [
+          [
+            {
+              "node": "Formatear respuesta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agente redactor 2": {
+        "main": [
+          [
+            {
+              "node": "Formatear respuesta 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agregar consultas": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Marco Antonio Martínez Guerrero",
+    "name": "Version 3dc505b3",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-13T21:45:48.062Z",
+    "updatedAt": "2026-10-13T21:45:50.000Z"
+  },
+  "activeVersionId": "3dc505b3-f4ce-47fe-92b8-bfc62d39c354",
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente redactor",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente redactor",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente redactor 2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Agente redactor 2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar documentos": {
+      "main": [
+        []
+      ]
+    },
+    "Actualizar consultas": {
+      "main": [
+        []
+      ]
+    },
+    "Actualizar resoluciones": {
+      "main": [
+        []
+      ]
+    },
+    "Formatear respuesta": {
+      "main": [
+        [
+          {
+            "node": "Enviar correo aviso",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar correo aviso": {
+      "main": [
+        [
+          {
+            "node": "Conmutar tipo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio correo Outlook": {
+      "main": [
+        [
+          {
+            "node": "Agente redactor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio correo Gmail": {
+      "main": [
+        [
+          {
+            "node": "Agente redactor 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear respuesta 2": {
+      "main": [
+        [
+          {
+            "node": "Enviar correo aviso 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar correo aviso 2": {
+      "main": [
+        [
+          {
+            "node": "Conmutar tipo 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar documentos": {
+      "main": [
+        []
+      ]
+    },
+    "Agregar resoluciones": {
+      "main": [
+        []
+      ]
+    },
+    "Conmutar tipo": {
+      "main": [
+        [
+          {
+            "node": "Actualizar documentos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar consultas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar resoluciones",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar gestiones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutar tipo 2": {
+      "main": [
+        [
+          {
+            "node": "Agregar documentos",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agregar resoluciones",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agregar consultas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agregar gestiones",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente redactor": {
+      "main": [
+        [
+          {
+            "node": "Formatear respuesta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente redactor 2": {
+      "main": [
+        [
+          {
+            "node": "Formatear respuesta 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar consultas": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2026-10-13T10:05:08.232Z",
+  "id": "rjZtNA2QvpctpFJv",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "RESUMEN INTELIGENTE Y CLASIFICACION DE CORREOS",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        544
+      ],
+      "id": "0da7b478-f274-42ee-ae79-c50d7544a9ad",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        368,
+        544
+      ],
+      "id": "190e90b3-bf58-479f-9e08-51e589331945",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        1360
+      ],
+      "id": "703fefb6-6b69-410e-a9f5-60037fb0266e",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        352,
+        1360
+      ],
+      "id": "f082eb16-1bba-4052-9de2-95cbcbf7a349",
+      "name": "Postgres Chat Memory1",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Envio correo Outlook').item.json.id }}",
+          "mode": "id"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DoAAAA=",
+          "mode": "list",
+          "cachedResultName": "documentos",
+          "cachedResultUrl": "https://outlook.office365.com/mail/AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DoAAAA%3D"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        16
+      ],
+      "id": "781e3cd6-a19e-4006-921f-6dd84aa89c8b",
+      "name": "Actualizar documentos",
+      "webhookId": "2740f8c3-52c6-463b-ae3c-29033195ad5c",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "tTpCVUjY3wyioXfb",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Envio correo Outlook').item.json.id }}",
+          "mode": "id"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DwAAAA=",
+          "mode": "list",
+          "cachedResultName": "consultas",
+          "cachedResultUrl": "https://outlook.office365.com/mail/AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DwAAAA%3D"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        192
+      ],
+      "id": "c04ea20e-24cb-4d81-aa55-ae0550b5292d",
+      "name": "Actualizar consultas",
+      "webhookId": "2740f8c3-52c6-463b-ae3c-29033195ad5c",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "tTpCVUjY3wyioXfb",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Envio correo Outlook').item.json.id }}",
+          "mode": "id"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DsAAAA=",
+          "mode": "list",
+          "cachedResultName": "resoluciones",
+          "cachedResultUrl": "https://outlook.office365.com/mail/AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3DsAAAA%3D"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        384
+      ],
+      "id": "0efc8468-bb04-4b37-aa6d-a9c111dbc156",
+      "name": "Actualizar resoluciones",
+      "webhookId": "2740f8c3-52c6-463b-ae3c-29033195ad5c",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "tTpCVUjY3wyioXfb",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const aiResponse = JSON.parse($input.item.json.output);\n$input.item.json.resumen = aiResponse.resumen;\n$input.item.json.categoria = aiResponse.categoria;\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        304
+      ],
+      "id": "4c25596e-ac2a-41e4-b05e-94c3f48d8c00",
+      "name": "Formatear respuesta"
+    },
+    {
+      "parameters": {
+        "toRecipients": "mantoniomg25480@gmail.com",
+        "subject": "Resumen de correo enviado por el cliente",
+        "bodyContent": "=Hola, buenas. Esto es un resumen del correo: {{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        800,
+        304
+      ],
+      "id": "8f5b273a-3e38-41cb-ae71-d0c0ee3a150f",
+      "name": "Enviar correo aviso",
+      "webhookId": "1c7d6bc9-df38-4e54-8c9f-d30f90ce00cf",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "tTpCVUjY3wyioXfb",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {},
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftOutlookTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        304
+      ],
+      "id": "a28dfe60-ff3c-451e-9540-79d09c9b5c27",
+      "name": "Envio correo Outlook",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "tTpCVUjY3wyioXfb",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        1120
+      ],
+      "id": "74bde9e2-9e48-4d56-81a2-60ced4885510",
+      "name": "Envio correo Gmail",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VmMlET5526MjN801",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const aiResponse = JSON.parse($input.item.json.output);\n$input.item.json.resumen = aiResponse.resumen;\n$input.item.json.categoria = aiResponse.categoria;\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        1120
+      ],
+      "id": "d0ab315b-d09f-4d72-8daf-da11a7d47b6e",
+      "name": "Formatear respuesta 2"
+    },
+    {
+      "parameters": {
+        "sendTo": "mantoniomg25480@gmail.com",
+        "subject": "Resumen de correo enviado por el cliente",
+        "message": "=Hola, buenas. Esto es un resumen del correo: {{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        800,
+        1120
+      ],
+      "id": "088ef925-fe2f-4cb9-a1b9-63270f73d747",
+      "name": "Enviar correo aviso 2",
+      "webhookId": "bbc2d28e-3c19-4daf-9d7b-0acee478c924",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VmMlET5526MjN801",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Envio correo Gmail').item.json.id }}",
+        "labelIds": [
+          "Label_2874650176790050751"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        832
+      ],
+      "id": "cc67ba9a-e655-4e64-8883-7eb4771b1141",
+      "name": "Agregar documentos",
+      "webhookId": "542481b0-1bb9-4f13-a91a-019b54d2cf7d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VmMlET5526MjN801",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Envio correo Gmail').item.json.id }}",
+        "labelIds": [
+          "Label_1198996818831763399"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        1024
+      ],
+      "id": "427eb39f-47d9-41c1-81cb-1defc3b370b5",
+      "name": "Agregar resoluciones",
+      "webhookId": "db8ec787-478c-41bd-abe4-b1404ae961e8",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VmMlET5526MjN801",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "documentos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "837f475f-4a05-4f92-abec-56413f82f44c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "documentos"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2d3bf8b2-f701-4f7d-8944-1cc61864ec0e",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "consultas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "consultas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7efd53a2-95bc-4e66-9d1d-df49afa7d492",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "resoluciones",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "resoluciones"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "df32f1fa-66c6-449b-be7a-ef03947c7dfc",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "gestiones",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "gestiones"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1024,
+        272
+      ],
+      "id": "6955b605-4620-40da-a37c-c29981c907f8",
+      "name": "Conmutar tipo"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "documentos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "837f475f-4a05-4f92-abec-56413f82f44c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Documentos"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2d3bf8b2-f701-4f7d-8944-1cc61864ec0e",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "resoluciones",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Resoluciones"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7efd53a2-95bc-4e66-9d1d-df49afa7d492",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "consultas",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Consultas"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5d611597-37d1-485a-9dff-9412976d5236",
+                    "leftValue": "={{ $json.categoria }}",
+                    "rightValue": "gestiones",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Gestiones"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1024,
+        1088
+      ],
+      "id": "70641eca-572e-4130-b11a-36b7f88e2f4e",
+      "name": "Conmutar tipo 2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analiza este correo por favor. {{ $json.body }} Luego clasifícalo en una de estas categorías de tipo de asunto de correo:\n- Documentos\n- Consultas\n- Resoluciones",
+        "options": {
+          "systemMessage": "Eres un asistente y recepcionista virtual experto en gestionar correos electrónicos para una gestoría.\n\nTu tarea es analizar el contenido del correo electrónico recibido y generar dos cosas:\n1. Un resumen claro y profesional del correo para enviárselo al usuario/trabajador.\n2. La clasificación exacta del tipo de tema al que pertenece el correo.\n\n---\n\n### ESTRUCTURA DE LA RESPUESTA (Debes devolver EXACTAMENTE este formato JSON):\n{\n  \"resumen\": \"Hola,\\n\\n[Aquí tu resumen conciso del correo]\\n\\nSaludos,\",\n  \"categoria\": \"[documentos | resoluciones | consultas]\"\n}\n\n---\n\n### REGLAS DE CLASIFICACIÓN PARA 'categoria':\n- Asigna \"documentos\" si el correo adjunta o menciona el envío de archivos como DNI, pasaportes, nóminas, empadronamientos o contratos.\n- Asigna \"resoluciones\" si el correo habla sobre el estado de un trámite, aprobaciones, denegaciones, notificaciones oficiales o cartas de resolución.\n- Asigna \"consultas\" si el cliente solo hace preguntas, pide información, solicita cita o dudas generales.\n\nResponde ÚNICAMENTE en el formato JSON especificado sin añadir texto explicativo adicional."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        304
+      ],
+      "id": "0b291c17-c5e0-443e-8228-57dadb72aec0",
+      "name": "Agente redactor"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analiza este correo por favor. {{ $json.body }} Luego clasifícalo en una de estas categorías de tipo de asunto de correo:\n- Documentos\n- Consultas\n- Resoluciones",
+        "options": {
+          "systemMessage": "Eres un asistente y recepcionista virtual experto en gestionar correos electrónicos para una gestoría.\n\nTu tarea es analizar el contenido del correo electrónico recibido y generar dos cosas:\n1. Un resumen claro y profesional del correo para enviárselo al usuario/trabajador.\n2. La clasificación exacta del tipo de tema al que pertenece el correo.\n\n---\n\n### ESTRUCTURA DE LA RESPUESTA (Debes devolver EXACTAMENTE este formato JSON):\n{\n  \"resumen\": \"Hola,\\n\\n[Aquí tu resumen conciso del correo]\\n\\nSaludos,\",\n  \"categoria\": \"[documentos | resoluciones | consultas]\"\n}\n\n---\n\n### REGLAS DE CLASIFICACIÓN PARA 'categoria':\n- Asigna \"documentos\" si el correo adjunta o menciona el envío de archivos como DNI, pasaportes, nóminas, empadronamientos o contratos.\n- Asigna \"resoluciones\" si el correo habla sobre el estado de un trámite, aprobaciones, denegaciones, notificaciones oficiales o cartas de resolución.\n- Asigna \"consultas\" si el cliente solo hace preguntas, pide información, solicita cita o dudas generales.\n\nResponde ÚNICAMENTE en el formato JSON especificado sin añadir texto explicativo adicional."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        1120
+      ],
+      "id": "33821922-f6a7-473b-a530-12eaa019c83a",
+      "name": "Agente redactor 2"
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Envio correo Gmail').item.json.id }}",
+        "labelIds": [
+          "Label_4145550550519444880"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        1216
+      ],
+      "id": "3818d5b9-3868-4ae9-9c3a-aa1fde48552e",
+      "name": "Agregar consultas",
+      "webhookId": "81c95268-2898-4ad9-ad02-b9f090ad3885",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VmMlET5526MjN801",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "messageId": {
+          "__rl": true,
+          "value": "={{ $('Envio correo Outlook').item.json.id }}",
+          "mode": "id"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3D4AAAA=",
+          "mode": "list",
+          "cachedResultName": "gestiones",
+          "cachedResultUrl": "https://outlook.office365.com/mail/AQMkADAwATM0MDAAMS0zYWEANS1mMWJmLTAwAi0wMAoALgAAA6mDiT1z_5dJu_KYCnigiOsBAGSaaVJWOSxFqOJHHS9TMjMABLgC3D4AAAA%3D"
+        }
+      },
+      "type": "n8n-nodes-base.microsoftOutlook",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        576
+      ],
+      "id": "94821fe7-d5b0-41cd-95b7-4c68ffcd15a6",
+      "name": "Actualizar gestiones",
+      "webhookId": "23bb6671-14e1-42b5-b377-ec32e033b362",
+      "credentials": {
+        "microsoftOutlookOAuth2Api": {
+          "id": "tTpCVUjY3wyioXfb",
+          "name": "Microsoft Outlook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Envio correo Gmail').item.json.id }}",
+        "labelIds": [
+          "Label_8755556239395242396"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        1408
+      ],
+      "id": "d396f61b-7b90-47c8-bdab-4cb32e227598",
+      "name": "Agregar gestiones",
+      "webhookId": "ab34dcfb-141a-4656-a61d-eb05b8ebb935",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VmMlET5526MjN801",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "rjZtNA2QvpctpFJv",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-10-13T10:05:08.252Z",
+      "updatedAt": "2026-10-13T10:05:08.252Z"
+    }
+  ],
+  "staticData": {
+    "node:Microsoft Outlook Trigger": {
+      "lastTimeChecked": "2026-10-13T14:56:38.101-04:00"
+    },
+    "node:Gmail Trigger": {
+      "Gmail Trigger": {
+        "lastTimeChecked": 1791910933,
+        "pendingMessageIds": [],
+        "possibleDuplicates": [
+          "1a13636fa3114fe5",
+          "1a1362e10f8cb357",
+          "1a136283f7b53110",
+          "1a1360962551ee47",
+          "1a1360198a95f50e",
+          "1a135f7c3e15ba90",
+          "1a135a56dcac1e15",
+          "1a135a09f9ad783a",
+          "1a13552fa4d53ece",
+          "1a1352e7413d2fdd"
+        ]
+      }
+    },
+    "node:Envio correo Outlook": {
+      "lastTimeChecked": "2026-11-04T10:19:02.676-05:00"
+    },
+    "node:Envio correo Gmail": {
+      "Envio correo Gmail": {
+        "lastTimeChecked": 1793805508,
+        "pendingMessageIds": [],
+        "possibleDuplicates": [
+          "1a1a723df06ab417"
+        ]
+      }
+    }
+  },
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2026-10-13T21:45:48.058Z",
+  "versionId": "3dc505b3-f4ce-47fe-92b8-bfc62d39c354"
+}
