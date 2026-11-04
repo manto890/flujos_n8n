@@ -1,0 +1,488 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "98437049-b5d1-4bd6-b04b-e29a88b6802d",
+    "workflowId": "qUmj9Rr8Je2lb9tH",
+    "nodes": [
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "A partir de que active este flijo quiero que analices el documento subido en herramienta \"Prospecciones SYNTIX AI\", luego buscas por herramientas de Instagram y por Google Maps posibles clientes interesados.",
+          "options": {
+            "systemMessage": "Eres un experto de captador de clientes potenciales leads para mi negocio de SYNTIX AI. Lee la documentación de herramienta \"Prospecciones SYNTIX AI\" perfiles ideales para SYNTIX AI partir de la herramienta pro favor dime en formato lista que prospectos podrían ser ideales para mi negocio.\n\nEn este formato:\n- Nombre: Información del negocio. Motivo de potencial cliente."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          224,
+          0
+        ],
+        "id": "08d3f4b4-62c3-4f2a-baf4-d728a52203f1",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.4,
+        "position": [
+          256,
+          224
+        ],
+        "id": "174109dd-16a1-45e5-a364-d84b3fdbdbe4",
+        "name": "Postgres Chat Memory",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          96,
+          224
+        ],
+        "id": "3237f067-05af-4c29-af8e-5c0d1576fae7",
+        "name": "Google Gemini Chat Model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyHour"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1jJbIrm1hqbVBBiUIk6apb_rJlc4e3rAF",
+            "mode": "list",
+            "cachedResultName": "SYNTIX AI",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1jJbIrm1hqbVBBiUIk6apb_rJlc4e3rAF"
+          },
+          "event": "fileUpdated",
+          "options": {
+            "fileType": "all"
+          }
+        },
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          -160,
+          608
+        ],
+        "id": "fbb3a5f1-4bd3-4e25-afd8-67cb2a7af1ba",
+        "name": "Google Drive Trigger1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          496,
+          464
+        ],
+        "id": "b183b37f-298c-4f9a-b3db-d1116daaaf1a",
+        "name": "Embeddings Google Gemini",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "triggerAtHour": 2
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          -32,
+          0
+        ],
+        "id": "800dc737-f215-44a5-9a34-5083eab7e1bc",
+        "name": "Schedule Trigger"
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "Contiene información de clientes ideales para SYNTIX AI según los servicios que ofrece para hacer tener prospectos buenos.",
+          "tableName": {
+            "__rl": true,
+            "value": "syntix_ai_documents",
+            "mode": "list",
+            "cachedResultName": "syntix_ai_documents"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          480,
+          256
+        ],
+        "id": "253827e8-378e-4472-ae0d-46a9d382a6fe",
+        "name": "Prospecciones SYNTIX AI",
+        "credentials": {
+          "supabaseApi": {
+            "id": "4viKc8Ym03FIbkYO",
+            "name": "SUPABASE SYNTIX AI"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Prospecciones SYNTIX AI",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Schedule Trigger": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prospecciones SYNTIX AI": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Marco Antonio Martínez Guerrero",
+    "name": "Version 98437049",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-23T17:26:56.620Z",
+    "updatedAt": "2026-10-24T15:02:30.000Z"
+  },
+  "activeVersionId": "98437049-b5d1-4bd6-b04b-e29a88b6802d",
+  "connections": {
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Prospecciones SYNTIX AI",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prospecciones SYNTIX AI": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2026-10-14T11:59:09.506Z",
+  "id": "qUmj9Rr8Je2lb9tH",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "WEB SCRAPPING DE LEADS",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "A partir de que active este flijo quiero que analices el documento subido en herramienta \"Prospecciones SYNTIX AI\", luego buscas por herramientas de Instagram y por Google Maps posibles clientes interesados.",
+        "options": {
+          "systemMessage": "Eres un experto de captador de clientes potenciales leads para mi negocio de SYNTIX AI. Lee la documentación de herramienta \"Prospecciones SYNTIX AI\" perfiles ideales para SYNTIX AI partir de la herramienta pro favor dime en formato lista que prospectos podrían ser ideales para mi negocio.\n\nEn este formato:\n- Nombre: Información del negocio. Motivo de potencial cliente."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "08d3f4b4-62c3-4f2a-baf4-d728a52203f1",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        256,
+        224
+      ],
+      "id": "174109dd-16a1-45e5-a364-d84b3fdbdbe4",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        96,
+        224
+      ],
+      "id": "3237f067-05af-4c29-af8e-5c0d1576fae7",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1jJbIrm1hqbVBBiUIk6apb_rJlc4e3rAF",
+          "mode": "list",
+          "cachedResultName": "SYNTIX AI",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1jJbIrm1hqbVBBiUIk6apb_rJlc4e3rAF"
+        },
+        "event": "fileUpdated",
+        "options": {
+          "fileType": "all"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        608
+      ],
+      "id": "fbb3a5f1-4bd3-4e25-afd8-67cb2a7af1ba",
+      "name": "Google Drive Trigger1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        496,
+        464
+      ],
+      "id": "b183b37f-298c-4f9a-b3db-d1116daaaf1a",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -32,
+        0
+      ],
+      "id": "800dc737-f215-44a5-9a34-5083eab7e1bc",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Contiene información de clientes ideales para SYNTIX AI según los servicios que ofrece para hacer tener prospectos buenos.",
+        "tableName": {
+          "__rl": true,
+          "value": "syntix_ai_documents",
+          "mode": "list",
+          "cachedResultName": "syntix_ai_documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        480,
+        256
+      ],
+      "id": "253827e8-378e-4472-ae0d-46a9d382a6fe",
+      "name": "Prospecciones SYNTIX AI",
+      "credentials": {
+        "supabaseApi": {
+          "id": "4viKc8Ym03FIbkYO",
+          "name": "SUPABASE SYNTIX AI"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "qUmj9Rr8Je2lb9tH",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-10-14T11:59:09.536Z",
+      "updatedAt": "2026-10-14T11:59:09.536Z"
+    }
+  ],
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        null
+      ],
+      "recurrenceRuleSignatures": [
+        null
+      ]
+    },
+    "node:Google Drive Trigger1": {
+      "lastTimeChecked": "2026-11-04T14:59:18Z"
+    }
+  },
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2026-10-24T15:02:20.206Z",
+  "versionId": "98437049-b5d1-4bd6-b04b-e29a88b6802d"
+}
