@@ -1,0 +1,3996 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "435ea350-3b08-4032-a261-fe87b880900e",
+    "workflowId": "nGI9xB6lvLswREf9",
+    "nodes": [
+      {
+        "parameters": {
+          "inputSource": "jsonExample",
+          "jsonExample": "{\n  \"accion\": \"={{ $fromAI('accion', 'Acción a realizar: subir, consultar, actualizar, etc.', 'string') }}\",\n  \"nombre_cliente\": \"={{ $fromAI('nombre_cliente', 'Nombre de pila del cliente', 'string') }}\",\n  \"apellidos_cliente\": \"={{ $fromAI('apellidos_cliente', 'Apellidos del cliente', 'string') }}\",\n  \"tipo_tramite\": \"={{ $fromAI('tipo_tramite', 'Asunto o tipo de trámite (ej: Empadronamiento, Arraigo, etc.)', 'string') }}\",\n  \"pasaporte_nie\": \"={{ $fromAI('pasaporte_nie', 'Número de NIE o Pasaporte del cliente', 'string') }}\",\n  \"email\": \"={{ $fromAI('email', 'Correo del cliente', 'string') }}\",\n  \"telefono\": \"={{ $fromAI('telefono', 'Teléfono de contacto', 'string') }}\",\n  \"nacionalidad\": \"={{ $fromAI('nacionalidad', 'Nacionalidad del cliente', 'string') }}\",\n  \"nombre_documento\": \"={{ $fromAI('nombre_documento', 'Nombre del archivo adjuntado/documento si aplica', 'string') }}\",\n  \"url_archivo\": \"={{ $fromAI('url_archivo', 'Enlace o URL del documento subido', 'string') }}\",\n  \"estado_validacion\": \"={{ $fromAI('estado_validacion', 'Estado de la validación si aplica', 'string') }}\",\n  \"revisado_ia\": \"={{ $fromAI('revisado_ia', 'Si fue revisado por la IA', 'string') }}\",\n  \"fecha_inicio\": \"={{ $fromAI('fecha_inicio', 'Fecha de subida del documento', 'string') }}\",\n  \"event_id\": \"={{ $fromAI('event_id', 'ID del evento de Google Calendar', 'string') }}\"\n}"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          0,
+          336
+        ],
+        "id": "bb9277b8-12b9-4713-9ad9-c6210818f851",
+        "name": "Al ejecutar el flujo"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "subir",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "73a65953-f278-4dce-a420-9267bbfb9f8f"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Subir"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "2a4f8330-291f-4818-831e-0ccb79f7f427",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "modificar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Modificar"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "44ad4fd2-f192-49e7-acd2-8fdb2fbb0344",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "buscar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Buscar"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "178f3220-8936-4b49-870e-ece8c062a884",
+                      "leftValue": "={{ $json.accion }}",
+                      "rightValue": "eliminar",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Eliminar"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          224,
+          304
+        ],
+        "id": "e1b58f3c-d84a-4734-9561-498aa2150722",
+        "name": "Conmutar"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Expresión para obtener el ID desde la URL guardada:\nconst url = $json.url_archivo;\nconst match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)/);\nconst fileId = match ? match[1] : url; // Devuelve el fileId extraído\nreturn { fileId };"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          672,
+          816
+        ],
+        "id": "ed2a9659-6018-46d8-89e6-42d271304828",
+        "name": "Extraer ID Archivo"
+      },
+      {
+        "parameters": {
+          "operation": "deleteFile",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $json.fileId }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          896,
+          816
+        ],
+        "id": "1b5b6394-ac08-4e5d-b73b-7e7909505f28",
+        "name": "eliminar_docs",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "deleteTable",
+          "schema": {
+            "__rl": true,
+            "mode": "list",
+            "value": "public"
+          },
+          "table": {
+            "__rl": true,
+            "value": "documentos",
+            "mode": "list",
+            "cachedResultName": "documentos"
+          },
+          "deleteCommand": "delete",
+          "where": {
+            "values": [
+              {
+                "column": "id",
+                "value": "={{ $json.fileId }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1120,
+          816
+        ],
+        "id": "e6405e7b-811c-4b6b-ab5f-189215a623ea",
+        "name": "eliminar_docs_t",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          448,
+          816
+        ],
+        "id": "f744fc0a-fb51-4727-95b7-2cfe901c6f02",
+        "name": "consultar_docs_id_eli",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '{{ $json.pasaporte_nie }}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+              "mode": "list",
+              "cachedResultName": "DOCUMENTOS CLIENTES",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          448,
+          -272
+        ],
+        "id": "810c979b-eb6d-4b9b-8344-3d934c187f32",
+        "name": "buscar_folder",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+              "mode": "list",
+              "cachedResultName": "DOCUMENTOS CLIENTES",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          896,
+          624
+        ],
+        "id": "f65a88a1-99d4-46fa-b83a-faff1b84bcd1",
+        "name": "buscar_docs2",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "b673a74f-a37f-46f5-8e5f-dfaa45e850b5",
+                "leftValue": "={{ $json.folderId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          672,
+          528
+        ],
+        "id": "9d9c8d3a-70c0-4fd8-a560-d1d4f8312913",
+        "name": "Si la carpeta existe? 2"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.nombre_cliente}}' and name contains '={{ $json.nombre_documento}}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "={{ $json.nombre_cliente }}",
+              "mode": "id"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1344,
+          48
+        ],
+        "id": "6fdf5821-d110-493a-b420-ffaf6a5b6bd6",
+        "name": "buscar_docs1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+              "mode": "list",
+              "cachedResultName": "DOCUMENTOS CLIENTES",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1344,
+          240
+        ],
+        "id": "b2f0fbc5-1599-464e-a521-5c5f2886394e",
+        "name": "buscar_docs3",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "b673a74f-a37f-46f5-8e5f-dfaa45e850b5",
+                "leftValue": "={{ $json.folderId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          672,
+          144
+        ],
+        "id": "585e73b5-d135-4193-bc7e-08842532516c",
+        "name": "Si la carpeta existe? "
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Establecer ID de Archivo').item.json.file_id }}",
+            "mode": "id"
+          },
+          "options": {
+            "googleFileConversion": {
+              "conversion": {
+                "docsToFormat": "text/plain"
+              }
+            }
+          }
+        },
+        "id": "947cb6e4-6338-45f5-9030-f1d339b13d07",
+        "name": "Descargar Archivo",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1792,
+          144
+        ],
+        "executeOnce": true,
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          3200,
+          128
+        ],
+        "id": "5b90ea03-1987-4dba-b23e-c986a14ff800",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "options": {}
+        },
+        "id": "16fb4044-5c8b-479e-941f-486f412a3590",
+        "name": "Extraer de Archivo de Texto",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          2912,
+          128
+        ],
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://www.googleapis.com/drive/v3/files/{{ $('Establecer ID de Archivo').item.json.file_id }}/copy",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleDriveOAuth2Api",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "name",
+                "value": "={{ $('Establecer ID de Archivo').item.json.name }}"
+              },
+              {
+                "name": "mimeType",
+                "value": "application/vnd.google-apps.document"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "1ce0cb12-4273-4af1-988b-04cae1d532e0",
+        "name": "Convertir a Google Docs",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          2688,
+          224
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          3152,
+          352
+        ],
+        "id": "21af7a27-04ea-429d-92c2-22747535feca",
+        "name": "Google Gemini Chat Model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $json.pasaporte_nie }}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.4,
+        "position": [
+          3280,
+          352
+        ],
+        "id": "bf54f7f8-b887-48a1-addd-d34fa84edb91",
+        "name": "Postgres Chat Memory",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Este nodo recibe el resultado de la búsqueda de la carpeta del cliente\nconst inputItem = $input.first();\nconst datosCliente = $('Al ejecutar el flujo').first().json;\n\nlet folderId = null;\n\n// Verificamos si el nodo de Google Drive anterior encontró la carpeta\nif (inputItem && inputItem.json && inputItem.json.id) {\n    folderId = inputItem.json.id;\n} else {\n    // Si no existe, aquí puedes retornar una bandera para que el siguiente nodo la cree,\n    // o manejar el ID de la carpeta raíz por defecto (\"DOCUMENTOS CLIENTES\")\n    folderId = \"1HSbo5MVioo_OIDhaK48BcXbM78yRC8it\"; // ID de tu carpeta raíz por defecto\n}\n\nreturn [{\n    json: {\n        folderId: folderId,\n        pasaporte_nie: datosCliente.pasaporte_nie,\n        nombre_cliente: datosCliente.nombre_cliente,\n        nombre_documento: datosCliente.nombre_documento,\n        url_archivo: datosCliente.url_archivo\n    }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          672,
+          -272
+        ],
+        "id": "46d5bdae-51e8-4fa3-b48b-a262d620a6de",
+        "name": "procesar_carpeta"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.nombre_cliente }}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+              "mode": "list",
+              "cachedResultName": "DOCUMENTOS CLIENTES",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          448,
+          528
+        ],
+        "id": "8882aec8-7849-4572-afb8-a863be0eb0bb",
+        "name": "buscar_folder3",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.nombre_cliente }}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+              "mode": "list",
+              "cachedResultName": "DOCUMENTOS CLIENTES",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          448,
+          144
+        ],
+        "id": "3e1294de-c05b-4b7e-a601-3022250340fc",
+        "name": "buscar_folder2",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.nombre_cliente}}' and name contains '={{ $json.nombre_documento}}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "={{ $json.nombre_cliente }}",
+              "mode": "id"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          896,
+          432
+        ],
+        "id": "435aac2b-d21e-4e9a-b105-91937ef88072",
+        "name": "buscar_docs4",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO documentos (id_tramite, nombre_documento, url_archivo) \nVALUES ('{{ $('procesar_carpeta').item.json.folderId }}', '{{ $('procesar_carpeta').item.json.nombre_documento }}', '{{ $('Subir archivo').item.json.webViewLink }}');",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1568,
+          -368
+        ],
+        "id": "0c07d58c-3d7e-4c73-b970-0e5af7f7b02f",
+        "name": "Insertar_archivo_bbdd",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://www.googleapis.com/drive/v3/files/{{ $('Establecer ID de Archivo').item.json.file_id }}/copy",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleDriveOAuth2Api",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "name",
+                "value": "={{ $('Establecer ID de Archivo').item.json.name }}"
+              },
+              {
+                "name": "mimeType",
+                "value": "application/vnd.google-apps.document"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "b7b5340e-50c5-445b-9288-ab12cd2505eb",
+        "name": "Convertir a Google Docs 2",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          2688,
+          -64
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentURL": "={{ $('Establecer ID de Archivo').item.json.file_id }}",
+          "simple": false,
+          "actionsUi": {
+            "actionFields": [
+              {
+                "action": "insert"
+              },
+              {
+                "action": "replaceAll"
+              },
+              {
+                "object": "paragraphBullets",
+                "action": "create"
+              }
+            ]
+          },
+          "updateFields": {
+            "writeControlObject": {
+              "control": "targetRevisionId"
+            }
+          }
+        },
+        "type": "n8n-nodes-base.googleDocsTool",
+        "typeVersion": 2,
+        "position": [
+          3408,
+          352
+        ],
+        "id": "a4c7f32b-b80b-467c-938f-05d4ce830063",
+        "name": "Update a document in Google Docs",
+        "credentials": {
+          "googleDocsOAuth2Api": {
+            "id": "tAwpUyWd2oMDjAn1",
+            "name": "Google Docs account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+                "name": "file_id",
+                "value": "={{ $('buscar_docs3').item.json.id }} || {{ $('buscar_docs1').item.json.id }} ",
+                "type": "string"
+              },
+              {
+                "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+                "name": "file_type",
+                "value": "={{ $('buscar_docs3').item.json.mimeType }} || {{ $('buscar_docs1').item.json.id }} ",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "7b705cf9-81d3-46cc-84fa-e1b2172e8a5c",
+        "name": "Establecer ID de Archivo",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1568,
+          144
+        ]
+      },
+      {
+        "parameters": {
+          "name": "={{ $('procesar_carpeta').item.json.nombre_documento }} - {{ $('procesar_carpeta').item.json.nombre_cliente }}",
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $('procesar_carpeta').item.json.folderId }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          896,
+          -272
+        ],
+        "id": "b817a87e-4796-4974-a24e-6e02fb5a7c45",
+        "name": "Subir archivo",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Captura la URL o ID del archivo y el nombre provenientes del nodo anterior\nconst url = $json.url_archivo || \"\";\nconst nombreArchivo = $json.name || $json.nombre_documento || \"\";\n\n// Extrae el ID de la URL mediante Regex\nconst match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)/);\nconst fileId = match ? match[1] : url;\n\n// Retorna un objeto con ambos datos\nreturn {\n  fileId: fileId,\n  nombreArchivo: nombreArchivo\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          48
+        ],
+        "id": "39719128-72fa-49ed-a40b-13b097a5c0c4",
+        "name": "Extraer datos archivo"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Captura la URL o ID del archivo y el nombre provenientes del nodo anterior\nconst url = $json.url_archivo || \"\";\nconst nombreArchivo = $json.name || $json.nombre_documento || \"\";\n\n// Extrae el ID de la URL mediante Regex\nconst match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)/);\nconst fileId = match ? match[1] : url;\n\n// Retorna un objeto con ambos datos\nreturn {\n  fileId: fileId,\n  nombreArchivo: nombreArchivo\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1120,
+          240
+        ],
+        "id": "ac411e06-9f85-4e74-a562-de3cde183155",
+        "name": "Extraer datos archivo1"
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          896,
+          48
+        ],
+        "id": "ee01ebb8-d620-441d-a4c6-f882177ab16a",
+        "name": "consultar_docs_id",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          896,
+          240
+        ],
+        "id": "a2c75927-7004-4626-a91e-7b822290e29f",
+        "name": "consultar_docs_id1",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO documentos (nombre_documento, tipo_tramite) VALUES();",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          4048,
+          128
+        ],
+        "id": "c14fda94-8919-4fcb-beb4-e660cfd1b46e",
+        "name": "Insertar_archivo_bbdd1",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $json.telefono }}",
+          "messageText": "¡Archivo actualizado/modificado correctamente!",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          3824,
+          128
+        ],
+        "id": "d977ec8e-b60b-4014-92c6-a3cf72ec4b81",
+        "name": "Enviar texto1",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+                "name": "file_id",
+                "value": "={{ $('Subir archivo').item.json.id }}",
+                "type": "string"
+              },
+              {
+                "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+                "name": "file_type",
+                "value": "={{ $('Subir archivo').item.json.mimeType }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "a759fe9d-a504-4239-8a5c-dd0080efcf01",
+        "name": "Establecer ID de Archivo 2",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          1120,
+          -272
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "INSERT INTO documentos (id_tramite, nombre_documento, url_archivo) \nVALUES ('{{ $('procesar_carpeta').item.json.folderId }}', '{{ $('procesar_carpeta').item.json.nombre_documento }}', '{{ $('Subir archivo').item.json.webViewLink }}');",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          2016,
+          -176
+        ],
+        "id": "d8e568a6-378e-416c-a593-01d3f22d5bf7",
+        "name": "Insertar_archivo_bbdd2",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "image",
+          "operation": "analyze",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3-flash-preview",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3-flash-preview"
+          },
+          "text": "Por favor extre informacion valiosa de las imagenes como datos perosnales: DNI, NIE, Pasaporte, Nombre, Direccion de domicilio, correo electrónico entre otras coas.",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          1792,
+          -176
+        ],
+        "id": "21f8cd28-ffb7-42f0-8689-bc1396f2c449",
+        "name": "Analizar imagen",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $json.telefono }}",
+          "messageText": "Se pueden subir archivos en la carpeta pero solo esta bien tenerlo como referencia ya que necesitamos que sea un documento escaneado o un PDF perfectamente legible para  presentarla formalmente ante la oficina de extranjería.",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          1568,
+          -176
+        ],
+        "id": "e2deeec9-dc56-4c1c-8946-3b5773df36fd",
+        "name": "Avisar imagen no permitida tramitar",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT * FROM documentos WHERE id_documento = {{ $('Establecer ID de Archivo').item.json.file_id }};",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          2688,
+          416
+        ],
+        "id": "475c59d0-62dd-4920-9131-6458f91474d3",
+        "name": "buscar_imagen",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "6fa0bd23-b588-4c23-a99c-a64a66291316",
+                "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                "rightValue": "image /png",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              },
+              {
+                "id": "89d08ace-41de-4bb1-96aa-135806d868d1",
+                "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                "rightValue": "image/jpeg",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2240,
+          416
+        ],
+        "id": "69e2cacc-e6e9-466b-a7d8-850b0b55920b",
+        "name": "Si es una imagen subida?"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Establecer ID de Archivo 2').item.json.file_type }}",
+                      "rightValue": "application/pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "f593b378-ad57-4b6d-a882-fd2d9f73775c"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PDF"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
+                      "leftValue": "={{ $('Establecer ID de Archivo 2').item.json.file_type }}",
+                      "rightValue": "application/vnd.google-apps.document",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Archivo de Texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "f53caf8b-7a8f-4d1e-98f4-deaf0e0171f0",
+                      "leftValue": "={{ $('Establecer ID de Archivo 2').item.json.file_type }}",
+                      "rightValue": "application/msword",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Word"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "5780c55d-e668-4666-bdcb-db7a833de152",
+                      "leftValue": "={{ $('Establecer ID de Archivo 2').item.json.file_type }}",
+                      "rightValue": "application/msword || application/pdf || application/vnd.google-apps.document",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEquals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "otro"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "none"
+          }
+        },
+        "id": "f5c05a5a-8e85-4bf6-be91-2fe3b41dadc6",
+        "name": "Conmutar 2",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          1344,
+          -304
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "f593b378-ad57-4b6d-a882-fd2d9f73775c"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PDF"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/vnd.google-apps.document",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Archivo de Texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "f53caf8b-7a8f-4d1e-98f4-deaf0e0171f0",
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/msword",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Word"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "d25810a1-2204-4d77-90fc-e4e550c3d90c",
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/msword || application/pdf || application/vnd.google-apps.document",
+                      "operator": {
+                        "type": "string",
+                        "operation": "notEquals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "otro"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "none"
+          }
+        },
+        "id": "42575f1e-80ff-496e-9faf-c04607173d06",
+        "name": "Conmutar 3",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          2016,
+          112
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{$json.tipo_tramite  }}",
+                      "rightValue": "nacionalidad",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "c36fdc04-e66e-4a9c-806b-71b311541e1e"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "nacionalidad"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "a2fb8b76-aef9-4ff0-9318-089dbbc15003",
+                      "leftValue": "={{ $json.tipo_tramite }}",
+                      "rightValue": "nie",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "nie"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "72ac0550-2cf5-4e76-9a63-633ef13b26f9",
+                      "leftValue": "={{ $json.tipo_tramite }}",
+                      "rightValue": "renovacion",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "renovacion"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "dfc954fc-78b5-4160-852f-c020b5e3bc7e",
+                      "leftValue": "={{ $json.tipo_tramite }}",
+                      "rightValue": "agrupacion",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "agrupacion"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          3600,
+          96
+        ],
+        "id": "51c4e3a2-596d-4dbe-8fbc-f0333d8eabb8",
+        "name": "Conmutar 4"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $json.telefono }}",
+          "messageText": "Se pueden subir archivos en la carpeta pero solo esta bien tenerlo como referencia ya que necesitamos que sea un documento escaneado o un PDF perfectamente legible para  presentarla formalmente ante la oficina de extranjería.",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          2464,
+          416
+        ],
+        "id": "aec8ddb4-aa7f-4507-8890-64cc0b898061",
+        "name": "Avisar imagen no permitida tramitar 2",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Al ejecutar el flujo": {
+        "main": [
+          [
+            {
+              "node": "Conmutar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutar": {
+        "main": [
+          [
+            {
+              "node": "buscar_folder",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "buscar_folder2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "buscar_folder3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "consultar_docs_id_eli",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer ID Archivo": {
+        "main": [
+          [
+            {
+              "node": "eliminar_docs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "eliminar_docs": {
+        "main": [
+          [
+            {
+              "node": "eliminar_docs_t",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "consultar_docs_id_eli": {
+        "main": [
+          [
+            {
+              "node": "Extraer ID Archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar_folder": {
+        "main": [
+          [
+            {
+              "node": "procesar_carpeta",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Si la carpeta existe? 2": {
+        "main": [
+          [
+            {
+              "node": "buscar_docs4",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "buscar_docs2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Si la carpeta existe? ": {
+        "main": [
+          [
+            {
+              "node": "consultar_docs_id",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "consultar_docs_id1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar_docs1": {
+        "main": [
+          [
+            {
+              "node": "Establecer ID de Archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar_docs3": {
+        "main": [
+          [
+            {
+              "node": "Establecer ID de Archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Descargar Archivo": {
+        "main": [
+          [
+            {
+              "node": "Conmutar 3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer de Archivo de Texto": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convertir a Google Docs": {
+        "main": [
+          [
+            {
+              "node": "Extraer de Archivo de Texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "procesar_carpeta": {
+        "main": [
+          [
+            {
+              "node": "Subir archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar_folder3": {
+        "main": [
+          [
+            {
+              "node": "Si la carpeta existe? 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar_folder2": {
+        "main": [
+          [
+            {
+              "node": "Si la carpeta existe? ",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "AI Agent": {
+        "main": [
+          [
+            {
+              "node": "Conmutar 4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convertir a Google Docs 2": {
+        "main": [
+          [
+            {
+              "node": "Extraer de Archivo de Texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update a document in Google Docs": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Establecer ID de Archivo": {
+        "main": [
+          [
+            {
+              "node": "Descargar Archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Subir archivo": {
+        "main": [
+          [
+            {
+              "node": "Establecer ID de Archivo 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer datos archivo": {
+        "main": [
+          [
+            {
+              "node": "buscar_docs1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer datos archivo1": {
+        "main": [
+          [
+            {
+              "node": "buscar_docs3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "consultar_docs_id1": {
+        "main": [
+          [
+            {
+              "node": "Extraer datos archivo1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "consultar_docs_id": {
+        "main": [
+          [
+            {
+              "node": "Extraer datos archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar texto1": {
+        "main": [
+          [
+            {
+              "node": "Insertar_archivo_bbdd1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Establecer ID de Archivo 2": {
+        "main": [
+          [
+            {
+              "node": "Conmutar 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analizar imagen": {
+        "main": [
+          [
+            {
+              "node": "Insertar_archivo_bbdd2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Avisar imagen no permitida tramitar": {
+        "main": [
+          [
+            {
+              "node": "Analizar imagen",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar_imagen": {
+        "main": [
+          [
+            {
+              "node": "Extraer de Archivo de Texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Si es una imagen subida?": {
+        "main": [
+          [
+            {
+              "node": "Avisar imagen no permitida tramitar 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutar 2": {
+        "main": [
+          [
+            {
+              "node": "Insertar_archivo_bbdd",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Insertar_archivo_bbdd",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Insertar_archivo_bbdd",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Avisar imagen no permitida tramitar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutar 3": {
+        "main": [
+          [
+            {
+              "node": "Convertir a Google Docs 2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extraer de Archivo de Texto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convertir a Google Docs",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Si es una imagen subida?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutar 4": {
+        "main": [
+          [
+            {
+              "node": "Enviar texto1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar texto1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar texto1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar texto1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Avisar imagen no permitida tramitar 2": {
+        "main": [
+          [
+            {
+              "node": "buscar_imagen",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Marco Antonio Martínez Guerrero",
+    "name": "Version 435ea350",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-11-04T10:44:08.588Z",
+    "updatedAt": "2026-11-04T10:44:11.000Z"
+  },
+  "activeVersionId": "435ea350-3b08-4032-a261-fe87b880900e",
+  "connections": {
+    "Al ejecutar el flujo": {
+      "main": [
+        [
+          {
+            "node": "Conmutar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutar": {
+      "main": [
+        [
+          {
+            "node": "buscar_folder",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "buscar_folder2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "buscar_folder3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "consultar_docs_id_eli",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer ID Archivo": {
+      "main": [
+        [
+          {
+            "node": "eliminar_docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "eliminar_docs": {
+      "main": [
+        [
+          {
+            "node": "eliminar_docs_t",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_docs_id_eli": {
+      "main": [
+        [
+          {
+            "node": "Extraer ID Archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_folder": {
+      "main": [
+        [
+          {
+            "node": "procesar_carpeta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Si la carpeta existe? 2": {
+      "main": [
+        [
+          {
+            "node": "buscar_docs4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "buscar_docs2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Si la carpeta existe? ": {
+      "main": [
+        [
+          {
+            "node": "consultar_docs_id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "consultar_docs_id1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_docs1": {
+      "main": [
+        [
+          {
+            "node": "Establecer ID de Archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_docs3": {
+      "main": [
+        [
+          {
+            "node": "Establecer ID de Archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Archivo": {
+      "main": [
+        [
+          {
+            "node": "Conmutar 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer de Archivo de Texto": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convertir a Google Docs": {
+      "main": [
+        [
+          {
+            "node": "Extraer de Archivo de Texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "procesar_carpeta": {
+      "main": [
+        [
+          {
+            "node": "Subir archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_folder3": {
+      "main": [
+        [
+          {
+            "node": "Si la carpeta existe? 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_folder2": {
+      "main": [
+        [
+          {
+            "node": "Si la carpeta existe? ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Conmutar 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convertir a Google Docs 2": {
+      "main": [
+        [
+          {
+            "node": "Extraer de Archivo de Texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a document in Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Establecer ID de Archivo": {
+      "main": [
+        [
+          {
+            "node": "Descargar Archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir archivo": {
+      "main": [
+        [
+          {
+            "node": "Establecer ID de Archivo 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer datos archivo": {
+      "main": [
+        [
+          {
+            "node": "buscar_docs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer datos archivo1": {
+      "main": [
+        [
+          {
+            "node": "buscar_docs3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_docs_id1": {
+      "main": [
+        [
+          {
+            "node": "Extraer datos archivo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_docs_id": {
+      "main": [
+        [
+          {
+            "node": "Extraer datos archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto1": {
+      "main": [
+        [
+          {
+            "node": "Insertar_archivo_bbdd1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Establecer ID de Archivo 2": {
+      "main": [
+        [
+          {
+            "node": "Conmutar 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analizar imagen": {
+      "main": [
+        [
+          {
+            "node": "Insertar_archivo_bbdd2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avisar imagen no permitida tramitar": {
+      "main": [
+        [
+          {
+            "node": "Analizar imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_imagen": {
+      "main": [
+        [
+          {
+            "node": "Extraer de Archivo de Texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Si es una imagen subida?": {
+      "main": [
+        [
+          {
+            "node": "Avisar imagen no permitida tramitar 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutar 2": {
+      "main": [
+        [
+          {
+            "node": "Insertar_archivo_bbdd",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insertar_archivo_bbdd",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insertar_archivo_bbdd",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Avisar imagen no permitida tramitar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutar 3": {
+      "main": [
+        [
+          {
+            "node": "Convertir a Google Docs 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extraer de Archivo de Texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convertir a Google Docs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Si es una imagen subida?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutar 4": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Avisar imagen no permitida tramitar 2": {
+      "main": [
+        [
+          {
+            "node": "buscar_imagen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-14T20:53:33.771Z",
+  "id": "nGI9xB6lvLswREf9",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "gestionar_docs",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"accion\": \"={{ $fromAI('accion', 'Acción a realizar: subir, consultar, actualizar, etc.', 'string') }}\",\n  \"nombre_cliente\": \"={{ $fromAI('nombre_cliente', 'Nombre de pila del cliente', 'string') }}\",\n  \"apellidos_cliente\": \"={{ $fromAI('apellidos_cliente', 'Apellidos del cliente', 'string') }}\",\n  \"tipo_tramite\": \"={{ $fromAI('tipo_tramite', 'Asunto o tipo de trámite (ej: Empadronamiento, Arraigo, etc.)', 'string') }}\",\n  \"pasaporte_nie\": \"={{ $fromAI('pasaporte_nie', 'Número de NIE o Pasaporte del cliente', 'string') }}\",\n  \"email\": \"={{ $fromAI('email', 'Correo del cliente', 'string') }}\",\n  \"telefono\": \"={{ $fromAI('telefono', 'Teléfono de contacto', 'string') }}\",\n  \"nacionalidad\": \"={{ $fromAI('nacionalidad', 'Nacionalidad del cliente', 'string') }}\",\n  \"nombre_documento\": \"={{ $fromAI('nombre_documento', 'Nombre del archivo adjuntado/documento si aplica', 'string') }}\",\n  \"url_archivo\": \"={{ $fromAI('url_archivo', 'Enlace o URL del documento subido', 'string') }}\",\n  \"estado_validacion\": \"={{ $fromAI('estado_validacion', 'Estado de la validación si aplica', 'string') }}\",\n  \"revisado_ia\": \"={{ $fromAI('revisado_ia', 'Si fue revisado por la IA', 'string') }}\",\n  \"fecha_inicio\": \"={{ $fromAI('fecha_inicio', 'Fecha de subida del documento', 'string') }}\",\n  \"event_id\": \"={{ $fromAI('event_id', 'ID del evento de Google Calendar', 'string') }}\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        336
+      ],
+      "id": "bb9277b8-12b9-4713-9ad9-c6210818f851",
+      "name": "Al ejecutar el flujo"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "subir",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "73a65953-f278-4dce-a420-9267bbfb9f8f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Subir"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2a4f8330-291f-4818-831e-0ccb79f7f427",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "modificar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Modificar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "44ad4fd2-f192-49e7-acd2-8fdb2fbb0344",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "buscar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Buscar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "178f3220-8936-4b49-870e-ece8c062a884",
+                    "leftValue": "={{ $json.accion }}",
+                    "rightValue": "eliminar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Eliminar"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        304
+      ],
+      "id": "e1b58f3c-d84a-4734-9561-498aa2150722",
+      "name": "Conmutar"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Expresión para obtener el ID desde la URL guardada:\nconst url = $json.url_archivo;\nconst match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)/);\nconst fileId = match ? match[1] : url; // Devuelve el fileId extraído\nreturn { fileId };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        816
+      ],
+      "id": "ed2a9659-6018-46d8-89e6-42d271304828",
+      "name": "Extraer ID Archivo"
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.fileId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        896,
+        816
+      ],
+      "id": "1b5b6394-ac08-4e5d-b73b-7e7909505f28",
+      "name": "eliminar_docs",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteTable",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documentos",
+          "mode": "list",
+          "cachedResultName": "documentos"
+        },
+        "deleteCommand": "delete",
+        "where": {
+          "values": [
+            {
+              "column": "id",
+              "value": "={{ $json.fileId }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1120,
+        816
+      ],
+      "id": "e6405e7b-811c-4b6b-ab5f-189215a623ea",
+      "name": "eliminar_docs_t",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        448,
+        816
+      ],
+      "id": "f744fc0a-fb51-4727-95b7-2cfe901c6f02",
+      "name": "consultar_docs_id_eli",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '{{ $json.pasaporte_nie }}' and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        448,
+        -272
+      ],
+      "id": "810c979b-eb6d-4b9b-8344-3d934c187f32",
+      "name": "buscar_folder",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        896,
+        624
+      ],
+      "id": "f65a88a1-99d4-46fa-b83a-faff1b84bcd1",
+      "name": "buscar_docs2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b673a74f-a37f-46f5-8e5f-dfaa45e850b5",
+              "leftValue": "={{ $json.folderId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        528
+      ],
+      "id": "9d9c8d3a-70c0-4fd8-a560-d1d4f8312913",
+      "name": "Si la carpeta existe? 2"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.nombre_cliente}}' and name contains '={{ $json.nombre_documento}}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.nombre_cliente }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        48
+      ],
+      "id": "6fdf5821-d110-493a-b420-ffaf6a5b6bd6",
+      "name": "buscar_docs1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        240
+      ],
+      "id": "b2f0fbc5-1599-464e-a521-5c5f2886394e",
+      "name": "buscar_docs3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b673a74f-a37f-46f5-8e5f-dfaa45e850b5",
+              "leftValue": "={{ $json.folderId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        672,
+        144
+      ],
+      "id": "585e73b5-d135-4193-bc7e-08842532516c",
+      "name": "Si la carpeta existe? "
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Establecer ID de Archivo').item.json.file_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "947cb6e4-6338-45f5-9030-f1d339b13d07",
+      "name": "Descargar Archivo",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1792,
+        144
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        3200,
+        128
+      ],
+      "id": "5b90ea03-1987-4dba-b23e-c986a14ff800",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "16fb4044-5c8b-479e-941f-486f412a3590",
+      "name": "Extraer de Archivo de Texto",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2912,
+        128
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/drive/v3/files/{{ $('Establecer ID de Archivo').item.json.file_id }}/copy",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $('Establecer ID de Archivo').item.json.name }}"
+            },
+            {
+              "name": "mimeType",
+              "value": "application/vnd.google-apps.document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1ce0cb12-4273-4af1-988b-04cae1d532e0",
+      "name": "Convertir a Google Docs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2688,
+        224
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        3152,
+        352
+      ],
+      "id": "21af7a27-04ea-429d-92c2-22747535feca",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.pasaporte_nie }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        3280,
+        352
+      ],
+      "id": "bf54f7f8-b887-48a1-addd-d34fa84edb91",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Este nodo recibe el resultado de la búsqueda de la carpeta del cliente\nconst inputItem = $input.first();\nconst datosCliente = $('Al ejecutar el flujo').first().json;\n\nlet folderId = null;\n\n// Verificamos si el nodo de Google Drive anterior encontró la carpeta\nif (inputItem && inputItem.json && inputItem.json.id) {\n    folderId = inputItem.json.id;\n} else {\n    // Si no existe, aquí puedes retornar una bandera para que el siguiente nodo la cree,\n    // o manejar el ID de la carpeta raíz por defecto (\"DOCUMENTOS CLIENTES\")\n    folderId = \"1HSbo5MVioo_OIDhaK48BcXbM78yRC8it\"; // ID de tu carpeta raíz por defecto\n}\n\nreturn [{\n    json: {\n        folderId: folderId,\n        pasaporte_nie: datosCliente.pasaporte_nie,\n        nombre_cliente: datosCliente.nombre_cliente,\n        nombre_documento: datosCliente.nombre_documento,\n        url_archivo: datosCliente.url_archivo\n    }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -272
+      ],
+      "id": "46d5bdae-51e8-4fa3-b48b-a262d620a6de",
+      "name": "procesar_carpeta"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.nombre_cliente }}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        448,
+        528
+      ],
+      "id": "8882aec8-7849-4572-afb8-a863be0eb0bb",
+      "name": "buscar_folder3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.nombre_cliente }}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        448,
+        144
+      ],
+      "id": "3e1294de-c05b-4b7e-a601-3022250340fc",
+      "name": "buscar_folder2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.nombre_cliente}}' and name contains '={{ $json.nombre_documento}}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.nombre_cliente }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        896,
+        432
+      ],
+      "id": "435aac2b-d21e-4e9a-b105-91937ef88072",
+      "name": "buscar_docs4",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO documentos (id_tramite, nombre_documento, url_archivo) \nVALUES ('{{ $('procesar_carpeta').item.json.folderId }}', '{{ $('procesar_carpeta').item.json.nombre_documento }}', '{{ $('Subir archivo').item.json.webViewLink }}');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1568,
+        -368
+      ],
+      "id": "0c07d58c-3d7e-4c73-b970-0e5af7f7b02f",
+      "name": "Insertar_archivo_bbdd",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/drive/v3/files/{{ $('Establecer ID de Archivo').item.json.file_id }}/copy",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $('Establecer ID de Archivo').item.json.name }}"
+            },
+            {
+              "name": "mimeType",
+              "value": "application/vnd.google-apps.document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b7b5340e-50c5-445b-9288-ab12cd2505eb",
+      "name": "Convertir a Google Docs 2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2688,
+        -64
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentURL": "={{ $('Establecer ID de Archivo').item.json.file_id }}",
+        "simple": false,
+        "actionsUi": {
+          "actionFields": [
+            {
+              "action": "insert"
+            },
+            {
+              "action": "replaceAll"
+            },
+            {
+              "object": "paragraphBullets",
+              "action": "create"
+            }
+          ]
+        },
+        "updateFields": {
+          "writeControlObject": {
+            "control": "targetRevisionId"
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        3408,
+        352
+      ],
+      "id": "a4c7f32b-b80b-467c-938f-05d4ce830063",
+      "name": "Update a document in Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "tAwpUyWd2oMDjAn1",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+              "name": "file_id",
+              "value": "={{ $('buscar_docs3').item.json.id }} || {{ $('buscar_docs1').item.json.id }} ",
+              "type": "string"
+            },
+            {
+              "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+              "name": "file_type",
+              "value": "={{ $('buscar_docs3').item.json.mimeType }} || {{ $('buscar_docs1').item.json.id }} ",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7b705cf9-81d3-46cc-84fa-e1b2172e8a5c",
+      "name": "Establecer ID de Archivo",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1568,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "name": "={{ $('procesar_carpeta').item.json.nombre_documento }} - {{ $('procesar_carpeta').item.json.nombre_cliente }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('procesar_carpeta').item.json.folderId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        896,
+        -272
+      ],
+      "id": "b817a87e-4796-4974-a24e-6e02fb5a7c45",
+      "name": "Subir archivo",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Captura la URL o ID del archivo y el nombre provenientes del nodo anterior\nconst url = $json.url_archivo || \"\";\nconst nombreArchivo = $json.name || $json.nombre_documento || \"\";\n\n// Extrae el ID de la URL mediante Regex\nconst match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)/);\nconst fileId = match ? match[1] : url;\n\n// Retorna un objeto con ambos datos\nreturn {\n  fileId: fileId,\n  nombreArchivo: nombreArchivo\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        48
+      ],
+      "id": "39719128-72fa-49ed-a40b-13b097a5c0c4",
+      "name": "Extraer datos archivo"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Captura la URL o ID del archivo y el nombre provenientes del nodo anterior\nconst url = $json.url_archivo || \"\";\nconst nombreArchivo = $json.name || $json.nombre_documento || \"\";\n\n// Extrae el ID de la URL mediante Regex\nconst match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)/);\nconst fileId = match ? match[1] : url;\n\n// Retorna un objeto con ambos datos\nreturn {\n  fileId: fileId,\n  nombreArchivo: nombreArchivo\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        240
+      ],
+      "id": "ac411e06-9f85-4e74-a562-de3cde183155",
+      "name": "Extraer datos archivo1"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        48
+      ],
+      "id": "ee01ebb8-d620-441d-a4c6-f882177ab16a",
+      "name": "consultar_docs_id",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        896,
+        240
+      ],
+      "id": "a2c75927-7004-4626-a91e-7b822290e29f",
+      "name": "consultar_docs_id1",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO documentos (nombre_documento, tipo_tramite) VALUES();",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        4048,
+        128
+      ],
+      "id": "c14fda94-8919-4fcb-beb4-e660cfd1b46e",
+      "name": "Insertar_archivo_bbdd1",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $json.telefono }}",
+        "messageText": "¡Archivo actualizado/modificado correctamente!",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        3824,
+        128
+      ],
+      "id": "d977ec8e-b60b-4014-92c6-a3cf72ec4b81",
+      "name": "Enviar texto1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+              "name": "file_id",
+              "value": "={{ $('Subir archivo').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+              "name": "file_type",
+              "value": "={{ $('Subir archivo').item.json.mimeType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a759fe9d-a504-4239-8a5c-dd0080efcf01",
+      "name": "Establecer ID de Archivo 2",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1120,
+        -272
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO documentos (id_tramite, nombre_documento, url_archivo) \nVALUES ('{{ $('procesar_carpeta').item.json.folderId }}', '{{ $('procesar_carpeta').item.json.nombre_documento }}', '{{ $('Subir archivo').item.json.webViewLink }}');",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        2016,
+        -176
+      ],
+      "id": "d8e568a6-378e-416c-a593-01d3f22d5bf7",
+      "name": "Insertar_archivo_bbdd2",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-flash-preview"
+        },
+        "text": "Por favor extre informacion valiosa de las imagenes como datos perosnales: DNI, NIE, Pasaporte, Nombre, Direccion de domicilio, correo electrónico entre otras coas.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1792,
+        -176
+      ],
+      "id": "21f8cd28-ffb7-42f0-8689-bc1396f2c449",
+      "name": "Analizar imagen",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $json.telefono }}",
+        "messageText": "Se pueden subir archivos en la carpeta pero solo esta bien tenerlo como referencia ya que necesitamos que sea un documento escaneado o un PDF perfectamente legible para  presentarla formalmente ante la oficina de extranjería.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        -176
+      ],
+      "id": "e2deeec9-dc56-4c1c-8946-3b5773df36fd",
+      "name": "Avisar imagen no permitida tramitar",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT * FROM documentos WHERE id_documento = {{ $('Establecer ID de Archivo').item.json.file_id }};",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        2688,
+        416
+      ],
+      "id": "475c59d0-62dd-4920-9131-6458f91474d3",
+      "name": "buscar_imagen",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "6fa0bd23-b588-4c23-a99c-a64a66291316",
+              "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+              "rightValue": "image /png",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "89d08ace-41de-4bb1-96aa-135806d868d1",
+              "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+              "rightValue": "image/jpeg",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2240,
+        416
+      ],
+      "id": "69e2cacc-e6e9-466b-a7d8-850b0b55920b",
+      "name": "Si es una imagen subida?"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Establecer ID de Archivo 2').item.json.file_type }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f593b378-ad57-4b6d-a882-fd2d9f73775c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
+                    "leftValue": "={{ $('Establecer ID de Archivo 2').item.json.file_type }}",
+                    "rightValue": "application/vnd.google-apps.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Archivo de Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "f53caf8b-7a8f-4d1e-98f4-deaf0e0171f0",
+                    "leftValue": "={{ $('Establecer ID de Archivo 2').item.json.file_type }}",
+                    "rightValue": "application/msword",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Word"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "5780c55d-e668-4666-bdcb-db7a833de152",
+                    "leftValue": "={{ $('Establecer ID de Archivo 2').item.json.file_type }}",
+                    "rightValue": "application/msword || application/pdf || application/vnd.google-apps.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "otro"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "id": "f5c05a5a-8e85-4bf6-be91-2fe3b41dadc6",
+      "name": "Conmutar 2",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1344,
+        -304
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f593b378-ad57-4b6d-a882-fd2d9f73775c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/vnd.google-apps.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Archivo de Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "f53caf8b-7a8f-4d1e-98f4-deaf0e0171f0",
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/msword",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Word"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "d25810a1-2204-4d77-90fc-e4e550c3d90c",
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/msword || application/pdf || application/vnd.google-apps.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEquals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "otro"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "id": "42575f1e-80ff-496e-9faf-c04607173d06",
+      "name": "Conmutar 3",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2016,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.tipo_tramite  }}",
+                    "rightValue": "nacionalidad",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c36fdc04-e66e-4a9c-806b-71b311541e1e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "nacionalidad"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a2fb8b76-aef9-4ff0-9318-089dbbc15003",
+                    "leftValue": "={{ $json.tipo_tramite }}",
+                    "rightValue": "nie",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "nie"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "72ac0550-2cf5-4e76-9a63-633ef13b26f9",
+                    "leftValue": "={{ $json.tipo_tramite }}",
+                    "rightValue": "renovacion",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "renovacion"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "dfc954fc-78b5-4160-852f-c020b5e3bc7e",
+                    "leftValue": "={{ $json.tipo_tramite }}",
+                    "rightValue": "agrupacion",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agrupacion"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        3600,
+        96
+      ],
+      "id": "51c4e3a2-596d-4dbe-8fbc-f0333d8eabb8",
+      "name": "Conmutar 4"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $json.telefono }}",
+        "messageText": "Se pueden subir archivos en la carpeta pero solo esta bien tenerlo como referencia ya que necesitamos que sea un documento escaneado o un PDF perfectamente legible para  presentarla formalmente ante la oficina de extranjería.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2464,
+        416
+      ],
+      "id": "aec8ddb4-aa7f-4507-8890-64cc0b898061",
+      "name": "Avisar imagen no permitida tramitar 2",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "nGI9xB6lvLswREf9",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-09-14T20:53:33.780Z",
+      "updatedAt": "2026-09-14T20:53:33.780Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-04T10:44:08.584Z",
+  "versionId": "435ea350-3b08-4032-a261-fe87b880900e"
+}
