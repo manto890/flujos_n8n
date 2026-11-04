@@ -1,7 +1,7 @@
 {
   "active": true,
   "activeVersion": {
-    "versionId": "8543e513-400f-42ea-ade0-92f65a042fe8",
+    "versionId": "3cbc6982-e3aa-4b76-88cb-b88a5c1a5461",
     "workflowId": "L7eHu3wRpwDNcVCW",
     "nodes": [
       {
@@ -90,7 +90,7 @@
         "typeVersion": 3.4,
         "position": [
           192,
-          -128
+          -112
         ],
         "id": "111f3545-79a7-437a-9099-1f011d2ee832",
         "name": "Conmutar"
@@ -104,7 +104,7 @@
         "typeVersion": 1.2,
         "position": [
           -32,
-          -112
+          -96
         ],
         "id": "88e81cac-c2cf-469f-bbad-5bbc7dec2bfc",
         "name": "Al ejecutar el flujo"
@@ -118,32 +118,11 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.7,
         "position": [
-          448,
+          416,
           -288
         ],
         "id": "20a04545-40d3-4747-b79d-d16540efd91f",
         "name": "Buscar tramites",
-        "credentials": {
-          "postgres": {
-            "id": "fn2ZPkKEjrJ6aNsv",
-            "name": "BBDD gestoria_extranjeria"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "SELECT d.nombre_documento, d.ruta_archivo \nFROM tramites AS t\nJOIN documentos d ON t.pasaporte_nie = d.pasaporte_nie\nWHERE t.pasaporte_nie = '{{ $json.pasaporte_nie }}';",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.7,
-        "position": [
-          448,
-          -112
-        ],
-        "id": "20c097a9-6e48-4d8b-8a9e-5382277ed863",
-        "name": "Buscar docs",
         "credentials": {
           "postgres": {
             "id": "fn2ZPkKEjrJ6aNsv",
@@ -160,8 +139,8 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.7,
         "position": [
-          448,
-          64
+          416,
+          96
         ],
         "id": "d47fd615-d704-4042-8fc7-dc558cb57429",
         "name": "Actualizar estado",
@@ -191,8 +170,8 @@
         "type": "n8n-nodes-base.googleDrive",
         "typeVersion": 3,
         "position": [
-          1104,
-          -16
+          864,
+          0
         ],
         "id": "4dfa2f21-06f0-4df6-a61f-12a6dc791e93",
         "name": "buscar_docs2",
@@ -231,8 +210,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          880,
-          -112
+          640,
+          -96
         ],
         "id": "23819d95-9cbb-4eea-8dc2-6b928d1095b4",
         "name": "Si la carpeta existe? 2"
@@ -256,8 +235,8 @@
         "type": "n8n-nodes-base.googleDrive",
         "typeVersion": 3,
         "position": [
-          656,
-          -112
+          416,
+          -96
         ],
         "id": "11f266f0-d4d2-4eac-9740-e80e21f64d08",
         "name": "buscar_folder3",
@@ -285,8 +264,8 @@
         "type": "n8n-nodes-base.googleDrive",
         "typeVersion": 3,
         "position": [
-          1104,
-          -208
+          864,
+          -192
         ],
         "id": "a97ab92c-f977-46a7-96fa-462becaaf9a2",
         "name": "buscar_docs4",
@@ -294,6 +273,27 @@
           "googleDriveOAuth2Api": {
             "id": "cCQ1BE3aV6hQHIKK",
             "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "executeQuery",
+          "query": "SELECT d.nombre_documento, d.ruta_archivo \nFROM tramites AS t\nJOIN documentos d ON t.pasaporte_nie = d.pasaporte_nie\nWHERE t.pasaporte_nie = '{{ $json.pasaporte_nie }}';",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.postgres",
+        "typeVersion": 2.7,
+        "position": [
+          1088,
+          -96
+        ],
+        "id": "16f56f96-e43c-42ca-a824-38955feb8e14",
+        "name": "Buscar docs",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
           }
         }
       }
@@ -310,7 +310,7 @@
           ],
           [
             {
-              "node": "Buscar docs",
+              "node": "buscar_folder3",
               "type": "main",
               "index": 0
             }
@@ -364,11 +364,22 @@
           ]
         ]
       },
-      "Buscar docs": {
+      "buscar_docs4": {
         "main": [
           [
             {
-              "node": "buscar_folder3",
+              "node": "Buscar docs",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar_docs2": {
+        "main": [
+          [
+            {
+              "node": "Buscar docs",
               "type": "main",
               "index": 0
             }
@@ -378,13 +389,13 @@
     },
     "nodeGroups": [],
     "authors": "Marco Antonio Martínez Guerrero",
-    "name": "Version 8543e513",
+    "name": "Version 3cbc6982",
     "description": "",
     "autosaved": true,
-    "createdAt": "2026-11-04T20:17:44.625Z",
-    "updatedAt": "2026-11-04T20:18:26.000Z"
+    "createdAt": "2026-11-04T22:09:10.254Z",
+    "updatedAt": "2026-11-04T22:09:11.000Z"
   },
-  "activeVersionId": "8543e513-400f-42ea-ade0-92f65a042fe8",
+  "activeVersionId": "3cbc6982-e3aa-4b76-88cb-b88a5c1a5461",
   "connections": {
     "Conmutar": {
       "main": [
@@ -397,7 +408,7 @@
         ],
         [
           {
-            "node": "Buscar docs",
+            "node": "buscar_folder3",
             "type": "main",
             "index": 0
           }
@@ -451,11 +462,22 @@
         ]
       ]
     },
-    "Buscar docs": {
+    "buscar_docs4": {
       "main": [
         [
           {
-            "node": "buscar_folder3",
+            "node": "Buscar docs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_docs2": {
+      "main": [
+        [
+          {
+            "node": "Buscar docs",
             "type": "main",
             "index": 0
           }
@@ -558,7 +580,7 @@
       "typeVersion": 3.4,
       "position": [
         192,
-        -128
+        -112
       ],
       "id": "111f3545-79a7-437a-9099-1f011d2ee832",
       "name": "Conmutar"
@@ -572,7 +594,7 @@
       "typeVersion": 1.2,
       "position": [
         -32,
-        -112
+        -96
       ],
       "id": "88e81cac-c2cf-469f-bbad-5bbc7dec2bfc",
       "name": "Al ejecutar el flujo"
@@ -586,32 +608,11 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
       "position": [
-        448,
+        416,
         -288
       ],
       "id": "20a04545-40d3-4747-b79d-d16540efd91f",
       "name": "Buscar tramites",
-      "credentials": {
-        "postgres": {
-          "id": "fn2ZPkKEjrJ6aNsv",
-          "name": "BBDD gestoria_extranjeria"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT d.nombre_documento, d.ruta_archivo \nFROM tramites AS t\nJOIN documentos d ON t.pasaporte_nie = d.pasaporte_nie\nWHERE t.pasaporte_nie = '{{ $json.pasaporte_nie }}';",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.7,
-      "position": [
-        448,
-        -112
-      ],
-      "id": "20c097a9-6e48-4d8b-8a9e-5382277ed863",
-      "name": "Buscar docs",
       "credentials": {
         "postgres": {
           "id": "fn2ZPkKEjrJ6aNsv",
@@ -628,8 +629,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
       "position": [
-        448,
-        64
+        416,
+        96
       ],
       "id": "d47fd615-d704-4042-8fc7-dc558cb57429",
       "name": "Actualizar estado",
@@ -659,8 +660,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1104,
-        -16
+        864,
+        0
       ],
       "id": "4dfa2f21-06f0-4df6-a61f-12a6dc791e93",
       "name": "buscar_docs2",
@@ -699,8 +700,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        880,
-        -112
+        640,
+        -96
       ],
       "id": "23819d95-9cbb-4eea-8dc2-6b928d1095b4",
       "name": "Si la carpeta existe? 2"
@@ -724,8 +725,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        656,
-        -112
+        416,
+        -96
       ],
       "id": "11f266f0-d4d2-4eac-9740-e80e21f64d08",
       "name": "buscar_folder3",
@@ -753,8 +754,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        1104,
-        -208
+        864,
+        -192
       ],
       "id": "a97ab92c-f977-46a7-96fa-462becaaf9a2",
       "name": "buscar_docs4",
@@ -762,6 +763,27 @@
         "googleDriveOAuth2Api": {
           "id": "cCQ1BE3aV6hQHIKK",
           "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT d.nombre_documento, d.ruta_archivo \nFROM tramites AS t\nJOIN documentos d ON t.pasaporte_nie = d.pasaporte_nie\nWHERE t.pasaporte_nie = '{{ $json.pasaporte_nie }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.7,
+      "position": [
+        1088,
+        -96
+      ],
+      "id": "16f56f96-e43c-42ca-a824-38955feb8e14",
+      "name": "Buscar docs",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
         }
       }
     }
@@ -783,6 +805,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-11-04T20:17:44.621Z",
-  "versionId": "8543e513-400f-42ea-ade0-92f65a042fe8"
+  "updatedAt": "2026-11-04T22:09:10.251Z",
+  "versionId": "3cbc6982-e3aa-4b76-88cb-b88a5c1a5461"
 }
