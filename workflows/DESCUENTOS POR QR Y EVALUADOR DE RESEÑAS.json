@@ -1,0 +1,142 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "QR Toolkit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QR Toolkit": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-31T22:59:25.424Z",
+  "id": "bWqotLJdpsc7fFUp",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "DESCUENTOS POR QR Y EVALUADOR DE RESEÑAS",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "5ae25f4f-65af-47c1-9ff6-1173f8e58e42",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "441a31da-b4dd-4a55-9708-d7676daf9581",
+      "name": "Webhook",
+      "webhookId": "5ae25f4f-65af-47c1-9ff6-1173f8e58e42"
+    },
+    {
+      "parameters": {
+        "operation": "readQrCode"
+      },
+      "type": "@cyberace/n8n-nodes-qr.qrToolkit",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "id": "8a4dd53a-cbe2-404e-b934-69f57d356d56",
+      "name": "QR Toolkit"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Accede al QR, analiza los comentarios positivos del mes de: {{ $now.format('yyyy-MM-dd') }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        672,
+        0
+      ],
+      "id": "2f67c947-69b0-4ce8-ba0b-5f951b5b090b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "url": "https://pro.formview.io/#/xkqpeiofqsdoyet/user/register?header=1&reset=1",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey1",
+              "value": "MX5cwaYdf7uLzwPeX0eglY3UQFDVuh"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "c8095b11-f0b8-40ea-90ef-43a6311d6c43",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "bWqotLJdpsc7fFUp",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-10-31T22:59:25.433Z",
+      "updatedAt": "2026-10-31T22:59:25.433Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-01T10:27:38.110Z",
+  "versionId": "d1923a12-a901-41ba-80af-9e2823cf84d6"
+}
