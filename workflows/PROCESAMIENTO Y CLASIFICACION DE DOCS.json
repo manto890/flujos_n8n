@@ -1,0 +1,3768 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "1f5b81ed-6a65-474d-8ae0-f6249ba47752",
+    "workflowId": "nxC0gqZZhZTQWAjg",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "d52bdb6b-8f97-4fb7-928f-8e25ab7e2d69",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          144,
+          -160
+        ],
+        "id": "14aa3ba2-6bdf-4fbf-875a-0f345b386b0d",
+        "name": "Enviar mensaje chat",
+        "webhookId": "d52bdb6b-8f97-4fb7-928f-8e25ab7e2d69"
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "tableName": {
+            "__rl": true,
+            "value": "documents",
+            "mode": "list",
+            "cachedResultName": "documents"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          2416,
+          -368
+        ],
+        "id": "167a2f17-a98a-430f-803a-4e1a87c25258",
+        "name": "Supabase Vector Store",
+        "credentials": {
+          "supabaseApi": {
+            "id": "4viKc8Ym03FIbkYO",
+            "name": "SUPABASE SYNTIX AI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Enviar mensaje chat').item.json.body.data.key.remoteJid }}",
+          "messageText": "=Nuevo documento de cliente subido a tu nube de trabajo y clasificado como: {{ $('Unificar').item.json.text || $('Unificar').item.json.output || 'Documento procesado' }}",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          2880,
+          -160
+        ],
+        "id": "5569fed3-10cd-443f-a5c8-e45fa49d52a0",
+        "name": "Avisar mensaje",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "filters": {}
+        },
+        "type": "n8n-nodes-base.gmailTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          144,
+          640
+        ],
+        "id": "6fb5b62a-72ae-4dce-9092-a8e0ae421aed",
+        "name": "Enviar correo",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "VmMlET5526MjN801",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $binary.data.mimeType }}",
+                      "rightValue": "image",
+                      "operator": {
+                        "type": "string",
+                        "operation": "startsWith"
+                      },
+                      "id": "55b7ac41-a040-4147-a638-d1bac8d957df"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "imagen"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "37031472-8dfc-4c01-9735-978970df1246",
+                      "leftValue": "={{ $binary.data.mimeType }}",
+                      "rightValue": "pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "contains"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "pdf"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          816,
+          -160
+        ],
+        "id": "b075e3a3-25a2-49f5-a427-f919f2192279",
+        "name": "Conmutar archivo"
+      },
+      {
+        "parameters": {
+          "resource": "image",
+          "operation": "analyze",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3.5-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3.5-flash"
+          },
+          "text": "Analiza los datos de esta imagen que es un documento y extrae todos sus datos",
+          "inputType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          1040,
+          -256
+        ],
+        "id": "bfb6ba4a-ed18-44e1-8466-6615cc88e0b6",
+        "name": "Analizar imagen",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "document",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3.6-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3.6-flash"
+          },
+          "text": "Analiza los datos del documento y extrae todos sus datos",
+          "inputType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          1040,
+          -64
+        ],
+        "id": "0f57befe-78bc-476e-8380-244ec9103d7a",
+        "name": "Analizar documento",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "numberInputs": 4
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          1264,
+          -192
+        ],
+        "id": "8e055d46-bcce-4228-873f-04774da35fa1",
+        "name": "Unificar"
+      },
+      {
+        "parameters": {
+          "numberInputs": 4
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          2160,
+          -192
+        ],
+        "id": "9686b127-c713-4855-81f3-223dc771f1ef",
+        "name": "Unificar 2"
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Subir archivo').item.json.id }}",
+            "mode": "id"
+          },
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "15652uj1PqZOqIi4fujKihlhS8WAsfsII",
+            "mode": "list",
+            "cachedResultName": "IDENTIFICATIVO",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/15652uj1PqZOqIi4fujKihlhS8WAsfsII"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1936,
+          -448
+        ],
+        "id": "2f61acd7-0d54-484c-bf0c-f358cff17568",
+        "name": "Identificativo",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Subir archivo 2').item.json.id }}",
+            "mode": "id"
+          },
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1tJdFVQqEIa9fY6mL8E4FZaQp-s7q04Z9",
+            "mode": "list",
+            "cachedResultName": "PENALES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1tJdFVQqEIa9fY6mL8E4FZaQp-s7q04Z9"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1936,
+          -256
+        ],
+        "id": "6e351f03-648c-4516-aafe-619acc20eb15",
+        "name": "Penales",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Subir archivo 3').item.json.id }}",
+            "mode": "id"
+          },
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1dxm_0_NcJhEJ7zqc_q_dRiPbYu5xnoKn",
+            "mode": "list",
+            "cachedResultName": "NOMINAS",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1dxm_0_NcJhEJ7zqc_q_dRiPbYu5xnoKn"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1936,
+          -64
+        ],
+        "id": "ec9fab06-4ee5-4def-aba0-299bd75dde36",
+        "name": "Nominas",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Subir archivo 4').item.json.id }}",
+            "mode": "id"
+          },
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1IKSYI0qTngTsGvXpVCRWWeCwxsKy5jUB",
+            "mode": "list",
+            "cachedResultName": "CONTRATOS",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1IKSYI0qTngTsGvXpVCRWWeCwxsKy5jUB"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1936,
+          128
+        ],
+        "id": "88e46e44-273c-4907-993b-8aa432352599",
+        "name": "Contratos",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "7aef7094-6bb0-421c-af98-56bbe023b280"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "374a2d2d-ac40-4478-a955-237f70e57fec",
+                      "leftValue": "",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "d2f2794c-c375-4349-bc18-ac26a5fd7b89",
+                      "leftValue": "",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "91ba5834-d1b4-4277-b91c-08c2efae339f",
+                      "leftValue": "",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1488,
+          -192
+        ],
+        "id": "9310173b-3403-4a9a-adb3-88a32794a508",
+        "name": "Conmutar 2"
+      },
+      {
+        "parameters": {
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1712,
+          -448
+        ],
+        "id": "7ac172f7-5554-45ca-a308-44387df07285",
+        "name": "Subir archivo",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "driveId": {
+            "__rl": true,
+            "value": "My Drive",
+            "mode": "list",
+            "cachedResultName": "My Drive",
+            "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1712,
+          -256
+        ],
+        "id": "8a7c02b1-f2f3-4c9b-8ae2-e21261ed7357",
+        "name": "Subir archivo 2",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1712,
+          -64
+        ],
+        "id": "cf6597ca-b216-4309-8a6d-07e7df9487a5",
+        "name": "Subir archivo 3",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1712,
+          128
+        ],
+        "id": "31e73e13-19a8-4754-87d9-13e9f1376d09",
+        "name": "Subir archivo 4",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          2392,
+          -136
+        ],
+        "id": "a05cb6f9-33a6-4860-916e-bc33cbdcaaae",
+        "name": "Embeddings Google Gemini",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "textSplittingMode": "custom",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1.1,
+        "position": [
+          2520,
+          -136
+        ],
+        "id": "404dd1bf-3a34-4d46-8017-683d53da649c",
+        "name": "Default Data Loader"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+        "typeVersion": 1,
+        "position": [
+          2600,
+          72
+        ],
+        "id": "07ba3202-b97b-4a45-8463-46963029b8be",
+        "name": "Recursive Character Text Splitter"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Este código unifica los datos entrantes sin importar si vienen de WhatsApp o Gmail\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  let canal = 'desconocido';\n  let remitente = '';\n  let textoMensaje = '';\n\n  // Identificar si viene de Evolution API (WhatsApp) o de Gmail\n  if (item.json.body && item.json.body.data) {\n    canal = 'whatsapp';\n    remitente = item.json.body.data.key.remoteJid || '';\n    textoMensaje = item.json.body.data.message?.conversation || item.json.body.data.message?.extendedTextMessage?.text || '';\n  } else if (item.json.text || item.json.subject) {\n    canal = 'gmail';\n    remitente = item.json.from || '';\n    textoMensaje = item.json.text || item.json.snippet || '';\n  }\n\n  results.push({\n    json: {\n      canal: canal,\n      remitente: remitente,\n      texto: textoMensaje,\n      procesadoEn: new Date().toISOString()\n    },\n    // Mantiene los archivos adjuntos binarios si existen\n    binary: item.binary\n  });\n}\n\nreturn results;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          368,
+          -160
+        ],
+        "id": "2571972b-73cc-42ed-9793-29be86700d52",
+        "name": "Estandarizar datos"
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1.1,
+        "position": [
+          592,
+          -160
+        ],
+        "id": "e7c5db76-a05f-4ae5-b113-2008e42d383a",
+        "name": "Extract from File1"
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "tableName": {
+            "__rl": true,
+            "value": "documents",
+            "mode": "list",
+            "cachedResultName": "documents"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          2416,
+          640
+        ],
+        "id": "362ca57e-87dc-4c46-94fe-d679ac3a43bb",
+        "name": "Supabase Vector Store1",
+        "credentials": {
+          "supabaseApi": {
+            "id": "4viKc8Ym03FIbkYO",
+            "name": "SUPABASE SYNTIX AI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "sendTo": "mantoniomg25480@gmail.com",
+          "subject": "Documento guardado en la nube",
+          "message": "=Hola,  El documento enviado por correo electrónico ya se encuentra guardado en la nube de trabajo (Google Drive) y ha sido clasificado como: {{ $('Unificar1').item.json.text || $('Unificar1').item.json.output || 'Documento procesado' }}.",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.gmail",
+        "typeVersion": 2.2,
+        "position": [
+          2880,
+          640
+        ],
+        "id": "6de2455f-9caa-47a6-a5e8-fda1204df7ab",
+        "name": "Avisar correo1",
+        "webhookId": "d5a47702-60e7-44fc-b0be-e48ee4bceb90",
+        "credentials": {
+          "gmailOAuth2": {
+            "id": "VmMlET5526MjN801",
+            "name": "Gmail account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $binary.data.mimeType }}",
+                      "rightValue": "image",
+                      "operator": {
+                        "type": "string",
+                        "operation": "startsWith"
+                      },
+                      "id": "55b7ac41-a040-4147-a638-d1bac8d957df"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "imagen"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "37031472-8dfc-4c01-9735-978970df1246",
+                      "leftValue": "={{ $binary.data.mimeType }}",
+                      "rightValue": "pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "contains"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "pdf"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          816,
+          640
+        ],
+        "id": "fdece295-b6f0-49dd-b1e1-3a8f4e323bf4",
+        "name": "Conmutar archivo1"
+      },
+      {
+        "parameters": {
+          "resource": "image",
+          "operation": "analyze",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3.5-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3.5-flash"
+          },
+          "text": "Analiza los datos de esta imagen que es un documento y extrae todos sus datos",
+          "inputType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          1040,
+          544
+        ],
+        "id": "504e8be3-712c-4f5e-b573-e155c5b1fb69",
+        "name": "Analizar imagen1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "document",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3.6-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3.6-flash"
+          },
+          "text": "Analiza los datos del documento y extrae todos sus datos",
+          "inputType": "binary",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          1040,
+          736
+        ],
+        "id": "70d77cc6-305e-4a24-936e-e40ff29f4a22",
+        "name": "Analizar documento1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "numberInputs": 4
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          1264,
+          608
+        ],
+        "id": "5eb7e7fb-4fe2-487c-bd5b-98b570a23f51",
+        "name": "Unificar1"
+      },
+      {
+        "parameters": {
+          "numberInputs": 4
+        },
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3.2,
+        "position": [
+          2160,
+          608
+        ],
+        "id": "cfd441c0-147c-4de7-8152-2ddd0f89914b",
+        "name": "Unificar "
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Subir archivo1').item.json.id }}",
+            "mode": "id"
+          },
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "15652uj1PqZOqIi4fujKihlhS8WAsfsII",
+            "mode": "list",
+            "cachedResultName": "IDENTIFICATIVO",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/15652uj1PqZOqIi4fujKihlhS8WAsfsII"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1936,
+          352
+        ],
+        "id": "d01a492e-d7a7-494f-817e-05f5e17bc915",
+        "name": "Identificativo1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Subir archivo ').item.json.id }}",
+            "mode": "id"
+          },
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1tJdFVQqEIa9fY6mL8E4FZaQp-s7q04Z9",
+            "mode": "list",
+            "cachedResultName": "PENALES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1tJdFVQqEIa9fY6mL8E4FZaQp-s7q04Z9"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1936,
+          544
+        ],
+        "id": "1191324a-4b0c-4e84-813a-26167ac84fe3",
+        "name": "Penales1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Subir archivo 5').item.json.id }}",
+            "mode": "id"
+          },
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1dxm_0_NcJhEJ7zqc_q_dRiPbYu5xnoKn",
+            "mode": "list",
+            "cachedResultName": "NOMINAS",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1dxm_0_NcJhEJ7zqc_q_dRiPbYu5xnoKn"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1936,
+          736
+        ],
+        "id": "a16753ae-bf29-4127-a0ce-95371b3f3321",
+        "name": "Nominas1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "move",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Subir archivo 6').item.json.id }}",
+            "mode": "id"
+          },
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1IKSYI0qTngTsGvXpVCRWWeCwxsKy5jUB",
+            "mode": "list",
+            "cachedResultName": "CONTRATOS",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1IKSYI0qTngTsGvXpVCRWWeCwxsKy5jUB"
+          }
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1936,
+          928
+        ],
+        "id": "7577c3cf-808e-4ceb-9020-9cc55d318aae",
+        "name": "Contratos1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "7aef7094-6bb0-421c-af98-56bbe023b280"
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "374a2d2d-ac40-4478-a955-237f70e57fec",
+                      "leftValue": "",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "d2f2794c-c375-4349-bc18-ac26a5fd7b89",
+                      "leftValue": "",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "91ba5834-d1b4-4277-b91c-08c2efae339f",
+                      "leftValue": "",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                }
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1488,
+          608
+        ],
+        "id": "b2235597-4881-4e79-ad6e-bd647877a354",
+        "name": "Conmutar "
+      },
+      {
+        "parameters": {
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1712,
+          352
+        ],
+        "id": "b0e91423-9c52-4907-89c1-cd590e81a586",
+        "name": "Subir archivo1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "driveId": {
+            "__rl": true,
+            "value": "My Drive",
+            "mode": "list",
+            "cachedResultName": "My Drive",
+            "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1712,
+          544
+        ],
+        "id": "6e2ec437-eb21-4aa7-b1d1-2965940955c2",
+        "name": "Subir archivo ",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1712,
+          736
+        ],
+        "id": "6f81d12d-b958-419b-b20d-c9d19af88bcf",
+        "name": "Subir archivo 5",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "driveId": {
+            "__rl": true,
+            "mode": "list",
+            "value": "My Drive"
+          },
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1712,
+          928
+        ],
+        "id": "6e4dbd8e-69b1-4d1d-b1e3-53ed98f4f460",
+        "name": "Subir archivo 6",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          2392,
+          872
+        ],
+        "id": "211c1bec-a771-4405-b485-f7e9d766c346",
+        "name": "Embeddings Google Gemini1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "textSplittingMode": "custom",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1.1,
+        "position": [
+          2520,
+          872
+        ],
+        "id": "54dd1f5b-72ae-4d1d-ba9e-460287f298d5",
+        "name": "Default Data Loader1"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+        "typeVersion": 1,
+        "position": [
+          2600,
+          1080
+        ],
+        "id": "adb55a2d-0ccc-49b9-8f67-82e52b4e5e09",
+        "name": "Recursive Character Text Splitter1"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Este código unifica los datos entrantes sin importar si vienen de WhatsApp o Gmail\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  let canal = 'desconocido';\n  let remitente = '';\n  let textoMensaje = '';\n\n  // Identificar si viene de Evolution API (WhatsApp) o de Gmail\n  if (item.json.body && item.json.body.data) {\n    canal = 'whatsapp';\n    remitente = item.json.body.data.key.remoteJid || '';\n    textoMensaje = item.json.body.data.message?.conversation || item.json.body.data.message?.extendedTextMessage?.text || '';\n  } else if (item.json.text || item.json.subject) {\n    canal = 'gmail';\n    remitente = item.json.from || '';\n    textoMensaje = item.json.text || item.json.snippet || '';\n  }\n\n  results.push({\n    json: {\n      canal: canal,\n      remitente: remitente,\n      texto: textoMensaje,\n      procesadoEn: new Date().toISOString()\n    },\n    // Mantiene los archivos adjuntos binarios si existen\n    binary: item.binary\n  });\n}\n\nreturn results;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          368,
+          640
+        ],
+        "id": "7fa516b1-86ef-431f-b270-25c6752c7d7d",
+        "name": "Estandarizar datos1"
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1.1,
+        "position": [
+          592,
+          640
+        ],
+        "id": "eda6c6ea-59e3-4683-a967-a2a531c0ce0b",
+        "name": "Extract from File"
+      }
+    ],
+    "connections": {
+      "Enviar mensaje chat": {
+        "main": [
+          [
+            {
+              "node": "Estandarizar datos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase Vector Store": {
+        "main": [
+          [
+            {
+              "node": "Avisar mensaje",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar correo": {
+        "main": [
+          [
+            {
+              "node": "Estandarizar datos1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutar archivo": {
+        "main": [
+          [
+            {
+              "node": "Analizar imagen",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Analizar documento",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analizar imagen": {
+        "main": [
+          [
+            {
+              "node": "Unificar",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "Analizar documento": {
+        "main": [
+          [
+            {
+              "node": "Unificar",
+              "type": "main",
+              "index": 3
+            }
+          ]
+        ]
+      },
+      "Unificar": {
+        "main": [
+          [
+            {
+              "node": "Conmutar 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Unificar 2": {
+        "main": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Identificativo": {
+        "main": [
+          [
+            {
+              "node": "Unificar 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Penales": {
+        "main": [
+          [
+            {
+              "node": "Unificar 2",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Nominas": {
+        "main": [
+          [
+            {
+              "node": "Unificar 2",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "Contratos": {
+        "main": [
+          [
+            {
+              "node": "Unificar 2",
+              "type": "main",
+              "index": 3
+            }
+          ]
+        ]
+      },
+      "Conmutar 2": {
+        "main": [
+          [
+            {
+              "node": "Subir archivo",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Subir archivo 2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Subir archivo 3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Subir archivo 4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Subir archivo": {
+        "main": [
+          [
+            {
+              "node": "Identificativo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Subir archivo 2": {
+        "main": [
+          [
+            {
+              "node": "Penales",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Subir archivo 3": {
+        "main": [
+          [
+            {
+              "node": "Nominas",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Subir archivo 4": {
+        "main": [
+          [
+            {
+              "node": "Contratos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Default Data Loader": {
+        "ai_document": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recursive Character Text Splitter": {
+        "ai_textSplitter": [
+          [
+            {
+              "node": "Default Data Loader",
+              "type": "ai_textSplitter",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Estandarizar datos": {
+        "main": [
+          [
+            {
+              "node": "Extract from File1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract from File1": {
+        "main": [
+          [
+            {
+              "node": "Conmutar archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase Vector Store1": {
+        "main": [
+          [
+            {
+              "node": "Avisar correo1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutar archivo1": {
+        "main": [
+          [
+            {
+              "node": "Analizar imagen1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Analizar documento1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analizar imagen1": {
+        "main": [
+          [
+            {
+              "node": "Unificar1",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "Analizar documento1": {
+        "main": [
+          [
+            {
+              "node": "Unificar1",
+              "type": "main",
+              "index": 3
+            }
+          ]
+        ]
+      },
+      "Unificar1": {
+        "main": [
+          [
+            {
+              "node": "Conmutar ",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Unificar ": {
+        "main": [
+          [
+            {
+              "node": "Supabase Vector Store1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Identificativo1": {
+        "main": [
+          [
+            {
+              "node": "Unificar ",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Penales1": {
+        "main": [
+          [
+            {
+              "node": "Unificar ",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Nominas1": {
+        "main": [
+          [
+            {
+              "node": "Unificar ",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "Contratos1": {
+        "main": [
+          [
+            {
+              "node": "Unificar ",
+              "type": "main",
+              "index": 3
+            }
+          ]
+        ]
+      },
+      "Conmutar ": {
+        "main": [
+          [
+            {
+              "node": "Subir archivo1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Subir archivo ",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Subir archivo 5",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Subir archivo 6",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Subir archivo1": {
+        "main": [
+          [
+            {
+              "node": "Identificativo1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Subir archivo ": {
+        "main": [
+          [
+            {
+              "node": "Penales1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Subir archivo 5": {
+        "main": [
+          [
+            {
+              "node": "Nominas1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Subir archivo 6": {
+        "main": [
+          [
+            {
+              "node": "Contratos1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini1": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Supabase Vector Store1",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Default Data Loader1": {
+        "ai_document": [
+          [
+            {
+              "node": "Supabase Vector Store1",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recursive Character Text Splitter1": {
+        "ai_textSplitter": [
+          [
+            {
+              "node": "Default Data Loader1",
+              "type": "ai_textSplitter",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Estandarizar datos1": {
+        "main": [
+          [
+            {
+              "node": "Extract from File",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract from File": {
+        "main": [
+          [
+            {
+              "node": "Conmutar archivo1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Marco Antonio Martínez Guerrero",
+    "name": "Version 1f5b81ed",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-29T19:54:03.411Z",
+    "updatedAt": "2026-10-29T19:54:23.000Z"
+  },
+  "activeVersionId": "1f5b81ed-6a65-474d-8ae0-f6249ba47752",
+  "connections": {
+    "Enviar mensaje chat": {
+      "main": [
+        [
+          {
+            "node": "Estandarizar datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "main": [
+        [
+          {
+            "node": "Avisar mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar correo": {
+      "main": [
+        [
+          {
+            "node": "Estandarizar datos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutar archivo": {
+      "main": [
+        [
+          {
+            "node": "Analizar imagen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analizar documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analizar imagen": {
+      "main": [
+        [
+          {
+            "node": "Unificar",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Analizar documento": {
+      "main": [
+        [
+          {
+            "node": "Unificar",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Unificar": {
+      "main": [
+        [
+          {
+            "node": "Conmutar 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unificar 2": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identificativo": {
+      "main": [
+        [
+          {
+            "node": "Unificar 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Penales": {
+      "main": [
+        [
+          {
+            "node": "Unificar 2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Nominas": {
+      "main": [
+        [
+          {
+            "node": "Unificar 2",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Contratos": {
+      "main": [
+        [
+          {
+            "node": "Unificar 2",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Conmutar 2": {
+      "main": [
+        [
+          {
+            "node": "Subir archivo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subir archivo 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subir archivo 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subir archivo 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir archivo": {
+      "main": [
+        [
+          {
+            "node": "Identificativo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir archivo 2": {
+      "main": [
+        [
+          {
+            "node": "Penales",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir archivo 3": {
+      "main": [
+        [
+          {
+            "node": "Nominas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir archivo 4": {
+      "main": [
+        [
+          {
+            "node": "Contratos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estandarizar datos": {
+      "main": [
+        [
+          {
+            "node": "Extract from File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File1": {
+      "main": [
+        [
+          {
+            "node": "Conmutar archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "main": [
+        [
+          {
+            "node": "Avisar correo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutar archivo1": {
+      "main": [
+        [
+          {
+            "node": "Analizar imagen1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Analizar documento1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analizar imagen1": {
+      "main": [
+        [
+          {
+            "node": "Unificar1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Analizar documento1": {
+      "main": [
+        [
+          {
+            "node": "Unificar1",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Unificar1": {
+      "main": [
+        [
+          {
+            "node": "Conmutar ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unificar ": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Identificativo1": {
+      "main": [
+        [
+          {
+            "node": "Unificar ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Penales1": {
+      "main": [
+        [
+          {
+            "node": "Unificar ",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Nominas1": {
+      "main": [
+        [
+          {
+            "node": "Unificar ",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Contratos1": {
+      "main": [
+        [
+          {
+            "node": "Unificar ",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Conmutar ": {
+      "main": [
+        [
+          {
+            "node": "Subir archivo1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subir archivo ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subir archivo 5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Subir archivo 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir archivo1": {
+      "main": [
+        [
+          {
+            "node": "Identificativo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir archivo ": {
+      "main": [
+        [
+          {
+            "node": "Penales1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir archivo 5": {
+      "main": [
+        [
+          {
+            "node": "Nominas1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir archivo 6": {
+      "main": [
+        [
+          {
+            "node": "Contratos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estandarizar datos1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Conmutar archivo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-09T18:17:00.404Z",
+  "id": "nxC0gqZZhZTQWAjg",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "PROCESAMIENTO Y CLASIFICACION DE DOCS",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "d52bdb6b-8f97-4fb7-928f-8e25ab7e2d69",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        144,
+        -160
+      ],
+      "id": "14aa3ba2-6bdf-4fbf-875a-0f345b386b0d",
+      "name": "Enviar mensaje chat",
+      "webhookId": "d52bdb6b-8f97-4fb7-928f-8e25ab7e2d69"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2416,
+        -368
+      ],
+      "id": "167a2f17-a98a-430f-803a-4e1a87c25258",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "4viKc8Ym03FIbkYO",
+          "name": "SUPABASE SYNTIX AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Enviar mensaje chat').item.json.body.data.key.remoteJid }}",
+        "messageText": "=Nuevo documento de cliente subido a tu nube de trabajo y clasificado como: {{ $('Unificar').item.json.text || $('Unificar').item.json.output || 'Documento procesado' }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2880,
+        -160
+      ],
+      "id": "5569fed3-10cd-443f-a5c8-e45fa49d52a0",
+      "name": "Avisar mensaje",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        144,
+        640
+      ],
+      "id": "6fb5b62a-72ae-4dce-9092-a8e0ae421aed",
+      "name": "Enviar correo",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VmMlET5526MjN801",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $binary.data.mimeType }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "55b7ac41-a040-4147-a638-d1bac8d957df"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "imagen"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "37031472-8dfc-4c01-9735-978970df1246",
+                    "leftValue": "={{ $binary.data.mimeType }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pdf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        -160
+      ],
+      "id": "b075e3a3-25a2-49f5-a427-f919f2192279",
+      "name": "Conmutar archivo"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.5-flash"
+        },
+        "text": "Analiza los datos de esta imagen que es un documento y extrae todos sus datos",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        -256
+      ],
+      "id": "bfb6ba4a-ed18-44e1-8466-6615cc88e0b6",
+      "name": "Analizar imagen",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.6-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.6-flash"
+        },
+        "text": "Analiza los datos del documento y extrae todos sus datos",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        -64
+      ],
+      "id": "0f57befe-78bc-476e-8380-244ec9103d7a",
+      "name": "Analizar documento",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1264,
+        -192
+      ],
+      "id": "8e055d46-bcce-4228-873f-04774da35fa1",
+      "name": "Unificar"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2160,
+        -192
+      ],
+      "id": "9686b127-c713-4855-81f3-223dc771f1ef",
+      "name": "Unificar 2"
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Subir archivo').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "15652uj1PqZOqIi4fujKihlhS8WAsfsII",
+          "mode": "list",
+          "cachedResultName": "IDENTIFICATIVO",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/15652uj1PqZOqIi4fujKihlhS8WAsfsII"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1936,
+        -448
+      ],
+      "id": "2f61acd7-0d54-484c-bf0c-f358cff17568",
+      "name": "Identificativo",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Subir archivo 2').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1tJdFVQqEIa9fY6mL8E4FZaQp-s7q04Z9",
+          "mode": "list",
+          "cachedResultName": "PENALES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1tJdFVQqEIa9fY6mL8E4FZaQp-s7q04Z9"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1936,
+        -256
+      ],
+      "id": "6e351f03-648c-4516-aafe-619acc20eb15",
+      "name": "Penales",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Subir archivo 3').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1dxm_0_NcJhEJ7zqc_q_dRiPbYu5xnoKn",
+          "mode": "list",
+          "cachedResultName": "NOMINAS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1dxm_0_NcJhEJ7zqc_q_dRiPbYu5xnoKn"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1936,
+        -64
+      ],
+      "id": "ec9fab06-4ee5-4def-aba0-299bd75dde36",
+      "name": "Nominas",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Subir archivo 4').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1IKSYI0qTngTsGvXpVCRWWeCwxsKy5jUB",
+          "mode": "list",
+          "cachedResultName": "CONTRATOS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1IKSYI0qTngTsGvXpVCRWWeCwxsKy5jUB"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1936,
+        128
+      ],
+      "id": "88e46e44-273c-4907-993b-8aa432352599",
+      "name": "Contratos",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7aef7094-6bb0-421c-af98-56bbe023b280"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "374a2d2d-ac40-4478-a955-237f70e57fec",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d2f2794c-c375-4349-bc18-ac26a5fd7b89",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "91ba5834-d1b4-4277-b91c-08c2efae339f",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1488,
+        -192
+      ],
+      "id": "9310173b-3403-4a9a-adb3-88a32794a508",
+      "name": "Conmutar 2"
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+          "mode": "list",
+          "cachedResultName": "DOCUMENTOS CLIENTES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        -448
+      ],
+      "id": "7ac172f7-5554-45ca-a308-44387df07285",
+      "name": "Subir archivo",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+          "mode": "list",
+          "cachedResultName": "DOCUMENTOS CLIENTES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        -256
+      ],
+      "id": "8a7c02b1-f2f3-4c9b-8ae2-e21261ed7357",
+      "name": "Subir archivo 2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+          "mode": "list",
+          "cachedResultName": "DOCUMENTOS CLIENTES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        -64
+      ],
+      "id": "cf6597ca-b216-4309-8a6d-07e7df9487a5",
+      "name": "Subir archivo 3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+          "mode": "list",
+          "cachedResultName": "DOCUMENTOS CLIENTES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        128
+      ],
+      "id": "31e73e13-19a8-4754-87d9-13e9f1376d09",
+      "name": "Subir archivo 4",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2392,
+        -136
+      ],
+      "id": "a05cb6f9-33a6-4860-916e-bc33cbdcaaae",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2520,
+        -136
+      ],
+      "id": "404dd1bf-3a34-4d46-8017-683d53da649c",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        2600,
+        72
+      ],
+      "id": "07ba3202-b97b-4a45-8463-46963029b8be",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Este código unifica los datos entrantes sin importar si vienen de WhatsApp o Gmail\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  let canal = 'desconocido';\n  let remitente = '';\n  let textoMensaje = '';\n\n  // Identificar si viene de Evolution API (WhatsApp) o de Gmail\n  if (item.json.body && item.json.body.data) {\n    canal = 'whatsapp';\n    remitente = item.json.body.data.key.remoteJid || '';\n    textoMensaje = item.json.body.data.message?.conversation || item.json.body.data.message?.extendedTextMessage?.text || '';\n  } else if (item.json.text || item.json.subject) {\n    canal = 'gmail';\n    remitente = item.json.from || '';\n    textoMensaje = item.json.text || item.json.snippet || '';\n  }\n\n  results.push({\n    json: {\n      canal: canal,\n      remitente: remitente,\n      texto: textoMensaje,\n      procesadoEn: new Date().toISOString()\n    },\n    // Mantiene los archivos adjuntos binarios si existen\n    binary: item.binary\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        -160
+      ],
+      "id": "2571972b-73cc-42ed-9793-29be86700d52",
+      "name": "Estandarizar datos"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        -160
+      ],
+      "id": "e7c5db76-a05f-4ae5-b113-2008e42d383a",
+      "name": "Extract from File1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2416,
+        640
+      ],
+      "id": "362ca57e-87dc-4c46-94fe-d679ac3a43bb",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "4viKc8Ym03FIbkYO",
+          "name": "SUPABASE SYNTIX AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "mantoniomg25480@gmail.com",
+        "subject": "Documento guardado en la nube",
+        "message": "=Hola,  El documento enviado por correo electrónico ya se encuentra guardado en la nube de trabajo (Google Drive) y ha sido clasificado como: {{ $('Unificar1').item.json.text || $('Unificar1').item.json.output || 'Documento procesado' }}.",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        640
+      ],
+      "id": "6de2455f-9caa-47a6-a5e8-fda1204df7ab",
+      "name": "Avisar correo1",
+      "webhookId": "d5a47702-60e7-44fc-b0be-e48ee4bceb90",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "VmMlET5526MjN801",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $binary.data.mimeType }}",
+                    "rightValue": "image",
+                    "operator": {
+                      "type": "string",
+                      "operation": "startsWith"
+                    },
+                    "id": "55b7ac41-a040-4147-a638-d1bac8d957df"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "imagen"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "37031472-8dfc-4c01-9735-978970df1246",
+                    "leftValue": "={{ $binary.data.mimeType }}",
+                    "rightValue": "pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pdf"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        816,
+        640
+      ],
+      "id": "fdece295-b6f0-49dd-b1e1-3a8f4e323bf4",
+      "name": "Conmutar archivo1"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.5-flash"
+        },
+        "text": "Analiza los datos de esta imagen que es un documento y extrae todos sus datos",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        544
+      ],
+      "id": "504e8be3-712c-4f5e-b573-e155c5b1fb69",
+      "name": "Analizar imagen1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.6-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.6-flash"
+        },
+        "text": "Analiza los datos del documento y extrae todos sus datos",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1040,
+        736
+      ],
+      "id": "70d77cc6-305e-4a24-936e-e40ff29f4a22",
+      "name": "Analizar documento1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1264,
+        608
+      ],
+      "id": "5eb7e7fb-4fe2-487c-bd5b-98b570a23f51",
+      "name": "Unificar1"
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2160,
+        608
+      ],
+      "id": "cfd441c0-147c-4de7-8152-2ddd0f89914b",
+      "name": "Unificar "
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Subir archivo1').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "15652uj1PqZOqIi4fujKihlhS8WAsfsII",
+          "mode": "list",
+          "cachedResultName": "IDENTIFICATIVO",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/15652uj1PqZOqIi4fujKihlhS8WAsfsII"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1936,
+        352
+      ],
+      "id": "d01a492e-d7a7-494f-817e-05f5e17bc915",
+      "name": "Identificativo1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Subir archivo ').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1tJdFVQqEIa9fY6mL8E4FZaQp-s7q04Z9",
+          "mode": "list",
+          "cachedResultName": "PENALES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1tJdFVQqEIa9fY6mL8E4FZaQp-s7q04Z9"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1936,
+        544
+      ],
+      "id": "1191324a-4b0c-4e84-813a-26167ac84fe3",
+      "name": "Penales1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Subir archivo 5').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1dxm_0_NcJhEJ7zqc_q_dRiPbYu5xnoKn",
+          "mode": "list",
+          "cachedResultName": "NOMINAS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1dxm_0_NcJhEJ7zqc_q_dRiPbYu5xnoKn"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1936,
+        736
+      ],
+      "id": "a16753ae-bf29-4127-a0ce-95371b3f3321",
+      "name": "Nominas1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "move",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Subir archivo 6').item.json.id }}",
+          "mode": "id"
+        },
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1IKSYI0qTngTsGvXpVCRWWeCwxsKy5jUB",
+          "mode": "list",
+          "cachedResultName": "CONTRATOS",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1IKSYI0qTngTsGvXpVCRWWeCwxsKy5jUB"
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1936,
+        928
+      ],
+      "id": "7577c3cf-808e-4ceb-9020-9cc55d318aae",
+      "name": "Contratos1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "7aef7094-6bb0-421c-af98-56bbe023b280"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "374a2d2d-ac40-4478-a955-237f70e57fec",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d2f2794c-c375-4349-bc18-ac26a5fd7b89",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "91ba5834-d1b4-4277-b91c-08c2efae339f",
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1488,
+        608
+      ],
+      "id": "b2235597-4881-4e79-ad6e-bd647877a354",
+      "name": "Conmutar "
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+          "mode": "list",
+          "cachedResultName": "DOCUMENTOS CLIENTES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        352
+      ],
+      "id": "b0e91423-9c52-4907-89c1-cd590e81a586",
+      "name": "Subir archivo1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+          "mode": "list",
+          "cachedResultName": "DOCUMENTOS CLIENTES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        544
+      ],
+      "id": "6e2ec437-eb21-4aa7-b1d1-2965940955c2",
+      "name": "Subir archivo ",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+          "mode": "list",
+          "cachedResultName": "DOCUMENTOS CLIENTES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        736
+      ],
+      "id": "6f81d12d-b958-419b-b20d-c9d19af88bcf",
+      "name": "Subir archivo 5",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+          "mode": "list",
+          "cachedResultName": "DOCUMENTOS CLIENTES",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1712,
+        928
+      ],
+      "id": "6e4dbd8e-69b1-4d1d-b1e3-53ed98f4f460",
+      "name": "Subir archivo 6",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2392,
+        872
+      ],
+      "id": "211c1bec-a771-4405-b485-f7e9d766c346",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2520,
+        872
+      ],
+      "id": "54dd1f5b-72ae-4d1d-ba9e-460287f298d5",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        2600,
+        1080
+      ],
+      "id": "adb55a2d-0ccc-49b9-8f67-82e52b4e5e09",
+      "name": "Recursive Character Text Splitter1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Este código unifica los datos entrantes sin importar si vienen de WhatsApp o Gmail\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  let canal = 'desconocido';\n  let remitente = '';\n  let textoMensaje = '';\n\n  // Identificar si viene de Evolution API (WhatsApp) o de Gmail\n  if (item.json.body && item.json.body.data) {\n    canal = 'whatsapp';\n    remitente = item.json.body.data.key.remoteJid || '';\n    textoMensaje = item.json.body.data.message?.conversation || item.json.body.data.message?.extendedTextMessage?.text || '';\n  } else if (item.json.text || item.json.subject) {\n    canal = 'gmail';\n    remitente = item.json.from || '';\n    textoMensaje = item.json.text || item.json.snippet || '';\n  }\n\n  results.push({\n    json: {\n      canal: canal,\n      remitente: remitente,\n      texto: textoMensaje,\n      procesadoEn: new Date().toISOString()\n    },\n    // Mantiene los archivos adjuntos binarios si existen\n    binary: item.binary\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        640
+      ],
+      "id": "7fa516b1-86ef-431f-b270-25c6752c7d7d",
+      "name": "Estandarizar datos1"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        592,
+        640
+      ],
+      "id": "eda6c6ea-59e3-4683-a967-a2a531c0ce0b",
+      "name": "Extract from File"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "nxC0gqZZhZTQWAjg",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-10-09T18:17:00.422Z",
+      "updatedAt": "2026-10-09T18:17:00.422Z"
+    }
+  ],
+  "staticData": {
+    "node:Enviar correo": {
+      "Enviar correo": {
+        "lastTimeChecked": 1793805508,
+        "pendingMessageIds": [],
+        "possibleDuplicates": [
+          "1a1a723df06ab417"
+        ]
+      }
+    }
+  },
+  "tags": [],
+  "triggerCount": 2,
+  "updatedAt": "2026-10-29T19:54:03.400Z",
+  "versionId": "1f5b81ed-6a65-474d-8ae0-f6249ba47752"
+}
