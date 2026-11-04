@@ -1,0 +1,3438 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "771b2d58-f6e1-41a2-b6b3-fd4119fc14ff",
+    "workflowId": "UiL4017pXsdJHDwB",
+    "nodes": [
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "id": "9475221f-1863-46a5-9b37-46ec42cf09e0",
+        "name": "Agregar1",
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          1728,
+          1024
+        ]
+      },
+      {
+        "parameters": {
+          "fieldsToSummarize": {
+            "values": [
+              {
+                "aggregation": "concatenate",
+                "field": "data"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "7f99b4ce-5d88-4e8a-bc5f-4f40c233d7d6",
+        "name": "Resumir1",
+        "type": "n8n-nodes-base.summarize",
+        "typeVersion": 1,
+        "position": [
+          1920,
+          1024
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "pdf",
+          "options": {}
+        },
+        "id": "536f61d7-4a1a-47dd-ac13-9ba45af10fa9",
+        "name": "Extraer Texto de PDF",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1520,
+          672
+        ],
+        "alwaysOutputData": false
+      },
+      {
+        "parameters": {
+          "operation": "xlsx",
+          "options": {}
+        },
+        "id": "30da7998-727e-4790-ab15-dd5587fb0762",
+        "name": "Extraer de Excel",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1520,
+          1024
+        ]
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+                "name": "file_id",
+                "value": "={{ $('Archivo Actualizado').item.json.id }}",
+                "type": "string"
+              },
+              {
+                "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+                "name": "file_type",
+                "value": "={{ $('Archivo Actualizado').item.json.mimeType }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "0a075d26-f613-433a-924e-fc93720818b5",
+        "name": "Establecer ID de Archivo",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          160,
+          1776
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "tableId": "documents",
+          "filterType": "string",
+          "filterString": "=metadata->>fileName=like.*{{ $('Archivo Actualizado').item.json.name }}"
+        },
+        "id": "c96a4d90-10db-4a41-931c-5b9a1447b066",
+        "name": "Eliminar Filas de Documentos Antiguos",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          544,
+          1872
+        ],
+        "alwaysOutputData": true,
+        "credentials": {
+          "supabaseApi": {
+            "id": "4viKc8Ym03FIbkYO",
+            "name": "SUPABASE SYNTIX AI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Establecer ID de Archivo').item.json.file_id }}",
+            "mode": "id"
+          },
+          "options": {
+            "googleFileConversion": {
+              "conversion": {
+                "docsToFormat": "text/plain"
+              }
+            }
+          }
+        },
+        "id": "8c6b2b4e-eda5-476b-919e-2518add6f069",
+        "name": "Descargar Archivo",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1872,
+          1936
+        ],
+        "executeOnce": true,
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://www.googleapis.com/drive/v3/files/{{ $('Establecer ID de Archivo1').item.json.file_id }}/copy",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "name",
+                "value": "={{ $('Establecer ID de Archivo1').item.json.name }}"
+              },
+              {
+                "name": "mimeType",
+                "value": "application/vnd.google-apps.document"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "f370a9ab-29ad-4137-9c7d-054b1bf5920c",
+        "name": "Convertir a Google Doc1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          1520,
+          1216
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 2
+            },
+            "conditions": [
+              {
+                "id": "928b5cae-77cd-48a2-81ef-2f76dc441b0a",
+                "leftValue": "={{ $('Archivo Actualizado').item.json.mimeType }}",
+                "rightValue": "application/vnd.google-apps.document",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              },
+              {
+                "id": "6368b5ad-32b0-491d-a27d-5cc3ad5c2a11",
+                "leftValue": "={{ ((Date.now() - Date.parse($('Archivo Actualizado').item.json.createdTime)) / 1000) }}",
+                "rightValue": 60,
+                "operator": {
+                  "type": "number",
+                  "operation": "lt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          320,
+          1776
+        ],
+        "id": "5363056b-7e22-4b84-bca1-4c39a144ee81",
+        "name": "Si",
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "operation": "deleteFile",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Establecer ID de Archivo1').item.json.file_id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1728,
+          1216
+        ],
+        "id": "64af0d3e-e48e-43ef-b73b-6667cf00e75a",
+        "name": "Eliminar Archivo",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+                "name": "file_id",
+                "value": "={{ $('Archivo Creado').item.json.id }}",
+                "type": "string"
+              },
+              {
+                "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+                "name": "file_type",
+                "value": "={{ $('Archivo Creado').item.json.mimeType }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "51e8f31c-4471-4bff-9ff7-caaaf3403bf8",
+        "name": "Establecer ID de Archivo1",
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          224,
+          976
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "download",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Establecer ID de Archivo1').item.json.file_id }}",
+            "mode": "id"
+          },
+          "options": {
+            "googleFileConversion": {
+              "conversion": {
+                "docsToFormat": "text/plain"
+              }
+            }
+          }
+        },
+        "id": "31562edd-31ba-40b9-9a94-3a6542e2798a",
+        "name": "Descargar Archivo1",
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          656,
+          1136
+        ],
+        "executeOnce": false,
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "aggregate": "aggregateAllItemData",
+          "options": {}
+        },
+        "id": "0f150a3a-fdfa-420e-bf9b-4f0e8693327a",
+        "name": "Agregar",
+        "type": "n8n-nodes-base.aggregate",
+        "typeVersion": 1,
+        "position": [
+          2624,
+          1872
+        ]
+      },
+      {
+        "parameters": {
+          "fieldsToSummarize": {
+            "values": [
+              {
+                "aggregation": "concatenate",
+                "field": "data"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "f42d1385-a33e-4d33-afd8-486dfca83b57",
+        "name": "Resumir",
+        "type": "n8n-nodes-base.summarize",
+        "typeVersion": 1,
+        "position": [
+          2832,
+          1872
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "pdf",
+          "options": {}
+        },
+        "id": "6a2eb520-39db-4736-9f9c-9cdffd1fed16",
+        "name": "Extraer Texto de PDF1",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          2432,
+          1536
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "xlsx",
+          "options": {}
+        },
+        "id": "5cc6fe89-cda6-4c27-ae3b-74e2ee7046af",
+        "name": "Extraer de Excel1",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          2432,
+          1872
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://www.googleapis.com/drive/v3/files/{{ $('Establecer ID de Archivo').item.json.file_id }}/copy",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "googleDriveOAuth2Api",
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "name",
+                "value": "={{ $('Establecer ID de Archivo').item.json.name }}"
+              },
+              {
+                "name": "mimeType",
+                "value": "application/vnd.google-apps.document"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "ca27026f-bb4f-476d-8587-67f85714b803",
+        "name": "Convertir a Google Doc2",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          2432,
+          2080
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "deleteFile",
+          "fileId": {
+            "__rl": true,
+            "value": "={{ $('Establecer ID de Archivo').item.json.file_id }}",
+            "mode": "id"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          2624,
+          2080
+        ],
+        "id": "874c4ae3-96a0-481d-b2d9-b4f6a74ce445",
+        "name": "Eliminar Archivo1",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "chunkSize": 2000,
+          "chunkOverlap": 200,
+          "options": {
+            "splitCode": "markdown"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+        "typeVersion": 1,
+        "position": [
+          2384,
+          1088
+        ],
+        "id": "c181fa4a-d978-4028-803d-516d53534137",
+        "name": "Divisor de Texto Recursivo por Caracteres"
+      },
+      {
+        "parameters": {
+          "chunkSize": 2000,
+          "chunkOverlap": 200,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+        "typeVersion": 1,
+        "position": [
+          3408,
+          2000
+        ],
+        "id": "12b74597-7c89-4008-bfa1-3fe8fec197b4",
+        "name": "Divisor de Texto Recursivo por Caracteres1"
+      },
+      {
+        "parameters": {
+          "content": "# Disparador de Observación (Drive) - Archivos Creados\n## Archivos creados en una carpeta específica -> Comprobar tipo de archivo y hacer conversión si es necesario -> Extraer el texto -> Añadir al Almacén de Vectores\nDrive/Backoffice/Backoffice_Contracts",
+          "height": 740,
+          "width": 2660,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -64,
+          624
+        ],
+        "typeVersion": 1,
+        "id": "3e3f1103-3b01-45ef-851c-f34bc224449f",
+        "name": "Nota Adhesiva1"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          464,
+          976
+        ],
+        "id": "fc3f9cbc-957a-494b-9e32-25df685b5be4",
+        "name": "Iterar Sobre Elementos"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          1680,
+          1776
+        ],
+        "id": "67e3e8c4-ab42-4fad-8ba7-bb95c4448644",
+        "name": "Iterar Sobre Elementos1"
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH",
+            "mode": "list",
+            "cachedResultName": "RAG AIREMARINERO",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH"
+          },
+          "event": "fileCreated",
+          "options": {}
+        },
+        "id": "e87b93a5-a342-4f44-9fa4-c110e3ec59e6",
+        "name": "Archivo Creado",
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          0,
+          976
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH",
+            "mode": "list",
+            "cachedResultName": "RAG AIREMARINERO",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH"
+          },
+          "event": "fileUpdated",
+          "options": {}
+        },
+        "id": "c41cfe38-a51e-4e1d-98cb-4d6594e833be",
+        "name": "Archivo Actualizado",
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          -16,
+          1776
+        ],
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "tableName": {
+            "__rl": true,
+            "value": "rpc/match_kb_restaurante",
+            "mode": "list",
+            "cachedResultName": "rpc/match_kb_restaurante"
+          },
+          "options": {
+            "queryName": "match_documents"
+          }
+        },
+        "id": "bb15d742-f503-4578-a25e-0966fa71e1d0",
+        "name": "Insertar en Almacén de Vectores de Supabase",
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1,
+        "position": [
+          3104,
+          1536
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "4viKc8Ym03FIbkYO",
+            "name": "SUPABASE SYNTIX AI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "options": {}
+        },
+        "id": "c40ff9bf-34c6-4b6f-b7b7-9fca7bc7f7b7",
+        "name": "Extraer de Archivo de Texto",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          1520,
+          848
+        ],
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "f593b378-ad57-4b6d-a882-fd2d9f73775c"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PDF"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/vnd.google-apps.document",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Archivo de Texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "2ae7faa7-a936-4621-a680-60c512163034",
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Excel"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "7ddfa924-1c26-4ee3-9890-5c9d2b96717a",
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Excel"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "f53caf8b-7a8f-4d1e-98f4-deaf0e0171f0",
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/msword",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Word"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "cd9ca627-d00d-4c30-903a-41f603c8e36f",
+                      "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                      "rightValue": "application/vnd.ms-word",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Word2"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "none"
+          }
+        },
+        "id": "bf55c96e-795d-4dea-8da5-0ed8f6a4d4f5",
+        "name": "Conmutador",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          2128,
+          1760
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "text",
+          "options": {}
+        },
+        "id": "6ba77dde-7eeb-4f8b-a8da-a6468a8911d8",
+        "name": "Extraer de Archivo de Texto1",
+        "type": "n8n-nodes-base.extractFromFile",
+        "typeVersion": 1,
+        "position": [
+          2432,
+          1696
+        ],
+        "alwaysOutputData": true
+      },
+      {
+        "parameters": {},
+        "id": "d22af23f-08c3-4167-bfc5-75b99e8b6c13",
+        "name": "Límite",
+        "type": "n8n-nodes-base.limit",
+        "typeVersion": 1,
+        "position": [
+          752,
+          1776
+        ]
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                      "rightValue": "application/pdf",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "1e2a0e52-3024-47e8-b065-debdd12bd3aa"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "PDF"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
+                      "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                      "rightValue": "application/vnd.google-apps.document",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Archivo de Texto"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "2ae7faa7-a936-4621-a680-60c512163034",
+                      "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                      "rightValue": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Excel"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "7ddfa924-1c26-4ee3-9890-5c9d2b96717a",
+                      "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                      "rightValue": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Documento de Windows(1)"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "f53caf8b-7a8f-4d1e-98f4-deaf0e0171f0",
+                      "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                      "rightValue": "application/msword",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Documento de Windows(2)"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 1
+                  },
+                  "conditions": [
+                    {
+                      "id": "cd9ca627-d00d-4c30-903a-41f603c8e36f",
+                      "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                      "rightValue": "application/vnd.ms-word",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Documento de Windows(3)"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "none"
+          }
+        },
+        "id": "9375e555-88b0-45bf-8cad-31f52ac7ac82",
+        "name": "Conmutador2",
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3,
+        "position": [
+          944,
+          896
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "tableName": {
+            "__rl": true,
+            "value": "rpc/match_kb_restaurante",
+            "mode": "list",
+            "cachedResultName": "rpc/match_kb_restaurante"
+          },
+          "options": {
+            "queryName": "match_documents"
+          }
+        },
+        "id": "d42d86f7-24bc-41a7-b774-fea43cb2816a",
+        "name": "Insertar en Almacén de Vectores de Supabase1",
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1,
+        "position": [
+          2128,
+          704
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "4viKc8Ym03FIbkYO",
+            "name": "SUPABASE SYNTIX AI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonMode": "expressionData",
+          "jsonData": "={{ $json.data || $json.text || $json.concatenated_data }}",
+          "options": {
+            "metadata": {
+              "metadataValues": [
+                {
+                  "name": "fileName",
+                  "value": "={{ $('Archivo Creado').item.json.name }}"
+                },
+                {
+                  "name": "date",
+                  "value": "={{$now}}"
+                }
+              ]
+            }
+          }
+        },
+        "id": "ae1519d0-88e8-43f2-a764-a24f13990923",
+        "name": "Default Data Loader2",
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1,
+        "position": [
+          2256,
+          928
+        ]
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          528,
+          1680
+        ],
+        "id": "755a6f9e-b41a-42dc-a232-ad96a6ae8d23",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH",
+            "mode": "list",
+            "cachedResultName": "RAG AIREMARINERO",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH"
+          },
+          "event": "fileCreated",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          48,
+          2464
+        ],
+        "id": "8abb8f4e-3afe-4678-8caf-4d8f8dab20d3",
+        "name": "Google Drive Trigger3",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "delete",
+          "tableId": "documents",
+          "filterType": "string",
+          "filterString": "=metadata->>fileName=like.*{{ $json.name }}"
+        },
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          352,
+          2464
+        ],
+        "id": "d3fb3c17-4eae-47fd-87c7-8366003bc2df",
+        "name": "Delete a row2",
+        "credentials": {
+          "supabaseApi": {
+            "id": "4viKc8Ym03FIbkYO",
+            "name": "SUPABASE SYNTIX AI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "# Workflow 3 (Eliminar Documento)",
+          "height": 384,
+          "width": 880,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -64,
+          2304
+        ],
+        "id": "6ea2c18a-46ae-4412-b58d-ed61556f6395",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "jsonMode": "expressionData",
+          "jsonData": "={{ $json.data || $json.text || $json.concatenated_data }}",
+          "options": {
+            "metadata": {
+              "metadataValues": [
+                {
+                  "name": "fileName",
+                  "value": "={{ $('Archivo Actualizado').item.json.name }}"
+                },
+                {
+                  "name": "date",
+                  "value": "={{$now}}"
+                }
+              ]
+            }
+          }
+        },
+        "id": "6608ef42-b786-4ac4-8b44-8a82d99bad2c",
+        "name": "Default Data Loader3",
+        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+        "typeVersion": 1,
+        "position": [
+          3296,
+          1824
+        ]
+      },
+      {
+        "parameters": {
+          "content": "# Disparador de Observación (Drive) - Archivos Actualizados\n## Archivos actualizados en una carpeta específica -> Comprobar tipo de archivo y hacer conversión si es necesario -> Extraer el texto -> Añadir al Almacén de Vectores\nDrive/Backoffice/Backoffice_Contracts",
+          "height": 888.3491772897637,
+          "width": 3588,
+          "color": 5
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -64,
+          1392
+        ],
+        "typeVersion": 1,
+        "id": "03393add-14fe-4199-87f5-74d4b69f8359",
+        "name": "Nota Adhesiva3"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          2112,
+          992
+        ],
+        "id": "faacd3bb-533f-454d-ae9f-5dee35886309",
+        "name": "Embeddings Google Gemini",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3.5-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3.5-flash"
+          },
+          "messages": {
+            "values": [
+              {
+                "content": "Tu objetivo es tomar el número de versión entrante y sumarle 1.\n\n[Ejemplos]\nEntrada: v1\nSalida: v2\n\nEntrada: v2\nSalida: v3\n\nEntrada: v4\nSalida: v5\n\nEl campo de salida siempre debe llamarse \"version\"",
+                "role": "model"
+              },
+              {
+                "content": "=número de versión entrante: {{ $json.id }}"
+              }
+            ]
+          },
+          "jsonOutput": true,
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          1120,
+          1776
+        ],
+        "id": "8e60a707-105f-414b-9ec2-79603f51d24f",
+        "name": "Message a model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          3088,
+          1792
+        ],
+        "id": "1ce7a9c8-5918-4717-a9d1-dd9f77d5a629",
+        "name": "Embeddings Google Gemini1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Agregar1": {
+        "main": [
+          [
+            {
+              "node": "Resumir1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer de Excel": {
+        "main": [
+          [
+            {
+              "node": "Agregar1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Establecer ID de Archivo": {
+        "main": [
+          [
+            {
+              "node": "Si",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Eliminar Filas de Documentos Antiguos": {
+        "main": [
+          [
+            {
+              "node": "Límite",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Descargar Archivo": {
+        "main": [
+          [
+            {
+              "node": "Iterar Sobre Elementos1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convertir a Google Doc1": {
+        "main": [
+          [
+            {
+              "node": "Eliminar Archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Si": {
+        "main": [
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Eliminar Filas de Documentos Antiguos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Establecer ID de Archivo1": {
+        "main": [
+          [
+            {
+              "node": "Iterar Sobre Elementos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Descargar Archivo1": {
+        "main": [
+          [
+            {
+              "node": "Iterar Sobre Elementos",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Agregar": {
+        "main": [
+          [
+            {
+              "node": "Resumir",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer de Excel1": {
+        "main": [
+          [
+            {
+              "node": "Agregar",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Convertir a Google Doc2": {
+        "main": [
+          [
+            {
+              "node": "Eliminar Archivo1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer Texto de PDF": {
+        "main": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Resumir1": {
+        "main": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Resumir": {
+        "main": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Divisor de Texto Recursivo por Caracteres": {
+        "ai_textSplitter": [
+          [
+            {
+              "node": "Default Data Loader2",
+              "type": "ai_textSplitter",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Divisor de Texto Recursivo por Caracteres1": {
+        "ai_textSplitter": [
+          [
+            {
+              "node": "Default Data Loader3",
+              "type": "ai_textSplitter",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer Texto de PDF1": {
+        "main": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Iterar Sobre Elementos": {
+        "main": [
+          [
+            {
+              "node": "Conmutador2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Descargar Archivo1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Iterar Sobre Elementos1": {
+        "main": [
+          [
+            {
+              "node": "Conmutador",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Descargar Archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Archivo Creado": {
+        "main": [
+          [
+            {
+              "node": "Establecer ID de Archivo1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Archivo Actualizado": {
+        "main": [
+          [
+            {
+              "node": "Establecer ID de Archivo",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer de Archivo de Texto": {
+        "main": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutador": {
+        "main": [
+          [
+            {
+              "node": "Extraer Texto de PDF1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extraer de Archivo de Texto1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extraer de Excel1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convertir a Google Doc2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convertir a Google Doc2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convertir a Google Doc2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extraer de Archivo de Texto1": {
+        "main": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Límite": {
+        "main": [
+          [
+            {
+              "node": "Message a model",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutador2": {
+        "main": [
+          [
+            {
+              "node": "Extraer Texto de PDF",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extraer de Archivo de Texto",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extraer de Excel",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convertir a Google Doc1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convertir a Google Doc1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Convertir a Google Doc1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Default Data Loader2": {
+        "ai_document": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase1",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Drive Trigger3": {
+        "main": [
+          [
+            {
+              "node": "Delete a row2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Default Data Loader3": {
+        "ai_document": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase",
+              "type": "ai_document",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase1",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Message a model": {
+        "main": [
+          [
+            {
+              "node": "Iterar Sobre Elementos1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini1": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Insertar en Almacén de Vectores de Supabase",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Marco Antonio Martínez Guerrero",
+    "name": "Version 771b2d58",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-13T09:51:32.250Z",
+    "updatedAt": "2026-10-13T09:51:46.000Z"
+  },
+  "activeVersionId": "771b2d58-f6e1-41a2-b6b3-fd4119fc14ff",
+  "connections": {
+    "Agregar1": {
+      "main": [
+        [
+          {
+            "node": "Resumir1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer de Excel": {
+      "main": [
+        [
+          {
+            "node": "Agregar1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Establecer ID de Archivo": {
+      "main": [
+        [
+          {
+            "node": "Si",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Eliminar Filas de Documentos Antiguos": {
+      "main": [
+        [
+          {
+            "node": "Límite",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Archivo": {
+      "main": [
+        [
+          {
+            "node": "Iterar Sobre Elementos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convertir a Google Doc1": {
+      "main": [
+        [
+          {
+            "node": "Eliminar Archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Si": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Eliminar Filas de Documentos Antiguos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Establecer ID de Archivo1": {
+      "main": [
+        [
+          {
+            "node": "Iterar Sobre Elementos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Descargar Archivo1": {
+      "main": [
+        [
+          {
+            "node": "Iterar Sobre Elementos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agregar": {
+      "main": [
+        [
+          {
+            "node": "Resumir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer de Excel1": {
+      "main": [
+        [
+          {
+            "node": "Agregar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convertir a Google Doc2": {
+      "main": [
+        [
+          {
+            "node": "Eliminar Archivo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Texto de PDF": {
+      "main": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resumir1": {
+      "main": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resumir": {
+      "main": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Divisor de Texto Recursivo por Caracteres": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader2",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Divisor de Texto Recursivo por Caracteres1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader3",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer Texto de PDF1": {
+      "main": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Iterar Sobre Elementos": {
+      "main": [
+        [
+          {
+            "node": "Conmutador2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Descargar Archivo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Iterar Sobre Elementos1": {
+      "main": [
+        [
+          {
+            "node": "Conmutador",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Descargar Archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Archivo Creado": {
+      "main": [
+        [
+          {
+            "node": "Establecer ID de Archivo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Archivo Actualizado": {
+      "main": [
+        [
+          {
+            "node": "Establecer ID de Archivo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer de Archivo de Texto": {
+      "main": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutador": {
+      "main": [
+        [
+          {
+            "node": "Extraer Texto de PDF1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extraer de Archivo de Texto1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extraer de Excel1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convertir a Google Doc2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convertir a Google Doc2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convertir a Google Doc2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer de Archivo de Texto1": {
+      "main": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Límite": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutador2": {
+      "main": [
+        [
+          {
+            "node": "Extraer Texto de PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extraer de Archivo de Texto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extraer de Excel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convertir a Google Doc1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convertir a Google Doc1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Convertir a Google Doc1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader2": {
+      "ai_document": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Drive Trigger3": {
+      "main": [
+        [
+          {
+            "node": "Delete a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader3": {
+      "ai_document": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Iterar Sobre Elementos1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insertar en Almacén de Vectores de Supabase",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-18T10:07:04.812Z",
+  "id": "UiL4017pXsdJHDwB",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Sistema RAG 2.0",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "9475221f-1863-46a5-9b37-46ec42cf09e0",
+      "name": "Agregar1",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1728,
+        1024
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7f99b4ce-5d88-4e8a-bc5f-4f40c233d7d6",
+      "name": "Resumir1",
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        1024
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "536f61d7-4a1a-47dd-ac13-9ba45af10fa9",
+      "name": "Extraer Texto de PDF",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        672
+      ],
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "id": "30da7998-727e-4790-ab15-dd5587fb0762",
+      "name": "Extraer de Excel",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        1024
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+              "name": "file_id",
+              "value": "={{ $('Archivo Actualizado').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+              "name": "file_type",
+              "value": "={{ $('Archivo Actualizado').item.json.mimeType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0a075d26-f613-433a-924e-fc93720818b5",
+      "name": "Establecer ID de Archivo",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        160,
+        1776
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>fileName=like.*{{ $('Archivo Actualizado').item.json.name }}"
+      },
+      "id": "c96a4d90-10db-4a41-931c-5b9a1447b066",
+      "name": "Eliminar Filas de Documentos Antiguos",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        544,
+        1872
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "4viKc8Ym03FIbkYO",
+          "name": "SUPABASE SYNTIX AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Establecer ID de Archivo').item.json.file_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "8c6b2b4e-eda5-476b-919e-2518add6f069",
+      "name": "Descargar Archivo",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1872,
+        1936
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/drive/v3/files/{{ $('Establecer ID de Archivo1').item.json.file_id }}/copy",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $('Establecer ID de Archivo1').item.json.name }}"
+            },
+            {
+              "name": "mimeType",
+              "value": "application/vnd.google-apps.document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f370a9ab-29ad-4137-9c7d-054b1bf5920c",
+      "name": "Convertir a Google Doc1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        1520,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "928b5cae-77cd-48a2-81ef-2f76dc441b0a",
+              "leftValue": "={{ $('Archivo Actualizado').item.json.mimeType }}",
+              "rightValue": "application/vnd.google-apps.document",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "6368b5ad-32b0-491d-a27d-5cc3ad5c2a11",
+              "leftValue": "={{ ((Date.now() - Date.parse($('Archivo Actualizado').item.json.createdTime)) / 1000) }}",
+              "rightValue": 60,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        1776
+      ],
+      "id": "5363056b-7e22-4b84-bca1-4c39a144ee81",
+      "name": "Si",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Establecer ID de Archivo1').item.json.file_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1728,
+        1216
+      ],
+      "id": "64af0d3e-e48e-43ef-b73b-6667cf00e75a",
+      "name": "Eliminar Archivo",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "10646eae-ae46-4327-a4dc-9987c2d76173",
+              "name": "file_id",
+              "value": "={{ $('Archivo Creado').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "f4536df5-d0b1-4392-bf17-b8137fb31a44",
+              "name": "file_type",
+              "value": "={{ $('Archivo Creado').item.json.mimeType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "51e8f31c-4471-4bff-9ff7-caaaf3403bf8",
+      "name": "Establecer ID de Archivo1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Establecer ID de Archivo1').item.json.file_id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "text/plain"
+            }
+          }
+        }
+      },
+      "id": "31562edd-31ba-40b9-9a94-3a6542e2798a",
+      "name": "Descargar Archivo1",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        656,
+        1136
+      ],
+      "executeOnce": false,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "id": "0f150a3a-fdfa-420e-bf9b-4f0e8693327a",
+      "name": "Agregar",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        2624,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToSummarize": {
+          "values": [
+            {
+              "aggregation": "concatenate",
+              "field": "data"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f42d1385-a33e-4d33-afd8-486dfca83b57",
+      "name": "Resumir",
+      "type": "n8n-nodes-base.summarize",
+      "typeVersion": 1,
+      "position": [
+        2832,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "6a2eb520-39db-4736-9f9c-9cdffd1fed16",
+      "name": "Extraer Texto de PDF1",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        1536
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "id": "5cc6fe89-cda6-4c27-ae3b-74e2ee7046af",
+      "name": "Extraer de Excel1",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://www.googleapis.com/drive/v3/files/{{ $('Establecer ID de Archivo').item.json.file_id }}/copy",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $('Establecer ID de Archivo').item.json.name }}"
+            },
+            {
+              "name": "mimeType",
+              "value": "application/vnd.google-apps.document"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ca27026f-bb4f-476d-8587-67f85714b803",
+      "name": "Convertir a Google Doc2",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        2432,
+        2080
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteFile",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('Establecer ID de Archivo').item.json.file_id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2624,
+        2080
+      ],
+      "id": "874c4ae3-96a0-481d-b2d9-b4f6a74ce445",
+      "name": "Eliminar Archivo1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chunkSize": 2000,
+        "chunkOverlap": 200,
+        "options": {
+          "splitCode": "markdown"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        2384,
+        1088
+      ],
+      "id": "c181fa4a-d978-4028-803d-516d53534137",
+      "name": "Divisor de Texto Recursivo por Caracteres"
+    },
+    {
+      "parameters": {
+        "chunkSize": 2000,
+        "chunkOverlap": 200,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        3408,
+        2000
+      ],
+      "id": "12b74597-7c89-4008-bfa1-3fe8fec197b4",
+      "name": "Divisor de Texto Recursivo por Caracteres1"
+    },
+    {
+      "parameters": {
+        "content": "# Disparador de Observación (Drive) - Archivos Creados\n## Archivos creados en una carpeta específica -> Comprobar tipo de archivo y hacer conversión si es necesario -> Extraer el texto -> Añadir al Almacén de Vectores\nDrive/Backoffice/Backoffice_Contracts",
+        "height": 740,
+        "width": 2660,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        624
+      ],
+      "typeVersion": 1,
+      "id": "3e3f1103-3b01-45ef-851c-f34bc224449f",
+      "name": "Nota Adhesiva1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        464,
+        976
+      ],
+      "id": "fc3f9cbc-957a-494b-9e32-25df685b5be4",
+      "name": "Iterar Sobre Elementos"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        1776
+      ],
+      "id": "67e3e8c4-ab42-4fad-8ba7-bb95c4448644",
+      "name": "Iterar Sobre Elementos1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH",
+          "mode": "list",
+          "cachedResultName": "RAG AIREMARINERO",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "id": "e87b93a5-a342-4f44-9fa4-c110e3ec59e6",
+      "name": "Archivo Creado",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        976
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH",
+          "mode": "list",
+          "cachedResultName": "RAG AIREMARINERO",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "id": "c41cfe38-a51e-4e1d-98cb-4d6594e833be",
+      "name": "Archivo Actualizado",
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        1776
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "rpc/match_kb_restaurante",
+          "mode": "list",
+          "cachedResultName": "rpc/match_kb_restaurante"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "bb15d742-f503-4578-a25e-0966fa71e1d0",
+      "name": "Insertar en Almacén de Vectores de Supabase",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        3104,
+        1536
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "4viKc8Ym03FIbkYO",
+          "name": "SUPABASE SYNTIX AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "c40ff9bf-34c6-4b6f-b7b7-9fca7bc7f7b7",
+      "name": "Extraer de Archivo de Texto",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        1520,
+        848
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f593b378-ad57-4b6d-a882-fd2d9f73775c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/vnd.google-apps.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Archivo de Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "2ae7faa7-a936-4621-a680-60c512163034",
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Excel"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "7ddfa924-1c26-4ee3-9890-5c9d2b96717a",
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Excel"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "f53caf8b-7a8f-4d1e-98f4-deaf0e0171f0",
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/msword",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Word"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "cd9ca627-d00d-4c30-903a-41f603c8e36f",
+                    "leftValue": "={{ $('Establecer ID de Archivo').item.json.file_type }}",
+                    "rightValue": "application/vnd.ms-word",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Word2"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "id": "bf55c96e-795d-4dea-8da5-0ed8f6a4d4f5",
+      "name": "Conmutador",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2128,
+        1760
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "id": "6ba77dde-7eeb-4f8b-a8da-a6468a8911d8",
+      "name": "Extraer de Archivo de Texto1",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        2432,
+        1696
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {},
+      "id": "d22af23f-08c3-4167-bfc5-75b99e8b6c13",
+      "name": "Límite",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        752,
+        1776
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                    "rightValue": "application/pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "1e2a0e52-3024-47e8-b065-debdd12bd3aa"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "fc193b06-363b-4699-a97d-e5a850138b0e",
+                    "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                    "rightValue": "application/vnd.google-apps.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Archivo de Texto"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "2ae7faa7-a936-4621-a680-60c512163034",
+                    "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Excel"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "7ddfa924-1c26-4ee3-9890-5c9d2b96717a",
+                    "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                    "rightValue": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Documento de Windows(1)"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "f53caf8b-7a8f-4d1e-98f4-deaf0e0171f0",
+                    "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                    "rightValue": "application/msword",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Documento de Windows(2)"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 1
+                },
+                "conditions": [
+                  {
+                    "id": "cd9ca627-d00d-4c30-903a-41f603c8e36f",
+                    "leftValue": "={{ $('Establecer ID de Archivo1').item.json.file_type }}",
+                    "rightValue": "application/vnd.ms-word",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Documento de Windows(3)"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "none"
+        }
+      },
+      "id": "9375e555-88b0-45bf-8cad-31f52ac7ac82",
+      "name": "Conmutador2",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        944,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "rpc/match_kb_restaurante",
+          "mode": "list",
+          "cachedResultName": "rpc/match_kb_restaurante"
+        },
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "id": "d42d86f7-24bc-41a7-b774-fea43cb2816a",
+      "name": "Insertar en Almacén de Vectores de Supabase1",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        2128,
+        704
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "4viKc8Ym03FIbkYO",
+          "name": "SUPABASE SYNTIX AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data || $json.text || $json.concatenated_data }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "fileName",
+                "value": "={{ $('Archivo Creado').item.json.name }}"
+              },
+              {
+                "name": "date",
+                "value": "={{$now}}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "ae1519d0-88e8-43f2-a764-a24f13990923",
+      "name": "Default Data Loader2",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        928
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        528,
+        1680
+      ],
+      "id": "755a6f9e-b41a-42dc-a232-ad96a6ae8d23",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH",
+          "mode": "list",
+          "cachedResultName": "RAG AIREMARINERO",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1A8p-luJneAQzNlqHW2oOFI9Joz5PlMMH"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        48,
+        2464
+      ],
+      "id": "8abb8f4e-3afe-4678-8caf-4d8f8dab20d3",
+      "name": "Google Drive Trigger3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "documents",
+        "filterType": "string",
+        "filterString": "=metadata->>fileName=like.*{{ $json.name }}"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        352,
+        2464
+      ],
+      "id": "d3fb3c17-4eae-47fd-87c7-8366003bc2df",
+      "name": "Delete a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "4viKc8Ym03FIbkYO",
+          "name": "SUPABASE SYNTIX AI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Workflow 3 (Eliminar Documento)",
+        "height": 384,
+        "width": 880,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        2304
+      ],
+      "id": "6ea2c18a-46ae-4412-b58d-ed61556f6395",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.data || $json.text || $json.concatenated_data }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "fileName",
+                "value": "={{ $('Archivo Actualizado').item.json.name }}"
+              },
+              {
+                "name": "date",
+                "value": "={{$now}}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "6608ef42-b786-4ac4-8b44-8a82d99bad2c",
+      "name": "Default Data Loader3",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1,
+      "position": [
+        3296,
+        1824
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# Disparador de Observación (Drive) - Archivos Actualizados\n## Archivos actualizados en una carpeta específica -> Comprobar tipo de archivo y hacer conversión si es necesario -> Extraer el texto -> Añadir al Almacén de Vectores\nDrive/Backoffice/Backoffice_Contracts",
+        "height": 888.3491772897637,
+        "width": 3588,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -64,
+        1392
+      ],
+      "typeVersion": 1,
+      "id": "03393add-14fe-4199-87f5-74d4b69f8359",
+      "name": "Nota Adhesiva3"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2112,
+        992
+      ],
+      "id": "faacd3bb-533f-454d-ae9f-5dee35886309",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "Tu objetivo es tomar el número de versión entrante y sumarle 1.\n\n[Ejemplos]\nEntrada: v1\nSalida: v2\n\nEntrada: v2\nSalida: v3\n\nEntrada: v4\nSalida: v5\n\nEl campo de salida siempre debe llamarse \"version\"",
+              "role": "model"
+            },
+            {
+              "content": "=número de versión entrante: {{ $json.id }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        1776
+      ],
+      "id": "8e60a707-105f-414b-9ec2-79603f51d24f",
+      "name": "Message a model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3088,
+        1792
+      ],
+      "id": "1ce7a9c8-5918-4717-a9d1-dd9f77d5a629",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "UiL4017pXsdJHDwB",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-09-18T10:07:04.822Z",
+      "updatedAt": "2026-09-18T10:07:04.822Z"
+    }
+  ],
+  "staticData": {
+    "node:Archivo Creado": {
+      "lastTimeChecked": "2026-11-04T14:59:00Z"
+    },
+    "node:Archivo Actualizado": {
+      "lastTimeChecked": "2026-11-04T14:59:01Z"
+    },
+    "node:Google Drive Trigger3": {
+      "lastTimeChecked": "2026-11-04T14:59:02Z"
+    }
+  },
+  "tags": [],
+  "triggerCount": 3,
+  "updatedAt": "2026-10-13T09:51:32.238Z",
+  "versionId": "771b2d58-f6e1-41a2-b6b3-fd4119fc14ff"
+}
