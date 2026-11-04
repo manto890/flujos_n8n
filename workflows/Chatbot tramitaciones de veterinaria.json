@@ -1,0 +1,418 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "01ac0264-cf6f-4531-b41c-a8c9e756894e",
+    "workflowId": "dfEhtbbeZyygOkCo",
+    "nodes": [
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+        "typeVersion": 1.4,
+        "position": [
+          1072,
+          32
+        ],
+        "id": "cae24f01-5937-457f-9ab4-b973fb2e7ede",
+        "name": "When chat message received",
+        "webhookId": "56ca5aa4-c3f0-4fb4-9a6a-f53c49dd9643"
+      },
+      {
+        "parameters": {
+          "options": {
+            "systemMessage": "Eres un recepcionista de una veterinaria canina que se encarga de resolver consultas de clientes de sus citas agendadas. \nPara ello debes de usar herramientas 'consultar_citas' o 'consultar_clientes'.\nSé amable y conciso por favor."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          1296,
+          32
+        ],
+        "id": "25d0b7e7-9ed0-4b5c-bb73-53bebda0a892",
+        "name": "AI Agent"
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+        "typeVersion": 1.4,
+        "position": [
+          1312,
+          240
+        ],
+        "id": "df6db0f3-4665-40d5-9640-67f2045fddf2",
+        "name": "Simple Memory"
+      },
+      {
+        "parameters": {
+          "model": "openai/gpt-oss-20b",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+        "typeVersion": 1,
+        "position": [
+          1168,
+          240
+        ],
+        "id": "30a74924-930e-4945-84df-2f9cbbe3ab3a",
+        "name": "Groq Chat Model",
+        "credentials": {
+          "groqApi": {
+            "id": "K0JeClcqfhzdTv6F",
+            "name": "Groq account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls",
+            "mode": "list",
+            "cachedResultName": "VETERINARIA PETSCARE N8N",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 188718140,
+            "mode": "list",
+            "cachedResultName": "Citas",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls/edit#gid=188718140"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.7,
+        "position": [
+          1456,
+          240
+        ],
+        "id": "65bc9ec5-af6a-42a6-9b7f-5fc54ac16363",
+        "name": "consultar_citas",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "T4O0cZndn7LJ8daH",
+            "name": "API Google Hoja Calculo"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls",
+            "mode": "list",
+            "cachedResultName": "VETERINARIA PETSCARE N8N",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1489206440,
+            "mode": "list",
+            "cachedResultName": "Clientes",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls/edit#gid=1489206440"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheetsTool",
+        "typeVersion": 4.7,
+        "position": [
+          1584,
+          240
+        ],
+        "id": "8c73a2b7-9ad8-4cf7-ba99-a09f7e65e45f",
+        "name": "consultar_clientes",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "T4O0cZndn7LJ8daH",
+            "name": "API Google Hoja Calculo"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "When chat message received": {
+        "main": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Simple Memory": {
+        "ai_memory": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Groq Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "consultar_citas": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "consultar_clientes": {
+        "ai_tool": [
+          [
+            {
+              "node": "AI Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Marco Antonio Martínez Guerrero",
+    "name": "Version 01ac0264",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-09-10T19:41:37.263Z",
+    "updatedAt": "2026-09-10T19:41:42.000Z"
+  },
+  "activeVersionId": "01ac0264-cf6f-4531-b41c-a8c9e756894e",
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_citas": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "consultar_clientes": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-09-09T13:49:02.548Z",
+  "id": "dfEhtbbeZyygOkCo",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "Chatbot tramitaciones de veterinaria",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        1072,
+        32
+      ],
+      "id": "cae24f01-5937-457f-9ab4-b973fb2e7ede",
+      "name": "When chat message received",
+      "webhookId": "56ca5aa4-c3f0-4fb4-9a6a-f53c49dd9643"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Eres un recepcionista de una veterinaria canina que se encarga de resolver consultas de clientes de sus citas agendadas. \nPara ello debes de usar herramientas 'consultar_citas' o 'consultar_clientes'.\nSé amable y conciso por favor."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1296,
+        32
+      ],
+      "id": "25d0b7e7-9ed0-4b5c-bb73-53bebda0a892",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1312,
+        240
+      ],
+      "id": "df6db0f3-4665-40d5-9640-67f2045fddf2",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        240
+      ],
+      "id": "30a74924-930e-4945-84df-2f9cbbe3ab3a",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "K0JeClcqfhzdTv6F",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls",
+          "mode": "list",
+          "cachedResultName": "VETERINARIA PETSCARE N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 188718140,
+          "mode": "list",
+          "cachedResultName": "Citas",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls/edit#gid=188718140"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1456,
+        240
+      ],
+      "id": "65bc9ec5-af6a-42a6-9b7f-5fc54ac16363",
+      "name": "consultar_citas",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T4O0cZndn7LJ8daH",
+          "name": "API Google Hoja Calculo"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls",
+          "mode": "list",
+          "cachedResultName": "VETERINARIA PETSCARE N8N",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1489206440,
+          "mode": "list",
+          "cachedResultName": "Clientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1o_ScVVfHMQ7Opo-aNXNbiVuMrDKfs5E9L4k8DhFBYls/edit#gid=1489206440"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1584,
+        240
+      ],
+      "id": "8c73a2b7-9ad8-4cf7-ba99-a09f7e65e45f",
+      "name": "consultar_clientes",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T4O0cZndn7LJ8daH",
+          "name": "API Google Hoja Calculo"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "saveDataSuccessExecution": "all",
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "saveManualExecutions": true
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "dfEhtbbeZyygOkCo",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-09-09T13:49:02.557Z",
+      "updatedAt": "2026-09-09T13:49:02.557Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2026-09-10T19:41:53.386Z",
+  "versionId": "01ac0264-cf6f-4531-b41c-a8c9e756894e"
+}
