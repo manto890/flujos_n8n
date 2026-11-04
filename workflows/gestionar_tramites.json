@@ -1,7 +1,7 @@
 {
   "active": true,
   "activeVersion": {
-    "versionId": "8dd550a9-ca42-4a62-bd4f-b309e7308188",
+    "versionId": "8543e513-400f-42ea-ade0-92f65a042fe8",
     "workflowId": "L7eHu3wRpwDNcVCW",
     "nodes": [
       {
@@ -171,6 +171,131 @@
             "name": "BBDD gestoria_extranjeria"
           }
         }
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+              "mode": "list",
+              "cachedResultName": "DOCUMENTOS CLIENTES",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1104,
+          -16
+        ],
+        "id": "4dfa2f21-06f0-4df6-a61f-12a6dc791e93",
+        "name": "buscar_docs2",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "b673a74f-a37f-46f5-8e5f-dfaa45e850b5",
+                "leftValue": "={{ $json.folderId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          880,
+          -112
+        ],
+        "id": "23819d95-9cbb-4eea-8dc2-6b928d1095b4",
+        "name": "Si la carpeta existe? 2"
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.nombre_cliente }}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+              "mode": "list",
+              "cachedResultName": "DOCUMENTOS CLIENTES",
+              "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          656,
+          -112
+        ],
+        "id": "11f266f0-d4d2-4eac-9740-e80e21f64d08",
+        "name": "buscar_folder3",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.nombre_cliente}}' and name contains '={{ $json.nombre_documento}}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "={{ $json.nombre_cliente }}",
+              "mode": "id"
+            }
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
+        "position": [
+          1104,
+          -208
+        ],
+        "id": "a97ab92c-f977-46a7-96fa-462becaaf9a2",
+        "name": "buscar_docs4",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
+          }
+        }
       }
     ],
     "connections": {
@@ -209,17 +334,57 @@
             }
           ]
         ]
+      },
+      "Si la carpeta existe? 2": {
+        "main": [
+          [
+            {
+              "node": "buscar_docs4",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "buscar_docs2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "buscar_folder3": {
+        "main": [
+          [
+            {
+              "node": "Si la carpeta existe? 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Buscar docs": {
+        "main": [
+          [
+            {
+              "node": "buscar_folder3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "nodeGroups": [],
     "authors": "Marco Antonio Martínez Guerrero",
-    "name": "Version 8dd550a9",
+    "name": "Version 8543e513",
     "description": "",
     "autosaved": true,
-    "createdAt": "2026-10-09T22:13:26.794Z",
-    "updatedAt": "2026-11-03T20:30:06.000Z"
+    "createdAt": "2026-11-04T20:17:44.625Z",
+    "updatedAt": "2026-11-04T20:18:26.000Z"
   },
-  "activeVersionId": "8dd550a9-ca42-4a62-bd4f-b309e7308188",
+  "activeVersionId": "8543e513-400f-42ea-ade0-92f65a042fe8",
   "connections": {
     "Conmutar": {
       "main": [
@@ -251,6 +416,46 @@
         [
           {
             "node": "Conmutar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Si la carpeta existe? 2": {
+      "main": [
+        [
+          {
+            "node": "buscar_docs4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "buscar_docs2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "buscar_folder3": {
+      "main": [
+        [
+          {
+            "node": "Si la carpeta existe? 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buscar docs": {
+      "main": [
+        [
+          {
+            "node": "buscar_folder3",
             "type": "main",
             "index": 0
           }
@@ -434,6 +639,131 @@
           "name": "BBDD gestoria_extranjeria"
         }
       }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1104,
+        -16
+      ],
+      "id": "4dfa2f21-06f0-4df6-a61f-12a6dc791e93",
+      "name": "buscar_docs2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b673a74f-a37f-46f5-8e5f-dfaa45e850b5",
+              "leftValue": "={{ $json.folderId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        -112
+      ],
+      "id": "23819d95-9cbb-4eea-8dc2-6b928d1095b4",
+      "name": "Si la carpeta existe? 2"
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.nombre_cliente }}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
+            "mode": "list",
+            "cachedResultName": "DOCUMENTOS CLIENTES",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        656,
+        -112
+      ],
+      "id": "11f266f0-d4d2-4eac-9740-e80e21f64d08",
+      "name": "buscar_folder3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.nombre_cliente}}' and name contains '={{ $json.nombre_documento}}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.nombre_cliente }}",
+            "mode": "id"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1104,
+        -208
+      ],
+      "id": "a97ab92c-f977-46a7-96fa-462becaaf9a2",
+      "name": "buscar_docs4",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -453,6 +783,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-10-09T22:13:26.791Z",
-  "versionId": "8dd550a9-ca42-4a62-bd4f-b309e7308188"
+  "updatedAt": "2026-11-04T20:17:44.621Z",
+  "versionId": "8543e513-400f-42ea-ade0-92f65a042fe8"
 }
