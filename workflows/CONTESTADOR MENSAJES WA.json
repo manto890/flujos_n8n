@@ -1,0 +1,3608 @@
+{
+  "active": true,
+  "activeVersion": {
+    "versionId": "60415ce0-4830-4640-acd2-50951b494fbc",
+    "workflowId": "mzsBAUqognHYd6x4",
+    "nodes": [
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "¿Por qué has cancelado la cita?",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          -1184,
+          1088
+        ],
+        "id": "0ce244e1-4a33-4fcf-bece-b7d0a5566826",
+        "name": "Enviar texto",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=Mensaje del usuario: {{ $json.text }}",
+          "options": {
+            "systemMessage": "=Eres el recepcionista virtual de una gestoría especializada en trámites de extranjería. Tu objetivo es ayudar a los clientes de forma amable, profesional, precisa y concisa.\n\nFECHA ACTUAL DEL SISTEMA: {{ $now.format('YYYY-MM-DD HH:mm') }}\n\n### TUS RESPONSABILIDADES:\n1. Responder dudas generales sobre trámites de extranjería.\n2. Gestionar la reserva, consulta y cancelación de citas (`gestionar_citas`).\n3. Consultar y actualizar el estado de expediente o trámites del cliente (`gestionar_tramites`).\n4. Solicitar y procesar la recepción de documentos requeridos (`gestionar_docs`).\n\n---\n\n### DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES (CAG):\nConsulta estas duraciones oficiales para calcular la hora final de las citas:\n- Nacionalidad: 60 minutos\n- Agrupación Familiar: 60 minutos\n- Renovación de NIE: 30 minutos\n- Consulta General / Asesoría: 45 minutos\n- Cualquier otro trámite no especificado: 45 minutos\n\n---\n\n### REGLA OBLIGATORIA DE LLAMADA A HERRAMIENTAS:\nCualquiera de las herramientas del sistema (`gestionar_citas`, `gestionar_tramites`, `gestionar_docs`) requiere SIEMPRE el envío de los siguientes 5 argumentos en su objeto JSON:\n- `accion`\n- `nombre_cliente`\n- `tipo_tramite`\n- `fecha_inicio`\n- `event_id`\n\nSi alguno de estos argumentos NO es relevante o necesario para la acción concreta que ejecutas, envía una cadena vacía `\"\"` como su valor. NUNCA omitas ninguno de los 5 campos en la llamada.\n\n---\n\n\n### HORARIOS DE ATENCION DE GESTORIA-MARCO\n\n- Lunes a jueves | 09:00 - 13:00 \n- Viernes | 09:00 - 15:00\n- Sabados | 09:00 - 13:00\n- Domingos y festivos | Cerrado |\n\n*Zona horaria**: Europe/Madrid\n\n----\n\n### REGLAS Y USO ESPECÍFICO DE CADA HERRAMIENTA:\n\n1. **HERRAMIENTA: `gestionar_citas`**\n   - **Agendar Cita (Flujo obligatorio en 3 pasos)**:\n     - **Paso 1. Recopilar Datos**: Solicita al cliente su Nombre completo y Asunto/Trámite que desea realizar.\n     - **Paso 2. Consultar y Ofrecer Huecos Disponibles**: \n       - En cuanto recibas el nombre y el trámite, NO le preguntes qué día prefiere.\n       - Ejecuta inmediatamente `gestionar_citas` con `accion: \"buscar_huecos\"`.\n       - Pasa en `fecha_inicio` la FECHA ACTUAL en formato ISO o YYYY-MM-DD.\n       - **CRÍTICO:** NO inventes días ni horas. Presenta ÚNICAMENTE la lista exacta de huecos que te devuelva la herramienta.\n       - Mientras presentes estos huecos, mantén `\"es_cita\": false` en tu respuesta JSON final.\n     - **Paso 3. Preparar Confirmación**: Cuando el cliente elija una fecha y hora específica:\n       a) Muestra un resumen claro con los datos recopilados (Nombre, Trámite, Fecha y Hora elegida).\n       b) Pide explícitamente la confirmación indicando las opciones de texto o número (\"Responde con 1 o Confirmar para agendar, o 2 o Cancelar para rechazar\").\n       c) Calcula `fecha_fin` sumando los minutos correspondientes según el **DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES**.\n       d) Marca `\"es_cita\": true` en tu respuesta JSON final.\n   - **Cancelar o Consultar Cita**:\n     - Para cancelar: solicita nombre completo o correo, ejecuta `gestionar_citas` con `accion: \"buscar\"` para obtener el `event_id`, y posteriormente la acción `\"cancelar\"`.\n   - **Respuestas de Confirmación del Cliente**:\n     - Si responde \"1\", \"Confirmar\" o \"Confirmar cita\", interpreta que la cita queda confirmada.\n     - Si responde \"2\", \"Cancelar\" o \"Cancelar cita\", procede a descartar la solicitud.\n\n2. **HERRAMIENTA: `gestionar_tramites`**\n   - **Uso**: Para consultar el estado actual de un expediente, modificar datos de un trámite en curso o aperturar una gestión.\n   - **Datos requeridos**: Solicita Nombre, Apellidos, NIE/Pasaporte y Fecha de nacimiento.\n   - **Acciones comunes**: `\"consultar_estado\"`, `\"actualizar_tramite\"`.\n\n3. **HERRAMIENTA: `gestionar_docs`**\n   - **Uso**: Para registrar, verificar o adjuntar documentación requerida para un trámite.\n   - **Datos requeridos**: Solicita Domicilio actual del cliente, NIE/Pasaporte y el Nombre del documento exacto que va a entregar o consultar (ej. \"Tasa 790\", \"Empadronamiento\", \"Pasaporte completo\").\n   - **Acciones comunes**: `\"registrar_documento\"`, `\"consultar_requisitos\"`.\n\n---\n\n### INSTRUCCIONES DE SALIDA (MUY IMPORTANTE):\n- Tus respuestas finales dirigidas al usuario en WhatsApp NO deben activar herramientas.\n- Estructura obligatoria del JSON de respuesta final:\n\n{\n  \"respuesta\": \"Texto de tu mensaje para el usuario en WhatsApp\",\n  \"es_cita\": false,\n  \"nombre_cliente\": \"\",\n  \"tipo_tramite\": \"\",\n  \"fecha_inicio\": \"\",\n  \"fecha_fin\": \"\"\n}\n\n#### EJEMPLOS DE SALIDA FINAL:\n\n- Consulta general: {\"respuesta\": \"¡Hola! ¿En qué puedo ayudarte?\", \"es_cita\": false, \"nombre_cliente\": \"\", \"tipo_tramite\": \"\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n- Ofrecer huecos: {\"respuesta\": \"Para tu Renovación de NIE, estos son los huecos libres para esta semana:\\n- Lunes 28: 10:00, 11:30\\n- Miércoles 30: 16:00\\n¿Cuál prefieres?\", \"es_cita\": false, \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n- Confirmar cita: {\"respuesta\": \"Resumen de tu cita:\\n- Nombre: Juan Pérez\\n- Trámite: Renovación de NIE\\n- Fecha: 28 de Septiembre a las 10:00\\n\\nResponde con:\\n1️⃣ Confirmar\\n2️⃣ Cancelar\", \"es_cita\": true, \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"2026-09-28T10:00:00\", \"fecha_fin\": \"2026-09-28T10:30:00\"}\n\n---\n\n### TONO Y ESTILO:\n- Amable, claro y directo.\n- Evita párrafos excesivamente largos."
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 3.1,
+        "position": [
+          -2672,
+          1184
+        ],
+        "id": "623c63ae-3795-4709-a3d5-39dfb1c9fc12",
+        "name": "Recepcionista gestoria",
+        "retryOnFail": false,
+        "waitBetweenTries": 3000,
+        "maxTries": 3,
+        "onError": "continueErrorOutput"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "q18smbXTzfEfGSsQ",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+            "cachedResultName": "gestionar_citas"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "accion": "crear",
+              "nombre_cliente": "={{ $(\"Formatear evento 2\").json.nombre_cliente }}",
+              "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}",
+              "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.fecha_inicio }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_cliente",
+                "displayName": "nombre_cliente",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_tramite",
+                "displayName": "tipo_tramite",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio",
+                "displayName": "fecha_inicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          -64,
+          848
+        ],
+        "id": "282dabca-65b7-4681-92d5-30fbf89e24ac",
+        "name": "Call 'gestionar_citas'2"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://gestoria-marco.com/message/sendText/01842b64-aa71-484c-a428-56cc66b4e8c9",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"number\": \"={{ $('Webhook').item.json.body.data.key.remoteJid }}.\",\n  \"options\": {\n    \"delay\": 1200,\n    \"presence\": \"composing\"\n  },\n  \"textMessage\": {\n    \"text\": \"={{ \"¡Cita confirmada y agendada con éxito!\\n\\n*Fecha:* \" + $node[\"Formatear evento1\"].json.fecha_inicio + \"\\n*Trámite:* \" + $node[\"Formatear evento1\"].json.tipo_tramite }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          160,
+          848
+        ],
+        "id": "6b200d32-8d41-46fa-a757-0fc078b0f668",
+        "name": "Confirmacion cita1",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "GenUBu4WY5qZhgI9",
+            "name": "Header EvolutionAPI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "Lo siento es que no tenemos hueco para ese dia",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          -288,
+          1040
+        ],
+        "id": "6b007892-45cb-49d3-bce4-fc5e81617e7d",
+        "name": "Enviar texto1",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "q18smbXTzfEfGSsQ",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+            "cachedResultName": "gestionar_citas"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "accion": "buscar",
+              "nombre_cliente": "={{ $node[\"Formatear evento1\"].json.nombre_cliente }}",
+              "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}",
+              "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.fecha_inicio }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_cliente",
+                "displayName": "nombre_cliente",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_tramite",
+                "displayName": "tipo_tramite",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio",
+                "displayName": "fecha_inicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          -736,
+          944
+        ],
+        "id": "cf67f660-50ea-46c2-b662-fb98e0e1d7bd",
+        "name": "Call 'gestionar_citas'1"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Extraer los datos provenientes de la respuesta interactiva de WhatsApp (Evolution API)\nconst body = $('Webhook').item.json.body;\nconst data = body.data || {};\n\n// Capturar el ID del botón o de la lista seleccionada\nconst selectedButtonId = data.message?.buttonsResponseMessage?.selectedButtonId \n                      || data.message?.listResponseMessage?.singleSelectReply?.selectedRowId \n                      || \"\";\n\n// Parsea los datos (asumiendo que el ID del botón es algo como \"confirmar_cita|FECHA|TIPO\")\nconst partes = selectedButtonId.split('|');\nconst fechaInicio = partes[1] || \"\";\nconst tipoTramite = partes[2] || \"Trámite de Extranjería\";\n\n// Datos del remitente en WhatsApp\nconst remoteJid = data.key?.remoteJid || \"\";\nconst nombreCliente = data.pushName || \"Cliente WhatsApp\";\n\nreturn {\n  accion: \"crear\",\n  nombre_cliente: nombreCliente,\n  tipo_tramite: tipoTramite,\n  fecha_inicio: fechaInicio,\n  remoteJid: remoteJid\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -288,
+          848
+        ],
+        "id": "73da6108-f2ad-4c39-92ad-b82098f5dba6",
+        "name": "Formatear evento 2"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "Entonces en que día te vendría bien agendar la cita?",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          -64,
+          1232
+        ],
+        "id": "06795852-5536-4cc5-ac04-17f430a15c9f",
+        "name": "Enviar texto2",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "q18smbXTzfEfGSsQ",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+            "cachedResultName": "gestionar_citas"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "accion": "buscar",
+              "nombre_cliente": "={{ $node[\"Formatear evento1\"].json.nombre_cliente }}",
+              "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}",
+              "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.fecha_inicio }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_cliente",
+                "displayName": "nombre_cliente",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_tramite",
+                "displayName": "tipo_tramite",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio",
+                "displayName": "fecha_inicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          160,
+          1232
+        ],
+        "id": "32bdb3fe-8883-4b0e-b05d-4a60b4cb70a3",
+        "name": "Call 'gestionar_citas'3"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "720a9d6d-50ef-4b17-bacc-1dae94fca008",
+                "leftValue": "={{ $json.fecha_inicio }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -512,
+          944
+        ],
+        "id": "2cb7b800-bfb1-4a5e-b93c-28ad3dd5a8be",
+        "name": "Te parece bien el dia?"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "3110b0dc-8201-47b1-be9b-5dc3de2fa254",
+                "leftValue": "",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals",
+                  "name": "filter.operator.equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -960,
+          1088
+        ],
+        "id": "d74689fa-5fcc-4130-935a-a4f3b40c0536",
+        "name": "Quieres reprogramar la cita?"
+      },
+      {
+        "parameters": {
+          "sessionIdType": "customKey",
+          "sessionKey": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "tableName": "chat_histories"
+        },
+        "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+        "typeVersion": 1.4,
+        "position": [
+          -2800,
+          1424
+        ],
+        "id": "8445bdb1-338d-40f3-ad70-6ab6009bcc66",
+        "name": "Postgres Chat Memory1",
+        "credentials": {
+          "postgres": {
+            "id": "fn2ZPkKEjrJ6aNsv",
+            "name": "BBDD gestoria_extranjeria"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-3.6-flash",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          -2928,
+          1424
+        ],
+        "id": "d4423e41-6a38-44b4-86c9-69e9e0bdd03a",
+        "name": "Google Gemini Chat Model1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "toolDescription": "Úsala únicamente cuando el usuario exprese que quiere hablar con una persona humana o ser atendido por un gestor.",
+          "method": "POST",
+          "url": "=http://host.docker.internal:3000/api/v1/accounts/1/conversations/{{ $('Webhook').item.json.body.data.chatwootConversationId }}/custom_attributes ",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": []
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"labels\": [\"agente_desactivado\"]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequestTool",
+        "typeVersion": 4.5,
+        "position": [
+          -2672,
+          1424
+        ],
+        "id": "d5b30565-69bc-4d29-a0a7-1362b7ae41a4",
+        "name": "Desactivar Agente1",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "JsJk8JjERwnhrC4i",
+            "name": "Header Chatwoot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "description": "Utiliza esta herramienta para gestionar citas del calendario (buscar disponibilidad de huecos libre, crear nuevas citas o cancelar citas existentes).\nFecha de inicio (Opcional. Si no hay fecha, pasa una cadena vacía \"\")\nID del evento (Opcional. Si no aplica, pasa una cadena vacía \"\")",
+          "workflowId": {
+            "__rl": true,
+            "value": "q18smbXTzfEfGSsQ",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+            "cachedResultName": "gestionar_citas"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "fecha_inicio": "={{ $fromAI('fecha_inicio', 'Fecha y hora de inicio en ISO 8601', 'string') }}",
+              "event_id": "={{ $fromAI('event_id', 'ID del evento a cancelar si aplica', 'string') }}",
+              "nombre_cliente": "={{ $fromAI('nombre_cliente', 'Nombre completo del cliente', 'string') }}",
+              "accion": "={{ $fromAI('accion', 'Acción a realizar: buscar_huecos, crear o cancelar', 'string') }}",
+              "tipo_tramite": "={{ $fromAI('tipo_tramite', 'Tipo de trámite solicitado', 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_cliente",
+                "displayName": "nombre_cliente",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_tramite",
+                "displayName": "tipo_tramite",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio",
+                "displayName": "fecha_inicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          -2544,
+          1424
+        ],
+        "id": "1dd04796-50d4-41df-bf60-d1fc188f0062",
+        "name": "gestionar_citas1"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Extraer la salida previa de forma segura\nlet rawOutput = $json.output ?? $json.text ?? $json.response ?? $json;\nlet parsedData = {};\n\n// Si ya es un objeto, úsalo directamente\nif (typeof rawOutput === 'object' && rawOutput !== null) {\n  parsedData = rawOutput;\n} else {\n  // Convertir a string y limpiar caracteres extraños de formato o saltos de línea iniciales\n  let cleanText = String(rawOutput).trim();\n  \n  // Quitar bloques markdown si los hubiera\n  cleanText = cleanText.replace(/^```(?:json)?/gi, '').replace(/```$/g, '').trim();\n\n  try {\n    parsedData = JSON.parse(cleanText);\n  } catch (error) {\n    // Si falla el parseo directo, intentamos limpiar llaves escapadas o saltos de línea al inicio\n    try {\n      let fixedText = cleanText.replace(/^[^{]*/, '').replace(/[^}]*$/, '');\n      parsedData = JSON.parse(fixedText);\n    } catch (e2) {\n      parsedData = { respuesta: cleanText };\n    }\n  }\n}\n\n// Asegurar que la respuesta sea estrictamente un texto plano y no otro objeto anidado\nlet textoRespuesta = parsedData.respuesta ?? rawOutput;\nif (typeof textoRespuesta === 'object') {\n  textoRespuesta = textoRespuesta.respuesta || JSON.stringify(textoRespuesta);\n}\n\nreturn {\n  json: {\n    respuesta: String(textoRespuesta).trim(),\n    es_cita: Boolean(parsedData.es_cita),\n    nombre_cliente: parsedData.nombre_cliente || \"\",\n    tipo_tramite: parsedData.tipo_tramite || \"Trámite General\",\n    fecha_inicio: parsedData.fecha_inicio || \"\",\n    fecha_fin: parsedData.fecha_fin || \"\"\n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -2080,
+          1088
+        ],
+        "id": "c69d9bc8-c34a-4111-a717-c9cd547fbe5a",
+        "name": "Formatear respuesta1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "7d49fe98-0145-474b-ab3e-fca1949eed11",
+                "leftValue": "={{ $json.es_cita }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "boolean",
+                  "operation": "true",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -1856,
+          1088
+        ],
+        "id": "590fdeab-e394-473a-bf0e-44e0287fae29",
+        "name": "¿Es una cita?1"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "={{ $json.respuesta }}",
+          "options_message": {
+            "linkPreview": false
+          }
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          -1632,
+          1184
+        ],
+        "id": "ed2188d2-8f24-4ac6-888c-714d23c2a65e",
+        "name": "Enviar mensaje1",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "={{ $json.respuesta }}",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          -1632,
+          992
+        ],
+        "id": "9b7b9fa2-d9c9-4683-9a5e-be6fe4c23032",
+        "name": "Enviar pregunta 1",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "description": "Úsala únicamente cuando el usuario envíe o solicite subir documentos, imágenes, pasaportes o archivos adjuntos para su expediente.",
+          "workflowId": {
+            "__rl": true,
+            "value": "nGI9xB6lvLswREf9",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/nGI9xB6lvLswREf9",
+            "cachedResultName": "gestionar_docs"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "accion": "={{ $fromAI('accion', 'Acción a realizar: crear, consultar, actualizar, etc.', 'string') }}",
+              "nombre": "={{ $fromAI('nombre', 'Nombre de pila del cliente', 'string') }}",
+              "apellidos": "={{ $fromAI('apellidos', 'Apellidos del cliente', 'string') }}",
+              "asunto": "={{ $fromAI('asunto', 'Asunto o tipo de trámite (ej: Empadronamiento, Arraigo, etc.)', 'string') }}",
+              "pasaporte_nie": "={{ $fromAI('pasaporte_nie', 'Número de NIE o Pasaporte del cliente', 'string') }}",
+              "email": "={{ $fromAI('email', 'Correo del cliente', 'string') }}",
+              "telefono": "={{ $fromAI('telefono', 'Teléfono de contacto', 'string') }}",
+              "nacionalidad": "={{ $fromAI('nacionalidad', 'Nacionalidad del cliente', 'string') }}",
+              "nombre_documento": "={{ $fromAI('nombre_documento', 'Nombre del archivo adjuntado/documento si aplica', 'string') }}",
+              "url_archivo": "={{ $fromAI('url_archivo', 'Enlace o URL del documento subido', 'string') }}",
+              "estado_validacion": "={{ $fromAI('estado_validacion', 'Estado de la validación si aplica', 'string') }}",
+              "revisado_ia": "={{ $fromAI('revisado_ia', 'Si fue revisado por la IA', 'string') }}",
+              "fecha_subida": "={{ $fromAI('fecha_subida', 'Fecha de subida del documento', 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre",
+                "displayName": "nombre",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "apellidos",
+                "displayName": "apellidos",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "asunto",
+                "displayName": "asunto",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "pasaporte_nie",
+                "displayName": "pasaporte_nie",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "telefono",
+                "displayName": "telefono",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nacionalidad",
+                "displayName": "nacionalidad",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_documento",
+                "displayName": "nombre_documento",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "url_archivo",
+                "displayName": "url_archivo",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "estado_validacion",
+                "displayName": "estado_validacion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "revisado_ia",
+                "displayName": "revisado_ia",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_subida",
+                "displayName": "fecha_subida",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          -2416,
+          1424
+        ],
+        "id": "a87891d3-6e9c-407a-b5a3-75a055789b1f",
+        "name": "gestionar_docs1"
+      },
+      {
+        "parameters": {
+          "description": "Úsala para consultar el estado de un expediente, ver resoluciones o verificar la fase de un trámite de extranjería.",
+          "workflowId": {
+            "__rl": true,
+            "value": "L7eHu3wRpwDNcVCW",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/L7eHu3wRpwDNcVCW",
+            "cachedResultName": "gestionar_tramites"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "accion": "={{ $fromAI('accion', 'Acción a realizar: crear, consultar, actualizar, etc.', 'string') }}",
+              "nombre": "={{ $fromAI('nombre', 'Nombre de pila del cliente', 'string') }}",
+              "asunto": "={{ $fromAI('asunto', 'Asunto o tipo de trámite (ej: Empadronamiento, Arraigo, etc.)', 'string') }}",
+              "pasaporte_nie": "={{ $fromAI('pasaporte_nie', 'Número de NIE o Pasaporte del cliente', 'string') }}",
+              "estado": "={{ $fromAI('estado', 'Estado del tramite', 'string') }}",
+              "historial": "={{ $fromAI('historial', 'Historial del tramite desde comienzo hasta la actualidad', 'string') }}",
+              "revisado_ia": "={{ $fromAI('revisado_ia', 'Si fue revisado por la IA', 'string') }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre",
+                "displayName": "nombre",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "asunto",
+                "displayName": "asunto",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "pasaporte_nie",
+                "displayName": "pasaporte_nie",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "estado",
+                "displayName": "estado",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "historial",
+                "displayName": "historial",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "revisado_ia",
+                "displayName": "revisado_ia",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+        "typeVersion": 2.2,
+        "position": [
+          -2288,
+          1424
+        ],
+        "id": "4417f3e1-20ca-4fc6-a105-502371890619",
+        "name": "gestionar_tramites1"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Extraer los datos provenientes de la respuesta interactiva de WhatsApp (Evolution API)\nconst body = $('Webhook').item.json.body;\nconst data = body.data || {};\n\n// Capturar el ID del botón o de la lista seleccionada\nconst selectedButtonId = data.message?.buttonsResponseMessage?.selectedButtonId \n                      || data.message?.listResponseMessage?.singleSelectReply?.selectedRowId \n                      || \"\";\n\n// Parsea los datos (asumiendo que el ID del botón es algo como \"confirmar_cita|FECHA|TIPO\")\nconst partes = selectedButtonId.split('|');\nconst fechaInicio = partes[1] || \"\";\nconst tipoTramite = partes[2] || \"Trámite de Extranjería\";\n\n// Datos del remitente en WhatsApp\nconst remoteJid = data.key?.remoteJid || \"\";\nconst nombreCliente = data.pushName || \"Cliente WhatsApp\";\n\nreturn {\n  accion: \"crear\",\n  nombre_cliente: nombreCliente,\n  tipo_tramite: tipoTramite,\n  fecha_inicio: fechaInicio,\n  remoteJid: remoteJid\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1184,
+          656
+        ],
+        "id": "ea064239-db86-4c56-97b0-35b16708aebf",
+        "name": "Formatear evento1"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "q18smbXTzfEfGSsQ",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+            "cachedResultName": "gestionar_citas"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "accion": "crear",
+              "nombre_cliente": "={{ $node[\"Formatear evento1\"].json.nombre_cliente }}",
+              "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}",
+              "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.fecha_inicio }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_cliente",
+                "displayName": "nombre_cliente",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_tramite",
+                "displayName": "tipo_tramite",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio",
+                "displayName": "fecha_inicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "mode": "each",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          -736,
+          752
+        ],
+        "id": "f7d4a6da-61e2-41c4-911d-0b5ec461413e",
+        "name": "Call 'gestionar_citas'4"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://gestoria-marco.com/message/sendText/01842b64-aa71-484c-a428-56cc66b4e8c9",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"number\": \"={{ $('Webhook').item.json.body.data.key.remoteJid }}\",\n  \"textMessage\": {\n    \"text\": \"Has cancelado la cita. No se ha agendado ninguna reserva.\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          -288,
+          1232
+        ],
+        "id": "dd64ffff-d946-4b89-8595-f00d4af25641",
+        "name": "Enviar cancelacion1",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "GenUBu4WY5qZhgI9",
+            "name": "Header EvolutionAPI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://gestoria-marco.com/message/sendText/01842b64-aa71-484c-a428-56cc66b4e8c9",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"number\": \"={{ $node[\"Formatear evento1\"].json.remoteJid }}\",\n  \"options\": {\n    \"delay\": 1200,\n    \"presence\": \"composing\"\n  },\n  \"textMessage\": {\n    \"text\": \"={{ \"¡Cita confirmada y agendada con éxito!\\n\\n*Fecha:* \" + $node[\"Formatear evento1\"].json.fecha_inicio + \"\\n*Trámite:* \" + $node[\"Formatear evento1\"].json.tipo_tramite }}\"\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          -736,
+          560
+        ],
+        "id": "0f8b8525-308e-41ee-b354-af7047e6b49c",
+        "name": "Confirmacion cita2",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "GenUBu4WY5qZhgI9",
+            "name": "Header EvolutionAPI"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "q18smbXTzfEfGSsQ",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+            "cachedResultName": "gestionar_citas"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "accion": "cancelar",
+              "nombre_cliente": "={{ $node[\"Formatear evento1\"].json.nombre_cliente }}",
+              "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.inicio_cita }}",
+              "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_cliente",
+                "displayName": "nombre_cliente",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_tramite",
+                "displayName": "tipo_tramite",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio",
+                "displayName": "fecha_inicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "mode": "each",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          -288,
+          1424
+        ],
+        "id": "affda4f8-f254-49aa-a6f7-128515fb2796",
+        "name": "Call 'gestionar_citas' eli1"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Extraer los datos del Webhook (Evolution API)\nconst body = $('Webhook').item.json.body || {};\nconst data = body.data || {};\n\n// Capturar el ID del botón o lista\nconst selectedButtonId = data.message?.buttonsResponseMessage?.selectedButtonId \n                      || data.message?.listResponseMessage?.singleSelectReply?.selectedRowId \n                      || \"\";\n\n// Asumiendo un ID formateado como: \"cancelar_cita|ID_EVENTO_O_FECHA|TIPO\"\nconst partes = selectedButtonId.split('|');\nconst idEventoOFecha = partes[1] || \"\";\nconst tipoTramite = partes[2] || \"Trámite General\";\n\n// Datos del cliente\nconst remoteJid = data.key?.remoteJid || \"\";\nconst nombreCliente = data.pushName || \"Cliente WhatsApp\";\n\nreturn {\n  accion: \"cancelar\",\n  nombre_cliente: nombreCliente,\n  tipo_tramite: tipoTramite,\n  fecha_o_id: idEventoOFecha,\n  remoteJid: remoteJid\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -736,
+          1280
+        ],
+        "id": "1ef972a4-7640-4349-864b-022cb1594656",
+        "name": "Formatear cancelacion1"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "En este momento no podemos procesar tu solicitud, un agente te atenderá en breve.",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          -2080,
+          1280
+        ],
+        "id": "9881c377-3379-4255-bcc2-ee504e68abae",
+        "name": "Enviar mensaje error1",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "8392bd82-4a4e-4e1a-8b35-f90288c534c8",
+                      "leftValue": "={{ $('Webhook').item.json.body.data.message.conversation.trim() }}",
+                      "rightValue": "=^(1|confirmar|confirmar cita)$",
+                      "operator": {
+                        "type": "string",
+                        "operation": "regex"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Confirmar"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "2ad41cd0-b859-4807-a6cf-9c3ffe2315ae",
+                      "leftValue": "={{ $('Webhook').item.json.body.data.message.conversation.trim() }}",
+                      "rightValue": "=^(2|cancelar|cancelar cita)$",
+                      "operator": {
+                        "type": "string",
+                        "operation": "regex"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Cancelar"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          -1408,
+          992
+        ],
+        "id": "2bbd17f9-fa23-48c6-8e0c-5e9bb842dd49",
+        "name": "Conmutar opciones1"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -512,
+          1280
+        ],
+        "id": "6db9cb51-db70-4cf5-b6de-6da8a6218822",
+        "name": "Bucle "
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -960,
+          656
+        ],
+        "id": "5e0350e8-c78b-4667-b2c6-e15f7d67b7e8",
+        "name": "Bucle1"
+      },
+      {
+        "parameters": {
+          "inputSource": "jsonExample",
+          "jsonExample": "{\n  \"nombre\": \"a string\",\n  \"telefono\": 123,\n  \"accion\": null,\n  \"anArray\": []\n}"
+        },
+        "type": "n8n-nodes-base.executeWorkflowTrigger",
+        "typeVersion": 1.2,
+        "position": [
+          -3600,
+          1184
+        ],
+        "id": "1a3f0abb-55a1-470c-9774-a35048d42638",
+        "name": "When Executed by Another Workflow"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "http://host.docker.internal:8080/message/sendText/gestoria-marco",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "3741B82F315D-4EFA-822E-7B43AFD2D083"
+              },
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"number\": \"5491122334455\",\n  \"text\": \"Prueba de conexión interna desde n8n\"\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          -3376,
+          1184
+        ],
+        "id": "5353261d-d678-4db1-a168-7ac013ac4729",
+        "name": "HTTP Request"
+      },
+      {
+        "parameters": {
+          "url": "=http://host.docker.internal:3000/api/v1/accounts/1/conversations/{{ $json.body.data.chatwootConversationId }}/labels",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "api_access_token",
+                "value": "z82VdURuNJJ98mnHjCj2a3Nz"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.5,
+        "position": [
+          -3104,
+          1184
+        ],
+        "id": "6fd818dc-9af1-464a-bb44-91cc5f0db7de",
+        "name": "Revisar etiqueta del agente",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "JsJk8JjERwnhrC4i",
+            "name": "Header Chatwoot"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Enviar texto": {
+        "main": [
+          [
+            {
+              "node": "Quieres reprogramar la cita?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Recepcionista gestoria": {
+        "main": [
+          [
+            {
+              "node": "Formatear respuesta1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar mensaje error1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call 'gestionar_citas'2": {
+        "main": [
+          [
+            {
+              "node": "Confirmacion cita1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call 'gestionar_citas'1": {
+        "main": [
+          [
+            {
+              "node": "Te parece bien el dia?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear evento 2": {
+        "main": [
+          [
+            {
+              "node": "Call 'gestionar_citas'2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar texto2": {
+        "main": [
+          [
+            {
+              "node": "Call 'gestionar_citas'3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Te parece bien el dia?": {
+        "main": [
+          [
+            {
+              "node": "Formatear evento 2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar texto1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Quieres reprogramar la cita?": {
+        "main": [
+          [
+            {
+              "node": "Call 'gestionar_citas'1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Formatear cancelacion1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Postgres Chat Memory1": {
+        "ai_memory": [
+          [
+            {
+              "node": "Recepcionista gestoria",
+              "type": "ai_memory",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Recepcionista gestoria",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Desactivar Agente1": {
+        "ai_tool": [
+          [
+            {
+              "node": "Recepcionista gestoria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "gestionar_citas1": {
+        "ai_tool": [
+          [
+            {
+              "node": "Recepcionista gestoria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear respuesta1": {
+        "main": [
+          [
+            {
+              "node": "¿Es una cita?1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "¿Es una cita?1": {
+        "main": [
+          [
+            {
+              "node": "Enviar pregunta 1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar mensaje1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar pregunta 1": {
+        "main": [
+          [
+            {
+              "node": "Conmutar opciones1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "gestionar_docs1": {
+        "ai_tool": [
+          [
+            {
+              "node": "Recepcionista gestoria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "gestionar_tramites1": {
+        "ai_tool": [
+          [
+            {
+              "node": "Recepcionista gestoria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear evento1": {
+        "main": [
+          [
+            {
+              "node": "Bucle1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call 'gestionar_citas'4": {
+        "main": [
+          [
+            {
+              "node": "Bucle1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Enviar cancelacion1": {
+        "main": [
+          [
+            {
+              "node": "Enviar texto2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Call 'gestionar_citas' eli1": {
+        "main": [
+          [
+            {
+              "node": "Bucle ",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Formatear cancelacion1": {
+        "main": [
+          [
+            {
+              "node": "Bucle ",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Conmutar opciones1": {
+        "main": [
+          [
+            {
+              "node": "Formatear evento1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar texto",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle ": {
+        "main": [
+          [
+            {
+              "node": "Enviar cancelacion1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Call 'gestionar_citas' eli1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Bucle1": {
+        "main": [
+          [
+            {
+              "node": "Confirmacion cita2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Call 'gestionar_citas'4",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When Executed by Another Workflow": {
+        "main": [
+          [
+            {
+              "node": "HTTP Request",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "HTTP Request": {
+        "main": [
+          [
+            {
+              "node": "Revisar etiqueta del agente",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Revisar etiqueta del agente": {
+        "main": [
+          [
+            {
+              "node": "Recepcionista gestoria",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "nodeGroups": [],
+    "authors": "Marco Antonio Martínez Guerrero",
+    "name": "Version 60415ce0",
+    "description": "",
+    "autosaved": true,
+    "createdAt": "2026-10-31T11:04:25.365Z",
+    "updatedAt": "2026-10-31T11:04:41.000Z"
+  },
+  "activeVersionId": "60415ce0-4830-4640-acd2-50951b494fbc",
+  "connections": {
+    "Enviar texto": {
+      "main": [
+        [
+          {
+            "node": "Quieres reprogramar la cita?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recepcionista gestoria": {
+      "main": [
+        [
+          {
+            "node": "Formatear respuesta1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar mensaje error1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'gestionar_citas'2": {
+      "main": [
+        [
+          {
+            "node": "Confirmacion cita1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'gestionar_citas'1": {
+      "main": [
+        [
+          {
+            "node": "Te parece bien el dia?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear evento 2": {
+      "main": [
+        [
+          {
+            "node": "Call 'gestionar_citas'2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto2": {
+      "main": [
+        [
+          {
+            "node": "Call 'gestionar_citas'3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Te parece bien el dia?": {
+      "main": [
+        [
+          {
+            "node": "Formatear evento 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quieres reprogramar la cita?": {
+      "main": [
+        [
+          {
+            "node": "Call 'gestionar_citas'1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Formatear cancelacion1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Recepcionista gestoria",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Recepcionista gestoria",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Desactivar Agente1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Recepcionista gestoria",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gestionar_citas1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Recepcionista gestoria",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear respuesta1": {
+      "main": [
+        [
+          {
+            "node": "¿Es una cita?1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "¿Es una cita?1": {
+      "main": [
+        [
+          {
+            "node": "Enviar pregunta 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar mensaje1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar pregunta 1": {
+      "main": [
+        [
+          {
+            "node": "Conmutar opciones1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gestionar_docs1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Recepcionista gestoria",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gestionar_tramites1": {
+      "ai_tool": [
+        [
+          {
+            "node": "Recepcionista gestoria",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear evento1": {
+      "main": [
+        [
+          {
+            "node": "Bucle1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'gestionar_citas'4": {
+      "main": [
+        [
+          {
+            "node": "Bucle1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar cancelacion1": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'gestionar_citas' eli1": {
+      "main": [
+        [
+          {
+            "node": "Bucle ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Formatear cancelacion1": {
+      "main": [
+        [
+          {
+            "node": "Bucle ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conmutar opciones1": {
+      "main": [
+        [
+          {
+            "node": "Formatear evento1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle ": {
+      "main": [
+        [
+          {
+            "node": "Enviar cancelacion1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'gestionar_citas' eli1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bucle1": {
+      "main": [
+        [
+          {
+            "node": "Confirmacion cita2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'gestionar_citas'4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Revisar etiqueta del agente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Revisar etiqueta del agente": {
+      "main": [
+        [
+          {
+            "node": "Recepcionista gestoria",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-10-23T18:02:26.890Z",
+  "id": "mzsBAUqognHYd6x4",
+  "isArchived": false,
+  "meta": null,
+  "name": "CONTESTADOR MENSAJES WA",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "¿Por qué has cancelado la cita?",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -1184,
+        1088
+      ],
+      "id": "0ce244e1-4a33-4fcf-bece-b7d0a5566826",
+      "name": "Enviar texto",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Mensaje del usuario: {{ $json.text }}",
+        "options": {
+          "systemMessage": "=Eres el recepcionista virtual de una gestoría especializada en trámites de extranjería. Tu objetivo es ayudar a los clientes de forma amable, profesional, precisa y concisa.\n\nFECHA ACTUAL DEL SISTEMA: {{ $now.format('YYYY-MM-DD HH:mm') }}\n\n### TUS RESPONSABILIDADES:\n1. Responder dudas generales sobre trámites de extranjería.\n2. Gestionar la reserva, consulta y cancelación de citas (`gestionar_citas`).\n3. Consultar y actualizar el estado de expediente o trámites del cliente (`gestionar_tramites`).\n4. Solicitar y procesar la recepción de documentos requeridos (`gestionar_docs`).\n\n---\n\n### DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES (CAG):\nConsulta estas duraciones oficiales para calcular la hora final de las citas:\n- Nacionalidad: 60 minutos\n- Agrupación Familiar: 60 minutos\n- Renovación de NIE: 30 minutos\n- Consulta General / Asesoría: 45 minutos\n- Cualquier otro trámite no especificado: 45 minutos\n\n---\n\n### REGLA OBLIGATORIA DE LLAMADA A HERRAMIENTAS:\nCualquiera de las herramientas del sistema (`gestionar_citas`, `gestionar_tramites`, `gestionar_docs`) requiere SIEMPRE el envío de los siguientes 5 argumentos en su objeto JSON:\n- `accion`\n- `nombre_cliente`\n- `tipo_tramite`\n- `fecha_inicio`\n- `event_id`\n\nSi alguno de estos argumentos NO es relevante o necesario para la acción concreta que ejecutas, envía una cadena vacía `\"\"` como su valor. NUNCA omitas ninguno de los 5 campos en la llamada.\n\n---\n\n\n### HORARIOS DE ATENCION DE GESTORIA-MARCO\n\n- Lunes a jueves | 09:00 - 13:00 \n- Viernes | 09:00 - 15:00\n- Sabados | 09:00 - 13:00\n- Domingos y festivos | Cerrado |\n\n*Zona horaria**: Europe/Madrid\n\n----\n\n### REGLAS Y USO ESPECÍFICO DE CADA HERRAMIENTA:\n\n1. **HERRAMIENTA: `gestionar_citas`**\n   - **Agendar Cita (Flujo obligatorio en 3 pasos)**:\n     - **Paso 1. Recopilar Datos**: Solicita al cliente su Nombre completo y Asunto/Trámite que desea realizar.\n     - **Paso 2. Consultar y Ofrecer Huecos Disponibles**: \n       - En cuanto recibas el nombre y el trámite, NO le preguntes qué día prefiere.\n       - Ejecuta inmediatamente `gestionar_citas` con `accion: \"buscar_huecos\"`.\n       - Pasa en `fecha_inicio` la FECHA ACTUAL en formato ISO o YYYY-MM-DD.\n       - **CRÍTICO:** NO inventes días ni horas. Presenta ÚNICAMENTE la lista exacta de huecos que te devuelva la herramienta.\n       - Mientras presentes estos huecos, mantén `\"es_cita\": false` en tu respuesta JSON final.\n     - **Paso 3. Preparar Confirmación**: Cuando el cliente elija una fecha y hora específica:\n       a) Muestra un resumen claro con los datos recopilados (Nombre, Trámite, Fecha y Hora elegida).\n       b) Pide explícitamente la confirmación indicando las opciones de texto o número (\"Responde con 1 o Confirmar para agendar, o 2 o Cancelar para rechazar\").\n       c) Calcula `fecha_fin` sumando los minutos correspondientes según el **DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES**.\n       d) Marca `\"es_cita\": true` en tu respuesta JSON final.\n   - **Cancelar o Consultar Cita**:\n     - Para cancelar: solicita nombre completo o correo, ejecuta `gestionar_citas` con `accion: \"buscar\"` para obtener el `event_id`, y posteriormente la acción `\"cancelar\"`.\n   - **Respuestas de Confirmación del Cliente**:\n     - Si responde \"1\", \"Confirmar\" o \"Confirmar cita\", interpreta que la cita queda confirmada.\n     - Si responde \"2\", \"Cancelar\" o \"Cancelar cita\", procede a descartar la solicitud.\n\n2. **HERRAMIENTA: `gestionar_tramites`**\n   - **Uso**: Para consultar el estado actual de un expediente, modificar datos de un trámite en curso o aperturar una gestión.\n   - **Datos requeridos**: Solicita Nombre, Apellidos, NIE/Pasaporte y Fecha de nacimiento.\n   - **Acciones comunes**: `\"consultar_estado\"`, `\"actualizar_tramite\"`.\n\n3. **HERRAMIENTA: `gestionar_docs`**\n   - **Uso**: Para registrar, verificar o adjuntar documentación requerida para un trámite.\n   - **Datos requeridos**: Solicita Domicilio actual del cliente, NIE/Pasaporte y el Nombre del documento exacto que va a entregar o consultar (ej. \"Tasa 790\", \"Empadronamiento\", \"Pasaporte completo\").\n   - **Acciones comunes**: `\"registrar_documento\"`, `\"consultar_requisitos\"`.\n\n---\n\n### INSTRUCCIONES DE SALIDA (MUY IMPORTANTE):\n- Tus respuestas finales dirigidas al usuario en WhatsApp NO deben activar herramientas.\n- Estructura obligatoria del JSON de respuesta final:\n\n{\n  \"respuesta\": \"Texto de tu mensaje para el usuario en WhatsApp\",\n  \"es_cita\": false,\n  \"nombre_cliente\": \"\",\n  \"tipo_tramite\": \"\",\n  \"fecha_inicio\": \"\",\n  \"fecha_fin\": \"\"\n}\n\n#### EJEMPLOS DE SALIDA FINAL:\n\n- Consulta general: {\"respuesta\": \"¡Hola! ¿En qué puedo ayudarte?\", \"es_cita\": false, \"nombre_cliente\": \"\", \"tipo_tramite\": \"\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n- Ofrecer huecos: {\"respuesta\": \"Para tu Renovación de NIE, estos son los huecos libres para esta semana:\\n- Lunes 28: 10:00, 11:30\\n- Miércoles 30: 16:00\\n¿Cuál prefieres?\", \"es_cita\": false, \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n- Confirmar cita: {\"respuesta\": \"Resumen de tu cita:\\n- Nombre: Juan Pérez\\n- Trámite: Renovación de NIE\\n- Fecha: 28 de Septiembre a las 10:00\\n\\nResponde con:\\n1️⃣ Confirmar\\n2️⃣ Cancelar\", \"es_cita\": true, \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"2026-09-28T10:00:00\", \"fecha_fin\": \"2026-09-28T10:30:00\"}\n\n---\n\n### TONO Y ESTILO:\n- Amable, claro y directo.\n- Evita párrafos excesivamente largos."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2672,
+        1184
+      ],
+      "id": "623c63ae-3795-4709-a3d5-39dfb1c9fc12",
+      "name": "Recepcionista gestoria",
+      "retryOnFail": false,
+      "waitBetweenTries": 3000,
+      "maxTries": 3,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "q18smbXTzfEfGSsQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+          "cachedResultName": "gestionar_citas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "accion": "crear",
+            "nombre_cliente": "={{ $(\"Formatear evento 2\").json.nombre_cliente }}",
+            "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}",
+            "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.fecha_inicio }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_cliente",
+              "displayName": "nombre_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_tramite",
+              "displayName": "tipo_tramite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio",
+              "displayName": "fecha_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -64,
+        848
+      ],
+      "id": "282dabca-65b7-4681-92d5-30fbf89e24ac",
+      "name": "Call 'gestionar_citas'2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gestoria-marco.com/message/sendText/01842b64-aa71-484c-a428-56cc66b4e8c9",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"={{ $('Webhook').item.json.body.data.key.remoteJid }}.\",\n  \"options\": {\n    \"delay\": 1200,\n    \"presence\": \"composing\"\n  },\n  \"textMessage\": {\n    \"text\": \"={{ \"¡Cita confirmada y agendada con éxito!\\n\\n*Fecha:* \" + $node[\"Formatear evento1\"].json.fecha_inicio + \"\\n*Trámite:* \" + $node[\"Formatear evento1\"].json.tipo_tramite }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        160,
+        848
+      ],
+      "id": "6b200d32-8d41-46fa-a757-0fc078b0f668",
+      "name": "Confirmacion cita1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GenUBu4WY5qZhgI9",
+          "name": "Header EvolutionAPI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "Lo siento es que no tenemos hueco para ese dia",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -288,
+        1040
+      ],
+      "id": "6b007892-45cb-49d3-bce4-fc5e81617e7d",
+      "name": "Enviar texto1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "q18smbXTzfEfGSsQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+          "cachedResultName": "gestionar_citas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "accion": "buscar",
+            "nombre_cliente": "={{ $node[\"Formatear evento1\"].json.nombre_cliente }}",
+            "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}",
+            "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.fecha_inicio }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_cliente",
+              "displayName": "nombre_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_tramite",
+              "displayName": "tipo_tramite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio",
+              "displayName": "fecha_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -736,
+        944
+      ],
+      "id": "cf67f660-50ea-46c2-b662-fb98e0e1d7bd",
+      "name": "Call 'gestionar_citas'1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extraer los datos provenientes de la respuesta interactiva de WhatsApp (Evolution API)\nconst body = $('Webhook').item.json.body;\nconst data = body.data || {};\n\n// Capturar el ID del botón o de la lista seleccionada\nconst selectedButtonId = data.message?.buttonsResponseMessage?.selectedButtonId \n                      || data.message?.listResponseMessage?.singleSelectReply?.selectedRowId \n                      || \"\";\n\n// Parsea los datos (asumiendo que el ID del botón es algo como \"confirmar_cita|FECHA|TIPO\")\nconst partes = selectedButtonId.split('|');\nconst fechaInicio = partes[1] || \"\";\nconst tipoTramite = partes[2] || \"Trámite de Extranjería\";\n\n// Datos del remitente en WhatsApp\nconst remoteJid = data.key?.remoteJid || \"\";\nconst nombreCliente = data.pushName || \"Cliente WhatsApp\";\n\nreturn {\n  accion: \"crear\",\n  nombre_cliente: nombreCliente,\n  tipo_tramite: tipoTramite,\n  fecha_inicio: fechaInicio,\n  remoteJid: remoteJid\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        848
+      ],
+      "id": "73da6108-f2ad-4c39-92ad-b82098f5dba6",
+      "name": "Formatear evento 2"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "Entonces en que día te vendría bien agendar la cita?",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        1232
+      ],
+      "id": "06795852-5536-4cc5-ac04-17f430a15c9f",
+      "name": "Enviar texto2",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "q18smbXTzfEfGSsQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+          "cachedResultName": "gestionar_citas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "accion": "buscar",
+            "nombre_cliente": "={{ $node[\"Formatear evento1\"].json.nombre_cliente }}",
+            "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}",
+            "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.fecha_inicio }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_cliente",
+              "displayName": "nombre_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_tramite",
+              "displayName": "tipo_tramite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio",
+              "displayName": "fecha_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        160,
+        1232
+      ],
+      "id": "32bdb3fe-8883-4b0e-b05d-4a60b4cb70a3",
+      "name": "Call 'gestionar_citas'3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "720a9d6d-50ef-4b17-bacc-1dae94fca008",
+              "leftValue": "={{ $json.fecha_inicio }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -512,
+        944
+      ],
+      "id": "2cb7b800-bfb1-4a5e-b93c-28ad3dd5a8be",
+      "name": "Te parece bien el dia?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3110b0dc-8201-47b1-be9b-5dc3de2fa254",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -960,
+        1088
+      ],
+      "id": "d74689fa-5fcc-4130-935a-a4f3b40c0536",
+      "name": "Quieres reprogramar la cita?"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "tableName": "chat_histories"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.4,
+      "position": [
+        -2800,
+        1424
+      ],
+      "id": "8445bdb1-338d-40f3-ad70-6ab6009bcc66",
+      "name": "Postgres Chat Memory1",
+      "credentials": {
+        "postgres": {
+          "id": "fn2ZPkKEjrJ6aNsv",
+          "name": "BBDD gestoria_extranjeria"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.6-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -2928,
+        1424
+      ],
+      "id": "d4423e41-6a38-44b4-86c9-69e9e0bdd03a",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Úsala únicamente cuando el usuario exprese que quiere hablar con una persona humana o ser atendido por un gestor.",
+        "method": "POST",
+        "url": "=http://host.docker.internal:3000/api/v1/accounts/1/conversations/{{ $('Webhook').item.json.body.data.chatwootConversationId }}/custom_attributes ",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": []
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"labels\": [\"agente_desactivado\"]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.5,
+      "position": [
+        -2672,
+        1424
+      ],
+      "id": "d5b30565-69bc-4d29-a0a7-1362b7ae41a4",
+      "name": "Desactivar Agente1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JsJk8JjERwnhrC4i",
+          "name": "Header Chatwoot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Utiliza esta herramienta para gestionar citas del calendario (buscar disponibilidad de huecos libre, crear nuevas citas o cancelar citas existentes).\nFecha de inicio (Opcional. Si no hay fecha, pasa una cadena vacía \"\")\nID del evento (Opcional. Si no aplica, pasa una cadena vacía \"\")",
+        "workflowId": {
+          "__rl": true,
+          "value": "q18smbXTzfEfGSsQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+          "cachedResultName": "gestionar_citas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fecha_inicio": "={{ $fromAI('fecha_inicio', 'Fecha y hora de inicio en ISO 8601', 'string') }}",
+            "event_id": "={{ $fromAI('event_id', 'ID del evento a cancelar si aplica', 'string') }}",
+            "nombre_cliente": "={{ $fromAI('nombre_cliente', 'Nombre completo del cliente', 'string') }}",
+            "accion": "={{ $fromAI('accion', 'Acción a realizar: buscar_huecos, crear o cancelar', 'string') }}",
+            "tipo_tramite": "={{ $fromAI('tipo_tramite', 'Tipo de trámite solicitado', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_cliente",
+              "displayName": "nombre_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_tramite",
+              "displayName": "tipo_tramite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio",
+              "displayName": "fecha_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2544,
+        1424
+      ],
+      "id": "1dd04796-50d4-41df-bf60-d1fc188f0062",
+      "name": "gestionar_citas1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extraer la salida previa de forma segura\nlet rawOutput = $json.output ?? $json.text ?? $json.response ?? $json;\nlet parsedData = {};\n\n// Si ya es un objeto, úsalo directamente\nif (typeof rawOutput === 'object' && rawOutput !== null) {\n  parsedData = rawOutput;\n} else {\n  // Convertir a string y limpiar caracteres extraños de formato o saltos de línea iniciales\n  let cleanText = String(rawOutput).trim();\n  \n  // Quitar bloques markdown si los hubiera\n  cleanText = cleanText.replace(/^```(?:json)?/gi, '').replace(/```$/g, '').trim();\n\n  try {\n    parsedData = JSON.parse(cleanText);\n  } catch (error) {\n    // Si falla el parseo directo, intentamos limpiar llaves escapadas o saltos de línea al inicio\n    try {\n      let fixedText = cleanText.replace(/^[^{]*/, '').replace(/[^}]*$/, '');\n      parsedData = JSON.parse(fixedText);\n    } catch (e2) {\n      parsedData = { respuesta: cleanText };\n    }\n  }\n}\n\n// Asegurar que la respuesta sea estrictamente un texto plano y no otro objeto anidado\nlet textoRespuesta = parsedData.respuesta ?? rawOutput;\nif (typeof textoRespuesta === 'object') {\n  textoRespuesta = textoRespuesta.respuesta || JSON.stringify(textoRespuesta);\n}\n\nreturn {\n  json: {\n    respuesta: String(textoRespuesta).trim(),\n    es_cita: Boolean(parsedData.es_cita),\n    nombre_cliente: parsedData.nombre_cliente || \"\",\n    tipo_tramite: parsedData.tipo_tramite || \"Trámite General\",\n    fecha_inicio: parsedData.fecha_inicio || \"\",\n    fecha_fin: parsedData.fecha_fin || \"\"\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2080,
+        1088
+      ],
+      "id": "c69d9bc8-c34a-4111-a717-c9cd547fbe5a",
+      "name": "Formatear respuesta1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7d49fe98-0145-474b-ab3e-fca1949eed11",
+              "leftValue": "={{ $json.es_cita }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1856,
+        1088
+      ],
+      "id": "590fdeab-e394-473a-bf0e-44e0287fae29",
+      "name": "¿Es una cita?1"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $json.respuesta }}",
+        "options_message": {
+          "linkPreview": false
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -1632,
+        1184
+      ],
+      "id": "ed2188d2-8f24-4ac6-888c-714d23c2a65e",
+      "name": "Enviar mensaje1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $json.respuesta }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -1632,
+        992
+      ],
+      "id": "9b7b9fa2-d9c9-4683-9a5e-be6fe4c23032",
+      "name": "Enviar pregunta 1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "description": "Úsala únicamente cuando el usuario envíe o solicite subir documentos, imágenes, pasaportes o archivos adjuntos para su expediente.",
+        "workflowId": {
+          "__rl": true,
+          "value": "nGI9xB6lvLswREf9",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/nGI9xB6lvLswREf9",
+          "cachedResultName": "gestionar_docs"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "accion": "={{ $fromAI('accion', 'Acción a realizar: crear, consultar, actualizar, etc.', 'string') }}",
+            "nombre": "={{ $fromAI('nombre', 'Nombre de pila del cliente', 'string') }}",
+            "apellidos": "={{ $fromAI('apellidos', 'Apellidos del cliente', 'string') }}",
+            "asunto": "={{ $fromAI('asunto', 'Asunto o tipo de trámite (ej: Empadronamiento, Arraigo, etc.)', 'string') }}",
+            "pasaporte_nie": "={{ $fromAI('pasaporte_nie', 'Número de NIE o Pasaporte del cliente', 'string') }}",
+            "email": "={{ $fromAI('email', 'Correo del cliente', 'string') }}",
+            "telefono": "={{ $fromAI('telefono', 'Teléfono de contacto', 'string') }}",
+            "nacionalidad": "={{ $fromAI('nacionalidad', 'Nacionalidad del cliente', 'string') }}",
+            "nombre_documento": "={{ $fromAI('nombre_documento', 'Nombre del archivo adjuntado/documento si aplica', 'string') }}",
+            "url_archivo": "={{ $fromAI('url_archivo', 'Enlace o URL del documento subido', 'string') }}",
+            "estado_validacion": "={{ $fromAI('estado_validacion', 'Estado de la validación si aplica', 'string') }}",
+            "revisado_ia": "={{ $fromAI('revisado_ia', 'Si fue revisado por la IA', 'string') }}",
+            "fecha_subida": "={{ $fromAI('fecha_subida', 'Fecha de subida del documento', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "apellidos",
+              "displayName": "apellidos",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "asunto",
+              "displayName": "asunto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "pasaporte_nie",
+              "displayName": "pasaporte_nie",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "telefono",
+              "displayName": "telefono",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nacionalidad",
+              "displayName": "nacionalidad",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_documento",
+              "displayName": "nombre_documento",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "url_archivo",
+              "displayName": "url_archivo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "estado_validacion",
+              "displayName": "estado_validacion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "revisado_ia",
+              "displayName": "revisado_ia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_subida",
+              "displayName": "fecha_subida",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2416,
+        1424
+      ],
+      "id": "a87891d3-6e9c-407a-b5a3-75a055789b1f",
+      "name": "gestionar_docs1"
+    },
+    {
+      "parameters": {
+        "description": "Úsala para consultar el estado de un expediente, ver resoluciones o verificar la fase de un trámite de extranjería.",
+        "workflowId": {
+          "__rl": true,
+          "value": "L7eHu3wRpwDNcVCW",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/L7eHu3wRpwDNcVCW",
+          "cachedResultName": "gestionar_tramites"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "accion": "={{ $fromAI('accion', 'Acción a realizar: crear, consultar, actualizar, etc.', 'string') }}",
+            "nombre": "={{ $fromAI('nombre', 'Nombre de pila del cliente', 'string') }}",
+            "asunto": "={{ $fromAI('asunto', 'Asunto o tipo de trámite (ej: Empadronamiento, Arraigo, etc.)', 'string') }}",
+            "pasaporte_nie": "={{ $fromAI('pasaporte_nie', 'Número de NIE o Pasaporte del cliente', 'string') }}",
+            "estado": "={{ $fromAI('estado', 'Estado del tramite', 'string') }}",
+            "historial": "={{ $fromAI('historial', 'Historial del tramite desde comienzo hasta la actualidad', 'string') }}",
+            "revisado_ia": "={{ $fromAI('revisado_ia', 'Si fue revisado por la IA', 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "asunto",
+              "displayName": "asunto",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "pasaporte_nie",
+              "displayName": "pasaporte_nie",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "historial",
+              "displayName": "historial",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "revisado_ia",
+              "displayName": "revisado_ia",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        -2288,
+        1424
+      ],
+      "id": "4417f3e1-20ca-4fc6-a105-502371890619",
+      "name": "gestionar_tramites1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extraer los datos provenientes de la respuesta interactiva de WhatsApp (Evolution API)\nconst body = $('Webhook').item.json.body;\nconst data = body.data || {};\n\n// Capturar el ID del botón o de la lista seleccionada\nconst selectedButtonId = data.message?.buttonsResponseMessage?.selectedButtonId \n                      || data.message?.listResponseMessage?.singleSelectReply?.selectedRowId \n                      || \"\";\n\n// Parsea los datos (asumiendo que el ID del botón es algo como \"confirmar_cita|FECHA|TIPO\")\nconst partes = selectedButtonId.split('|');\nconst fechaInicio = partes[1] || \"\";\nconst tipoTramite = partes[2] || \"Trámite de Extranjería\";\n\n// Datos del remitente en WhatsApp\nconst remoteJid = data.key?.remoteJid || \"\";\nconst nombreCliente = data.pushName || \"Cliente WhatsApp\";\n\nreturn {\n  accion: \"crear\",\n  nombre_cliente: nombreCliente,\n  tipo_tramite: tipoTramite,\n  fecha_inicio: fechaInicio,\n  remoteJid: remoteJid\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1184,
+        656
+      ],
+      "id": "ea064239-db86-4c56-97b0-35b16708aebf",
+      "name": "Formatear evento1"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "q18smbXTzfEfGSsQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+          "cachedResultName": "gestionar_citas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "accion": "crear",
+            "nombre_cliente": "={{ $node[\"Formatear evento1\"].json.nombre_cliente }}",
+            "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}",
+            "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.fecha_inicio }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_cliente",
+              "displayName": "nombre_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_tramite",
+              "displayName": "tipo_tramite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio",
+              "displayName": "fecha_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -736,
+        752
+      ],
+      "id": "f7d4a6da-61e2-41c4-911d-0b5ec461413e",
+      "name": "Call 'gestionar_citas'4"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gestoria-marco.com/message/sendText/01842b64-aa71-484c-a428-56cc66b4e8c9",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"={{ $('Webhook').item.json.body.data.key.remoteJid }}\",\n  \"textMessage\": {\n    \"text\": \"Has cancelado la cita. No se ha agendado ninguna reserva.\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -288,
+        1232
+      ],
+      "id": "dd64ffff-d946-4b89-8595-f00d4af25641",
+      "name": "Enviar cancelacion1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GenUBu4WY5qZhgI9",
+          "name": "Header EvolutionAPI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gestoria-marco.com/message/sendText/01842b64-aa71-484c-a428-56cc66b4e8c9",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"={{ $node[\"Formatear evento1\"].json.remoteJid }}\",\n  \"options\": {\n    \"delay\": 1200,\n    \"presence\": \"composing\"\n  },\n  \"textMessage\": {\n    \"text\": \"={{ \"¡Cita confirmada y agendada con éxito!\\n\\n*Fecha:* \" + $node[\"Formatear evento1\"].json.fecha_inicio + \"\\n*Trámite:* \" + $node[\"Formatear evento1\"].json.tipo_tramite }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -736,
+        560
+      ],
+      "id": "0f8b8525-308e-41ee-b354-af7047e6b49c",
+      "name": "Confirmacion cita2",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GenUBu4WY5qZhgI9",
+          "name": "Header EvolutionAPI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "q18smbXTzfEfGSsQ",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/q18smbXTzfEfGSsQ",
+          "cachedResultName": "gestionar_citas"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "accion": "cancelar",
+            "nombre_cliente": "={{ $node[\"Formatear evento1\"].json.nombre_cliente }}",
+            "fecha_inicio": "={{ $node[\"Formatear evento1\"].json.inicio_cita }}",
+            "tipo_tramite": "={{ $node[\"Formatear evento1\"].json.tipo_tramite }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_cliente",
+              "displayName": "nombre_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_tramite",
+              "displayName": "tipo_tramite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio",
+              "displayName": "fecha_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -288,
+        1424
+      ],
+      "id": "affda4f8-f254-49aa-a6f7-128515fb2796",
+      "name": "Call 'gestionar_citas' eli1"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Extraer los datos del Webhook (Evolution API)\nconst body = $('Webhook').item.json.body || {};\nconst data = body.data || {};\n\n// Capturar el ID del botón o lista\nconst selectedButtonId = data.message?.buttonsResponseMessage?.selectedButtonId \n                      || data.message?.listResponseMessage?.singleSelectReply?.selectedRowId \n                      || \"\";\n\n// Asumiendo un ID formateado como: \"cancelar_cita|ID_EVENTO_O_FECHA|TIPO\"\nconst partes = selectedButtonId.split('|');\nconst idEventoOFecha = partes[1] || \"\";\nconst tipoTramite = partes[2] || \"Trámite General\";\n\n// Datos del cliente\nconst remoteJid = data.key?.remoteJid || \"\";\nconst nombreCliente = data.pushName || \"Cliente WhatsApp\";\n\nreturn {\n  accion: \"cancelar\",\n  nombre_cliente: nombreCliente,\n  tipo_tramite: tipoTramite,\n  fecha_o_id: idEventoOFecha,\n  remoteJid: remoteJid\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -736,
+        1280
+      ],
+      "id": "1ef972a4-7640-4349-864b-022cb1594656",
+      "name": "Formatear cancelacion1"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "En este momento no podemos procesar tu solicitud, un agente te atenderá en breve.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -2080,
+        1280
+      ],
+      "id": "9881c377-3379-4255-bcc2-ee504e68abae",
+      "name": "Enviar mensaje error1",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8392bd82-4a4e-4e1a-8b35-f90288c534c8",
+                    "leftValue": "={{ $('Webhook').item.json.body.data.message.conversation.trim() }}",
+                    "rightValue": "=^(1|confirmar|confirmar cita)$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Confirmar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2ad41cd0-b859-4807-a6cf-9c3ffe2315ae",
+                    "leftValue": "={{ $('Webhook').item.json.body.data.message.conversation.trim() }}",
+                    "rightValue": "=^(2|cancelar|cancelar cita)$",
+                    "operator": {
+                      "type": "string",
+                      "operation": "regex"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Cancelar"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1408,
+        992
+      ],
+      "id": "2bbd17f9-fa23-48c6-8e0c-5e9bb842dd49",
+      "name": "Conmutar opciones1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -512,
+        1280
+      ],
+      "id": "6db9cb51-db70-4cf5-b6de-6da8a6218822",
+      "name": "Bucle "
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -960,
+        656
+      ],
+      "id": "5e0350e8-c78b-4667-b2c6-e15f7d67b7e8",
+      "name": "Bucle1"
+    },
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"nombre\": \"a string\",\n  \"telefono\": 123,\n  \"accion\": null,\n  \"anArray\": []\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -3600,
+        1184
+      ],
+      "id": "1a3f0abb-55a1-470c-9774-a35048d42638",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:8080/message/sendText/gestoria-marco",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "3741B82F315D-4EFA-822E-7B43AFD2D083"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"number\": \"5491122334455\",\n  \"text\": \"Prueba de conexión interna desde n8n\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -3376,
+        1184
+      ],
+      "id": "5353261d-d678-4db1-a168-7ac013ac4729",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "url": "=http://host.docker.internal:3000/api/v1/accounts/1/conversations/{{ $json.body.data.chatwootConversationId }}/labels",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "api_access_token",
+              "value": "z82VdURuNJJ98mnHjCj2a3Nz"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -3104,
+        1184
+      ],
+      "id": "6fd818dc-9af1-464a-bb44-91cc5f0db7de",
+      "name": "Revisar etiqueta del agente",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "JsJk8JjERwnhrC4i",
+          "name": "Header Chatwoot"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "mzsBAUqognHYd6x4",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-10-23T18:02:26.914Z",
+      "updatedAt": "2026-10-23T18:02:26.914Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-10-31T11:04:25.356Z",
+  "versionId": "60415ce0-4830-4640-acd2-50951b494fbc"
+}
