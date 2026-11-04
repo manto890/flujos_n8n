@@ -1,7 +1,7 @@
 {
   "active": true,
   "activeVersion": {
-    "versionId": "c00025ff-4865-4688-91a6-5c3e797db338",
+    "versionId": "bb4b0a7e-246d-4bf9-b48e-3e8212308077",
     "workflowId": "k9e5IKWBV6MMq96I",
     "nodes": [
       {
@@ -320,8 +320,8 @@
         "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
         "typeVersion": 1.4,
         "position": [
-          1816,
-          872
+          1824,
+          880
         ],
         "id": "74979ec5-acbd-42a2-9ff9-674196e0fdf3",
         "name": "Postgres Chat Memory",
@@ -340,8 +340,8 @@
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "typeVersion": 1.1,
         "position": [
-          1688,
-          872
+          1696,
+          880
         ],
         "id": "b7b2d1e3-f356-4c15-89a4-70e2a371fbd5",
         "name": "Google Gemini Chat Model",
@@ -405,8 +405,8 @@
         "type": "n8n-nodes-base.httpRequestTool",
         "typeVersion": 4.5,
         "position": [
-          1944,
-          872
+          1952,
+          880
         ],
         "id": "fd274db2-c9c3-437d-bc45-1c9546298061",
         "name": "Desactivar Agente",
@@ -496,8 +496,8 @@
         "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
         "typeVersion": 2.2,
         "position": [
-          2072,
-          872
+          2080,
+          880
         ],
         "id": "15b097ef-8431-40ae-850a-93678d8f53a4",
         "name": "gestionar_citas"
@@ -510,8 +510,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          2528,
-          1328
+          2848,
+          624
         ],
         "id": "84ddbc73-e14c-4c8f-ae7d-82146240aa01",
         "name": "Formatear respuesta"
@@ -527,8 +527,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          2976,
-          -32
+          3376,
+          -720
         ],
         "id": "7dab64ff-84f9-445e-b7b0-e78168a2c395",
         "name": "Enviar pregunta ",
@@ -706,8 +706,8 @@
         "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
         "typeVersion": 2.2,
         "position": [
-          2200,
-          872
+          2208,
+          880
         ],
         "id": "ed8fea21-c828-4d02-8431-e16d9a132363",
         "name": "gestionar_docs"
@@ -813,8 +813,8 @@
         "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
         "typeVersion": 2.2,
         "position": [
-          2328,
-          872
+          2336,
+          880
         ],
         "id": "5f4438a5-e25a-49dc-a19f-de9c21398ec2",
         "name": "gestionar_tramites"
@@ -858,8 +858,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          3424,
-          -272
+          3824,
+          -1104
         ],
         "id": "dcedae97-3fd3-4ee5-8551-2a32cda4b33f",
         "name": "Formatear evento"
@@ -943,8 +943,8 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          3872,
-          -224
+          4272,
+          -1008
         ],
         "id": "40ada232-d522-4525-9611-3823f43f9093",
         "name": "Call 'gestionar_citas'"
@@ -963,8 +963,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.5,
         "position": [
-          4320,
-          208
+          4720,
+          -576
         ],
         "id": "d4b15d59-b4c3-453a-82c6-1e589febd5d4",
         "name": "Enviar cancelacion",
@@ -989,8 +989,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.5,
         "position": [
-          3872,
-          -416
+          4272,
+          -1200
         ],
         "id": "eaa26e7d-e630-42ab-963b-b435476bdcd8",
         "name": "Confirmacion cita",
@@ -1080,8 +1080,8 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          4320,
-          400
+          4720,
+          -384
         ],
         "id": "320b025c-606b-49b1-b4ef-cc326590ceb2",
         "name": "Call 'gestionar_citas' eli"
@@ -1094,8 +1094,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          3872,
-          352
+          4272,
+          -432
         ],
         "id": "40e62c66-82a7-418d-9bc8-aec638c6d7d3",
         "name": "Formatear cancelacion"
@@ -1111,8 +1111,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          2528,
-          560
+          2560,
+          464
         ],
         "id": "1cde3f5c-6849-45fa-a810-76df7e66131e",
         "name": "Enviar mensaje error",
@@ -1182,8 +1182,8 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.4,
         "position": [
-          3200,
-          -32
+          3600,
+          -720
         ],
         "id": "858af59e-beda-419d-9377-ca2ceccc0b5b",
         "name": "Conmutar opciones"
@@ -1307,8 +1307,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          3648,
-          -272
+          4048,
+          -1104
         ],
         "id": "bafa6d3e-5d33-4f13-b81b-470e6c4ba581",
         "name": "Bucle"
@@ -1324,8 +1324,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3424,
-          160
+          3824,
+          -624
         ],
         "id": "9325430b-6e51-4dd9-b8fc-ed3186de1f9d",
         "name": "Enviar texto",
@@ -1348,7 +1348,7 @@
         "typeVersion": 3.1,
         "position": [
           1936,
-          656
+          640
         ],
         "id": "c3a4e425-dd20-43ff-b526-cef696124916",
         "name": "Recepcionista gestoria",
@@ -1371,8 +1371,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.5,
         "position": [
-          5440,
-          -512
+          5840,
+          -1296
         ],
         "id": "979ebb80-db52-4727-8209-858e0d9d9bc0",
         "name": "Confirmacion cita1",
@@ -1394,8 +1394,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          4544,
-          -80
+          4944,
+          -864
         ],
         "id": "86a02db6-d097-4f0e-9df5-86d1faeb00d1",
         "name": "Enviar texto1",
@@ -1414,8 +1414,8 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          4768,
-          -272
+          5168,
+          -1056
         ],
         "id": "d106a308-4c9a-4d75-9455-2fcfe2737382",
         "name": "Formatear evento 2"
@@ -1447,8 +1447,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          3648,
-          160
+          4048,
+          -624
         ],
         "id": "52b7a557-f6ef-4348-bb3d-ee6ba47a6b6b",
         "name": "Quieres reprogramar la cita?"
@@ -1464,8 +1464,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3872,
-          -32
+          4272,
+          -816
         ],
         "id": "d8bf979c-4d4e-4743-b657-18bc30d64b51",
         "name": "Enviar pregunta 1",
@@ -1574,8 +1574,8 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          4992,
-          -80
+          5392,
+          -864
         ],
         "id": "b5db382b-8068-42bc-be25-6276ecf879bd",
         "name": "Append row in sheet",
@@ -1597,8 +1597,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          4768,
-          -80
+          5168,
+          -864
         ],
         "id": "8e3c4670-2a39-4d34-95e0-ec4e000a1d63",
         "name": "Enviar texto3",
@@ -1688,8 +1688,8 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          4320,
-          16
+          4720,
+          -768
         ],
         "id": "c50f38ed-1f1d-4239-a168-ea954d3b9249",
         "name": "Call 'gestionar_citas' b"
@@ -1773,8 +1773,8 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          5216,
-          -224
+          5616,
+          -1008
         ],
         "id": "3f17d85d-2e2f-474e-8168-7b6b6418db5f",
         "name": "Call 'gestionar_citas' conf"
@@ -1786,8 +1786,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          4992,
-          -272
+          5392,
+          -1056
         ],
         "id": "fc0ce6c5-cab5-41f5-a145-6af8ccfbf46a",
         "name": "Bucle 3"
@@ -1799,8 +1799,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          4096,
-          352
+          4496,
+          -432
         ],
         "id": "d5d747e4-e6c7-41a5-9811-6c80cee428c2",
         "name": "Bucle 4"
@@ -1812,8 +1812,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          4096,
-          -32
+          4496,
+          -816
         ],
         "id": "718520af-c792-4156-8a80-40f5563a4a84",
         "name": "Bucle 2"
@@ -1829,8 +1829,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          4544,
-          -272
+          4944,
+          -1056
         ],
         "id": "c8473133-1f9a-42a3-95c9-4f06445e46a0",
         "name": "Enviar texto2",
@@ -1868,8 +1868,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          4320,
-          -176
+          4720,
+          -960
         ],
         "id": "4c2fd36d-529d-48f7-a9b8-b5508053f582",
         "name": "Hay hueco en ese dia para cita?"
@@ -1885,8 +1885,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          5440,
-          -320
+          5840,
+          -1104
         ],
         "id": "c8b1e421-27b5-4b13-8e88-4e4ec4b27480",
         "name": "Enviar texto4",
@@ -1995,8 +1995,8 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          5888,
-          -320
+          6288,
+          -1104
         ],
         "id": "609c483b-777c-4783-9a95-b8a756ace5e4",
         "name": "Append row in sheet1",
@@ -2018,8 +2018,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          5664,
-          -320
+          6064,
+          -1104
         ],
         "id": "43729668-2341-44cf-a601-4e4c686a1240",
         "name": "Enviar texto5",
@@ -2058,8 +2058,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          5216,
-          -416
+          5616,
+          -1200
         ],
         "id": "ffe486cd-8811-4f62-8ccd-9a8b6d1b5582",
         "name": "Se pudo agendar cita?"
@@ -2228,8 +2228,8 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          4096,
-          928
+          4496,
+          144
         ],
         "id": "a2b625c5-2c27-4a9b-baab-0fc9a4913813",
         "name": "Call 'gestionar_docs'"
@@ -2241,8 +2241,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          3872,
-          832
+          4272,
+          48
         ],
         "id": "57e5881f-2b2b-4a02-a1ed-26b6b53d5a6e",
         "name": "Bucle1"
@@ -2258,8 +2258,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          4320,
-          592
+          4720,
+          -192
         ],
         "id": "e649f744-2209-4fb6-9856-63012af61a3e",
         "name": "Enviar texto7",
@@ -2298,8 +2298,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          2976,
-          1600
+          3376,
+          816
         ],
         "id": "6276ff72-331c-4dae-a453-1e05acf9f87f",
         "name": "Es mejor que contacte con gestor?"
@@ -2315,8 +2315,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3200,
-          1600
+          3600,
+          624
         ],
         "id": "697b8bcc-dfef-4f4f-9474-f80fb046e597",
         "name": "Enviar texto8",
@@ -2340,8 +2340,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3200,
-          1792
+          3600,
+          816
         ],
         "id": "64f6abb5-c3eb-462c-b127-65ad299a3b37",
         "name": "Enviar mensaje",
@@ -2380,25 +2380,11 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          4096,
-          688
+          4496,
+          -96
         ],
         "id": "fbcc01a7-b733-4d09-ac80-5119aeaee1da",
         "name": "Si se ha subido todos los docs?"
-      },
-      {
-        "parameters": {
-          "mode": "runOnceForEachItem",
-          "jsCode": "// Extraer los datos de la entrada anterior (Evolution API)\nconst item = $input.item.json;\nconst base64Data = item.base64 || item.data || \"\"; \nconst mimeType = item.mimetype || \"application/pdf\"; \nconst fileName = item.fileName || \"documento_extranjeria.pdf\";\n\n// Limpiar el prefijo de data URI si lo tuviera\nconst base64Clean = base64Data.replace(/^data:.*;base64,/, \"\");\n\n// Usar global.Buffer para evitar el error de TypeScript en n8n\nconst binaryData = global.Buffer.from(base64Clean, 'base64');\n\nreturn {\n  json: { \n    fileName, \n    mimeType,\n    success: true \n  },\n  binary: {\n    data: {\n      data: binaryData.toString('base64'),\n      mimeType: mimeType,\n      fileName: fileName,\n    }\n  }\n};"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3648,
-          832
-        ],
-        "id": "59d2be54-361f-4f64-874a-fc345247887c",
-        "name": "Pasar base64 a binario"
       },
       {
         "parameters": {
@@ -2411,8 +2397,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          4320,
-          784
+          4720,
+          0
         ],
         "id": "7c6416bd-5efb-4523-aa3d-32891e2dcb69",
         "name": "Enviar texto9",
@@ -2434,8 +2420,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3200,
-          832
+          3600,
+          -144
         ],
         "id": "615ef17e-4d1f-47bd-9ad2-4a75d64a2ba6",
         "name": "Enviar texto6",
@@ -2457,8 +2443,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3200,
-          1024
+          3600,
+          48
         ],
         "id": "0d28b3ef-ce2c-40d3-b899-668f0575f040",
         "name": "Enviar texto10",
@@ -2480,8 +2466,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3200,
-          1216
+          3600,
+          240
         ],
         "id": "b749ced0-bfce-49da-a274-1324a0b9c2dd",
         "name": "Enviar texto11",
@@ -2497,14 +2483,14 @@
           "resource": "messages-api",
           "instanceName": "gestoria-marco",
           "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+          "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.\n\n- {{ $json.nombre_documento }}",
           "options_message": {}
         },
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3200,
-          1408
+          3600,
+          432
         ],
         "id": "520b7768-7836-4bcb-bc68-581deae93bb5",
         "name": "Enviar texto12",
@@ -2552,8 +2538,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3200,
-          640
+          3600,
+          -336
         ],
         "id": "284c393e-5bba-4b2b-8fa3-886ff3aeb829",
         "name": "Enviar texto13",
@@ -2574,34 +2560,11 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3424,
-          832
+          3824,
+          48
         ],
         "id": "4555746f-2fa6-4068-bb20-22655a0d94b8",
         "name": "Descargar documento",
-        "credentials": {
-          "evolutionApi": {
-            "id": "cvPqkt8XAs3saTjV",
-            "name": "API DE GESTORIA-MARCO"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "resource": "messages-api",
-          "instanceName": "gestoria-marco",
-          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "=Para gestionar el tramite. Dime en que tramite quieres gestionar? Selecciona una de las opciones \n1) Consultar historial\n2)Actualizar documentos \n3)",
-          "options_message": {}
-        },
-        "type": "n8n-nodes-evolution-api.evolutionApi",
-        "typeVersion": 1,
-        "position": [
-          2976,
-          2000
-        ],
-        "id": "d9bc5ba4-10e3-4d72-ad6a-067eff4be410",
-        "name": "Enviar texto14",
         "credentials": {
           "evolutionApi": {
             "id": "cvPqkt8XAs3saTjV",
@@ -2720,8 +2683,8 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.4,
         "position": [
-          2752,
-          1296
+          3152,
+          592
         ],
         "id": "e585e0ee-b6cd-4862-ba45-69343c7aec46",
         "name": "Conmutar tema"
@@ -2861,8 +2824,8 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.4,
         "position": [
-          2976,
-          976
+          3376,
+          192
         ],
         "id": "f3667209-1a2d-4cf8-9e2e-16c06bf355d4",
         "name": "Conmutar tipo tramite"
@@ -2871,30 +2834,6 @@
         "parameters": {
           "rules": {
             "values": [
-              {
-                "conditions": {
-                  "options": {
-                    "caseSensitive": true,
-                    "leftValue": "",
-                    "typeValidation": "strict",
-                    "version": 3
-                  },
-                  "conditions": [
-                    {
-                      "id": "8392bd82-4a4e-4e1a-8b35-f90288c534c8",
-                      "leftValue": "={{ $('Webhook').item.json.body.data.message.conversation.trim() }}",
-                      "rightValue": "=^(1|actualizar|actualizar documentos)$",
-                      "operator": {
-                        "type": "string",
-                        "operation": "regex"
-                      }
-                    }
-                  ],
-                  "combinator": "and"
-                },
-                "renameOutput": true,
-                "outputKey": "Actualizar"
-              },
               {
                 "conditions": {
                   "options": {
@@ -2950,11 +2889,11 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.4,
         "position": [
-          3200,
-          1984
+          3376,
+          1200
         ],
         "id": "27dd1d3a-f51e-46d7-abb7-b38249c2de0d",
-        "name": "Conmutar opciones1"
+        "name": "Conmutar opciones 2"
       },
       {
         "parameters": {
@@ -2967,7 +2906,9 @@
           },
           "workflowInputs": {
             "mappingMode": "defineBelow",
-            "value": {},
+            "value": {
+              "accion": "buscar"
+            },
             "matchingColumns": [],
             "schema": [
               {
@@ -3059,120 +3000,11 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          3424,
-          1712
-        ],
-        "id": "bbf78dfe-f6b9-4459-b2cf-512083db9950",
-        "name": "Call 'gestionar_tramites'"
-      },
-      {
-        "parameters": {
-          "workflowId": {
-            "__rl": true,
-            "value": "L7eHu3wRpwDNcVCW",
-            "mode": "list",
-            "cachedResultUrl": "/workflow/L7eHu3wRpwDNcVCW",
-            "cachedResultName": "gestionar_tramites"
-          },
-          "workflowInputs": {
-            "mappingMode": "defineBelow",
-            "value": {},
-            "matchingColumns": [],
-            "schema": [
-              {
-                "id": "accion",
-                "displayName": "accion",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "canBeUsedToMatch": true,
-                "type": "string",
-                "removed": false
-              },
-              {
-                "id": "nombre_cliente",
-                "displayName": "nombre_cliente",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "canBeUsedToMatch": true,
-                "type": "string",
-                "removed": false
-              },
-              {
-                "id": "tipo_tramite",
-                "displayName": "tipo_tramite",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "canBeUsedToMatch": true,
-                "type": "string",
-                "removed": false
-              },
-              {
-                "id": "pasaporte_nie",
-                "displayName": "pasaporte_nie",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "canBeUsedToMatch": true,
-                "type": "string",
-                "removed": false
-              },
-              {
-                "id": "estado",
-                "displayName": "estado",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "canBeUsedToMatch": true,
-                "type": "string",
-                "removed": false
-              },
-              {
-                "id": "historial",
-                "displayName": "historial",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "canBeUsedToMatch": true,
-                "type": "string",
-                "removed": false
-              },
-              {
-                "id": "fecha_inicio",
-                "displayName": "fecha_inicio",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "canBeUsedToMatch": true,
-                "type": "string",
-                "removed": false
-              },
-              {
-                "id": "event_id",
-                "displayName": "event_id",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "canBeUsedToMatch": true,
-                "type": "string",
-                "removed": false
-              }
-            ],
-            "attemptToConvertTypes": false,
-            "convertFieldsToString": true
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.executeWorkflow",
-        "typeVersion": 1.3,
-        "position": [
-          3424,
-          2000
+          3600,
+          1008
         ],
         "id": "c5edc455-11ea-46f2-ac63-27a1f8860008",
-        "name": "Call 'gestionar_tramites'1"
+        "name": "Buscar_tramites"
       },
       {
         "parameters": {
@@ -3185,7 +3017,9 @@
           },
           "workflowInputs": {
             "mappingMode": "defineBelow",
-            "value": {},
+            "value": {
+              "accion": "buscar_docs"
+            },
             "matchingColumns": [],
             "schema": [
               {
@@ -3277,11 +3111,228 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          3424,
-          2192
+          3600,
+          1200
         ],
         "id": "ed26c2cb-77f0-445a-af98-9c25cdbff5f6",
-        "name": "Call 'gestionar_tramites'2"
+        "name": "Buscar_docs"
+      },
+      {
+        "parameters": {
+          "workflowId": {
+            "__rl": true,
+            "value": "L7eHu3wRpwDNcVCW",
+            "mode": "list",
+            "cachedResultUrl": "/workflow/L7eHu3wRpwDNcVCW",
+            "cachedResultName": "gestionar_tramites"
+          },
+          "workflowInputs": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "accion": "actualizar"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "accion",
+                "displayName": "accion",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "nombre_cliente",
+                "displayName": "nombre_cliente",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "tipo_tramite",
+                "displayName": "tipo_tramite",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "pasaporte_nie",
+                "displayName": "pasaporte_nie",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "estado",
+                "displayName": "estado",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "historial",
+                "displayName": "historial",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "fecha_inicio",
+                "displayName": "fecha_inicio",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              },
+              {
+                "id": "event_id",
+                "displayName": "event_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "canBeUsedToMatch": true,
+                "type": "string",
+                "removed": false
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": true
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.executeWorkflow",
+        "typeVersion": 1.3,
+        "position": [
+          4048,
+          1008
+        ],
+        "id": "73898fa8-768d-48be-9dbd-b51a9961349a",
+        "name": "Actualizar estado tramites"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "a87e9601-3bc6-468f-ad3e-a71b7768809a",
+                "leftValue": "={{ $json.fecha_fin }}",
+                "rightValue": "={{ $now.format('dd-MM-yyyy') }}",
+                "operator": {
+                  "type": "dateTime",
+                  "operation": "before"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          3824,
+          1008
+        ],
+        "id": "2e86c275-a3b1-4f65-a7fb-b705f0b2f7e0",
+        "name": "Si la fecha fin es antes de hoy?"
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "Revisa los requisitos de documentos necesarios para hacer estos tramites:\n- Renovacion el NIE\n- Nacionalidad española\n- Arraigo familiar o socioformativo\n- Obtencion del NIE",
+          "tableName": {
+            "__rl": true,
+            "value": "gestoria_marco_documents",
+            "mode": "list",
+            "cachedResultName": "gestoria_marco_documents"
+          },
+          "includeDocumentMetadata": false,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          2496,
+          864
+        ],
+        "id": "33516a1d-eed3-4e7e-a441-5a4f016776ec",
+        "name": "Supabase Vector Store",
+        "credentials": {
+          "supabaseApi": {
+            "id": "4viKc8Ym03FIbkYO",
+            "name": "SUPABASE SYNTIX AI"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          2512,
+          1024
+        ],
+        "id": "5468d537-8c85-4d27-bda1-e1b8d9643fc3",
+        "name": "Embeddings Google Gemini",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0CDHMUGTEZ",
+            "mode": "list",
+            "cachedResultName": "negociacion-leads"
+          },
+          "text": "=El documento encontrado es:  \n- {{ $json.nombre_documento }} \n- {{ $json.url_archivo }} \n- {{ $json.fecha_fin }} \n- {{ $json.fecha_inicio }}",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.7,
+        "position": [
+          3824,
+          1200
+        ],
+        "id": "7286fda8-0052-4e33-9e3b-12126e247f60",
+        "name": "Send a message",
+        "webhookId": "ca84ba88-92af-4fb6-bb0b-8635b9deca60",
+        "credentials": {
+          "slackApi": {
+            "id": "zSkgC26vJV8X1XUB",
+            "name": "Slack account"
+          }
+        }
       }
     ],
     "connections": {
@@ -3952,17 +4003,6 @@
           ]
         ]
       },
-      "Pasar base64 a binario": {
-        "main": [
-          [
-            {
-              "node": "Bucle1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Enviar texto6": {
         "main": [
           [
@@ -4033,7 +4073,7 @@
         "main": [
           [
             {
-              "node": "Pasar base64 a binario",
+              "node": "Bucle1",
               "type": "main",
               "index": 0
             }
@@ -4070,7 +4110,7 @@
           ],
           [
             {
-              "node": "Enviar texto14",
+              "node": "Conmutar opciones 2",
               "type": "main",
               "index": 0
             }
@@ -4116,52 +4156,94 @@
           ]
         ]
       },
-      "Enviar texto14": {
+      "Conmutar opciones 2": {
         "main": [
           [
             {
-              "node": "Conmutar opciones1",
+              "node": "Buscar_tramites",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Buscar_docs",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Conmutar opciones1": {
+      "Buscar_tramites": {
         "main": [
           [
             {
-              "node": "Call 'gestionar_tramites'",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Call 'gestionar_tramites'1",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Call 'gestionar_tramites'2",
+              "node": "Si la fecha fin es antes de hoy?",
               "type": "main",
               "index": 0
             }
           ]
         ]
+      },
+      "Buscar_docs": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Si la fecha fin es antes de hoy?": {
+        "main": [
+          [
+            {
+              "node": "Actualizar estado tramites",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Supabase Vector Store": {
+        "ai_tool": [
+          [
+            {
+              "node": "Recepcionista gestoria",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Supabase Vector Store",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send a message": {
+        "main": [
+          []
+        ]
       }
     },
     "nodeGroups": [],
     "authors": "Marco Antonio Martínez Guerrero",
-    "name": "Version c00025ff",
+    "name": "Version bb4b0a7e",
     "description": "",
     "autosaved": true,
-    "createdAt": "2026-11-04T11:13:11.385Z",
-    "updatedAt": "2026-11-04T11:13:13.000Z"
+    "createdAt": "2026-11-04T20:41:12.304Z",
+    "updatedAt": "2026-11-04T20:41:16.000Z"
   },
-  "activeVersionId": "c00025ff-4865-4688-91a6-5c3e797db338",
+  "activeVersionId": "bb4b0a7e-246d-4bf9-b48e-3e8212308077",
   "connections": {
     "Tipo de mensaje": {
       "main": [
@@ -4830,17 +4912,6 @@
         ]
       ]
     },
-    "Pasar base64 a binario": {
-      "main": [
-        [
-          {
-            "node": "Bucle1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Enviar texto6": {
       "main": [
         [
@@ -4911,7 +4982,7 @@
       "main": [
         [
           {
-            "node": "Pasar base64 a binario",
+            "node": "Bucle1",
             "type": "main",
             "index": 0
           }
@@ -4948,7 +5019,7 @@
         ],
         [
           {
-            "node": "Enviar texto14",
+            "node": "Conmutar opciones 2",
             "type": "main",
             "index": 0
           }
@@ -4994,40 +5065,82 @@
         ]
       ]
     },
-    "Enviar texto14": {
+    "Conmutar opciones 2": {
       "main": [
         [
           {
-            "node": "Conmutar opciones1",
+            "node": "Buscar_tramites",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Buscar_docs",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Conmutar opciones1": {
+    "Buscar_tramites": {
       "main": [
         [
           {
-            "node": "Call 'gestionar_tramites'",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'gestionar_tramites'1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Call 'gestionar_tramites'2",
+            "node": "Si la fecha fin es antes de hoy?",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Buscar_docs": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Si la fecha fin es antes de hoy?": {
+      "main": [
+        [
+          {
+            "node": "Actualizar estado tramites",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "Recepcionista gestoria",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
       ]
     }
   },
@@ -5356,8 +5469,8 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.4,
       "position": [
-        1816,
-        872
+        1824,
+        880
       ],
       "id": "74979ec5-acbd-42a2-9ff9-674196e0fdf3",
       "name": "Postgres Chat Memory",
@@ -5376,8 +5489,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        1688,
-        872
+        1696,
+        880
       ],
       "id": "b7b2d1e3-f356-4c15-89a4-70e2a371fbd5",
       "name": "Google Gemini Chat Model",
@@ -5441,8 +5554,8 @@
       "type": "n8n-nodes-base.httpRequestTool",
       "typeVersion": 4.5,
       "position": [
-        1944,
-        872
+        1952,
+        880
       ],
       "id": "fd274db2-c9c3-437d-bc45-1c9546298061",
       "name": "Desactivar Agente",
@@ -5532,8 +5645,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        2072,
-        872
+        2080,
+        880
       ],
       "id": "15b097ef-8431-40ae-850a-93678d8f53a4",
       "name": "gestionar_citas"
@@ -5546,8 +5659,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2528,
-        1328
+        2848,
+        624
       ],
       "id": "84ddbc73-e14c-4c8f-ae7d-82146240aa01",
       "name": "Formatear respuesta"
@@ -5563,8 +5676,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        2976,
-        -32
+        3376,
+        -720
       ],
       "id": "7dab64ff-84f9-445e-b7b0-e78168a2c395",
       "name": "Enviar pregunta ",
@@ -5742,8 +5855,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        2200,
-        872
+        2208,
+        880
       ],
       "id": "ed8fea21-c828-4d02-8431-e16d9a132363",
       "name": "gestionar_docs"
@@ -5849,8 +5962,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
       "typeVersion": 2.2,
       "position": [
-        2328,
-        872
+        2336,
+        880
       ],
       "id": "5f4438a5-e25a-49dc-a19f-de9c21398ec2",
       "name": "gestionar_tramites"
@@ -5894,8 +6007,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3424,
-        -272
+        3824,
+        -1104
       ],
       "id": "dcedae97-3fd3-4ee5-8551-2a32cda4b33f",
       "name": "Formatear evento"
@@ -5979,8 +6092,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        3872,
-        -224
+        4272,
+        -1008
       ],
       "id": "40ada232-d522-4525-9611-3823f43f9093",
       "name": "Call 'gestionar_citas'"
@@ -5999,8 +6112,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        4320,
-        208
+        4720,
+        -576
       ],
       "id": "d4b15d59-b4c3-453a-82c6-1e589febd5d4",
       "name": "Enviar cancelacion",
@@ -6025,8 +6138,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        3872,
-        -416
+        4272,
+        -1200
       ],
       "id": "eaa26e7d-e630-42ab-963b-b435476bdcd8",
       "name": "Confirmacion cita",
@@ -6116,8 +6229,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        4320,
-        400
+        4720,
+        -384
       ],
       "id": "320b025c-606b-49b1-b4ef-cc326590ceb2",
       "name": "Call 'gestionar_citas' eli"
@@ -6130,8 +6243,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3872,
-        352
+        4272,
+        -432
       ],
       "id": "40e62c66-82a7-418d-9bc8-aec638c6d7d3",
       "name": "Formatear cancelacion"
@@ -6147,8 +6260,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        2528,
-        560
+        2560,
+        464
       ],
       "id": "1cde3f5c-6849-45fa-a810-76df7e66131e",
       "name": "Enviar mensaje error",
@@ -6218,8 +6331,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        3200,
-        -32
+        3600,
+        -720
       ],
       "id": "858af59e-beda-419d-9377-ca2ceccc0b5b",
       "name": "Conmutar opciones"
@@ -6343,8 +6456,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        3648,
-        -272
+        4048,
+        -1104
       ],
       "id": "bafa6d3e-5d33-4f13-b81b-470e6c4ba581",
       "name": "Bucle"
@@ -6360,8 +6473,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3424,
-        160
+        3824,
+        -624
       ],
       "id": "9325430b-6e51-4dd9-b8fc-ed3186de1f9d",
       "name": "Enviar texto",
@@ -6384,7 +6497,7 @@
       "typeVersion": 3.1,
       "position": [
         1936,
-        656
+        640
       ],
       "id": "c3a4e425-dd20-43ff-b526-cef696124916",
       "name": "Recepcionista gestoria",
@@ -6407,8 +6520,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        5440,
-        -512
+        5840,
+        -1296
       ],
       "id": "979ebb80-db52-4727-8209-858e0d9d9bc0",
       "name": "Confirmacion cita1",
@@ -6430,8 +6543,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        4544,
-        -80
+        4944,
+        -864
       ],
       "id": "86a02db6-d097-4f0e-9df5-86d1faeb00d1",
       "name": "Enviar texto1",
@@ -6450,8 +6563,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4768,
-        -272
+        5168,
+        -1056
       ],
       "id": "d106a308-4c9a-4d75-9455-2fcfe2737382",
       "name": "Formatear evento 2"
@@ -6483,8 +6596,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3648,
-        160
+        4048,
+        -624
       ],
       "id": "52b7a557-f6ef-4348-bb3d-ee6ba47a6b6b",
       "name": "Quieres reprogramar la cita?"
@@ -6500,8 +6613,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3872,
-        -32
+        4272,
+        -816
       ],
       "id": "d8bf979c-4d4e-4743-b657-18bc30d64b51",
       "name": "Enviar pregunta 1",
@@ -6610,8 +6723,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        4992,
-        -80
+        5392,
+        -864
       ],
       "id": "b5db382b-8068-42bc-be25-6276ecf879bd",
       "name": "Append row in sheet",
@@ -6633,8 +6746,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        4768,
-        -80
+        5168,
+        -864
       ],
       "id": "8e3c4670-2a39-4d34-95e0-ec4e000a1d63",
       "name": "Enviar texto3",
@@ -6724,8 +6837,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        4320,
-        16
+        4720,
+        -768
       ],
       "id": "c50f38ed-1f1d-4239-a168-ea954d3b9249",
       "name": "Call 'gestionar_citas' b"
@@ -6809,8 +6922,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        5216,
-        -224
+        5616,
+        -1008
       ],
       "id": "3f17d85d-2e2f-474e-8168-7b6b6418db5f",
       "name": "Call 'gestionar_citas' conf"
@@ -6822,8 +6935,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        4992,
-        -272
+        5392,
+        -1056
       ],
       "id": "fc0ce6c5-cab5-41f5-a145-6af8ccfbf46a",
       "name": "Bucle 3"
@@ -6835,8 +6948,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        4096,
-        352
+        4496,
+        -432
       ],
       "id": "d5d747e4-e6c7-41a5-9811-6c80cee428c2",
       "name": "Bucle 4"
@@ -6848,8 +6961,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        4096,
-        -32
+        4496,
+        -816
       ],
       "id": "718520af-c792-4156-8a80-40f5563a4a84",
       "name": "Bucle 2"
@@ -6865,8 +6978,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        4544,
-        -272
+        4944,
+        -1056
       ],
       "id": "c8473133-1f9a-42a3-95c9-4f06445e46a0",
       "name": "Enviar texto2",
@@ -6904,8 +7017,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        4320,
-        -176
+        4720,
+        -960
       ],
       "id": "4c2fd36d-529d-48f7-a9b8-b5508053f582",
       "name": "Hay hueco en ese dia para cita?"
@@ -6921,8 +7034,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        5440,
-        -320
+        5840,
+        -1104
       ],
       "id": "c8b1e421-27b5-4b13-8e88-4e4ec4b27480",
       "name": "Enviar texto4",
@@ -7031,8 +7144,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        5888,
-        -320
+        6288,
+        -1104
       ],
       "id": "609c483b-777c-4783-9a95-b8a756ace5e4",
       "name": "Append row in sheet1",
@@ -7054,8 +7167,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        5664,
-        -320
+        6064,
+        -1104
       ],
       "id": "43729668-2341-44cf-a601-4e4c686a1240",
       "name": "Enviar texto5",
@@ -7094,8 +7207,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        5216,
-        -416
+        5616,
+        -1200
       ],
       "id": "ffe486cd-8811-4f62-8ccd-9a8b6d1b5582",
       "name": "Se pudo agendar cita?"
@@ -7264,8 +7377,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        4096,
-        928
+        4496,
+        144
       ],
       "id": "a2b625c5-2c27-4a9b-baab-0fc9a4913813",
       "name": "Call 'gestionar_docs'"
@@ -7277,8 +7390,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        3872,
-        832
+        4272,
+        48
       ],
       "id": "57e5881f-2b2b-4a02-a1ed-26b6b53d5a6e",
       "name": "Bucle1"
@@ -7294,8 +7407,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        4320,
-        592
+        4720,
+        -192
       ],
       "id": "e649f744-2209-4fb6-9856-63012af61a3e",
       "name": "Enviar texto7",
@@ -7334,8 +7447,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2976,
-        1600
+        3376,
+        816
       ],
       "id": "6276ff72-331c-4dae-a453-1e05acf9f87f",
       "name": "Es mejor que contacte con gestor?"
@@ -7351,8 +7464,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3200,
-        1600
+        3600,
+        624
       ],
       "id": "697b8bcc-dfef-4f4f-9474-f80fb046e597",
       "name": "Enviar texto8",
@@ -7376,8 +7489,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3200,
-        1792
+        3600,
+        816
       ],
       "id": "64f6abb5-c3eb-462c-b127-65ad299a3b37",
       "name": "Enviar mensaje",
@@ -7416,25 +7529,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        4096,
-        688
+        4496,
+        -96
       ],
       "id": "fbcc01a7-b733-4d09-ac80-5119aeaee1da",
       "name": "Si se ha subido todos los docs?"
-    },
-    {
-      "parameters": {
-        "mode": "runOnceForEachItem",
-        "jsCode": "// Extraer los datos de la entrada anterior (Evolution API)\nconst item = $input.item.json;\nconst base64Data = item.base64 || item.data || \"\"; \nconst mimeType = item.mimetype || \"application/pdf\"; \nconst fileName = item.fileName || \"documento_extranjeria.pdf\";\n\n// Limpiar el prefijo de data URI si lo tuviera\nconst base64Clean = base64Data.replace(/^data:.*;base64,/, \"\");\n\n// Usar global.Buffer para evitar el error de TypeScript en n8n\nconst binaryData = global.Buffer.from(base64Clean, 'base64');\n\nreturn {\n  json: { \n    fileName, \n    mimeType,\n    success: true \n  },\n  binary: {\n    data: {\n      data: binaryData.toString('base64'),\n      mimeType: mimeType,\n      fileName: fileName,\n    }\n  }\n};"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        3648,
-        832
-      ],
-      "id": "59d2be54-361f-4f64-874a-fc345247887c",
-      "name": "Pasar base64 a binario"
     },
     {
       "parameters": {
@@ -7447,8 +7546,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        4320,
-        784
+        4720,
+        0
       ],
       "id": "7c6416bd-5efb-4523-aa3d-32891e2dcb69",
       "name": "Enviar texto9",
@@ -7470,8 +7569,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3200,
-        832
+        3600,
+        -144
       ],
       "id": "615ef17e-4d1f-47bd-9ad2-4a75d64a2ba6",
       "name": "Enviar texto6",
@@ -7493,8 +7592,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3200,
-        1024
+        3600,
+        48
       ],
       "id": "0d28b3ef-ce2c-40d3-b899-668f0575f040",
       "name": "Enviar texto10",
@@ -7516,8 +7615,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3200,
-        1216
+        3600,
+        240
       ],
       "id": "b749ced0-bfce-49da-a274-1324a0b9c2dd",
       "name": "Enviar texto11",
@@ -7533,14 +7632,14 @@
         "resource": "messages-api",
         "instanceName": "gestoria-marco",
         "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+        "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.\n\n- {{ $json.nombre_documento }}",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3200,
-        1408
+        3600,
+        432
       ],
       "id": "520b7768-7836-4bcb-bc68-581deae93bb5",
       "name": "Enviar texto12",
@@ -7588,8 +7687,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3200,
-        640
+        3600,
+        -336
       ],
       "id": "284c393e-5bba-4b2b-8fa3-886ff3aeb829",
       "name": "Enviar texto13",
@@ -7610,34 +7709,11 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3424,
-        832
+        3824,
+        48
       ],
       "id": "4555746f-2fa6-4068-bb20-22655a0d94b8",
       "name": "Descargar documento",
-      "credentials": {
-        "evolutionApi": {
-          "id": "cvPqkt8XAs3saTjV",
-          "name": "API DE GESTORIA-MARCO"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "messages-api",
-        "instanceName": "gestoria-marco",
-        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "=Para gestionar el tramite. Dime en que tramite quieres gestionar? Selecciona una de las opciones \n1) Consultar historial\n2)Actualizar documentos \n3)",
-        "options_message": {}
-      },
-      "type": "n8n-nodes-evolution-api.evolutionApi",
-      "typeVersion": 1,
-      "position": [
-        2976,
-        2000
-      ],
-      "id": "d9bc5ba4-10e3-4d72-ad6a-067eff4be410",
-      "name": "Enviar texto14",
       "credentials": {
         "evolutionApi": {
           "id": "cvPqkt8XAs3saTjV",
@@ -7756,8 +7832,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        2752,
-        1296
+        3152,
+        592
       ],
       "id": "e585e0ee-b6cd-4862-ba45-69343c7aec46",
       "name": "Conmutar tema"
@@ -7897,8 +7973,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        2976,
-        976
+        3376,
+        192
       ],
       "id": "f3667209-1a2d-4cf8-9e2e-16c06bf355d4",
       "name": "Conmutar tipo tramite"
@@ -7907,30 +7983,6 @@
       "parameters": {
         "rules": {
           "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "id": "8392bd82-4a4e-4e1a-8b35-f90288c534c8",
-                    "leftValue": "={{ $('Webhook').item.json.body.data.message.conversation.trim() }}",
-                    "rightValue": "=^(1|actualizar|actualizar documentos)$",
-                    "operator": {
-                      "type": "string",
-                      "operation": "regex"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "Actualizar"
-            },
             {
               "conditions": {
                 "options": {
@@ -7986,11 +8038,11 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        3200,
-        1984
+        3376,
+        1200
       ],
       "id": "27dd1d3a-f51e-46d7-abb7-b38249c2de0d",
-      "name": "Conmutar opciones1"
+      "name": "Conmutar opciones 2"
     },
     {
       "parameters": {
@@ -8003,7 +8055,9 @@
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
-          "value": {},
+          "value": {
+            "accion": "buscar"
+          },
           "matchingColumns": [],
           "schema": [
             {
@@ -8095,120 +8149,11 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        3424,
-        1712
-      ],
-      "id": "bbf78dfe-f6b9-4459-b2cf-512083db9950",
-      "name": "Call 'gestionar_tramites'"
-    },
-    {
-      "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "L7eHu3wRpwDNcVCW",
-          "mode": "list",
-          "cachedResultUrl": "/workflow/L7eHu3wRpwDNcVCW",
-          "cachedResultName": "gestionar_tramites"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {},
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "accion",
-              "displayName": "accion",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "nombre_cliente",
-              "displayName": "nombre_cliente",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "tipo_tramite",
-              "displayName": "tipo_tramite",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "pasaporte_nie",
-              "displayName": "pasaporte_nie",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "estado",
-              "displayName": "estado",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "historial",
-              "displayName": "historial",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "fecha_inicio",
-              "displayName": "fecha_inicio",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            },
-            {
-              "id": "event_id",
-              "displayName": "event_id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.3,
-      "position": [
-        3424,
-        2000
+        3600,
+        1008
       ],
       "id": "c5edc455-11ea-46f2-ac63-27a1f8860008",
-      "name": "Call 'gestionar_tramites'1"
+      "name": "Buscar_tramites"
     },
     {
       "parameters": {
@@ -8221,7 +8166,9 @@
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
-          "value": {},
+          "value": {
+            "accion": "buscar_docs"
+          },
           "matchingColumns": [],
           "schema": [
             {
@@ -8313,11 +8260,228 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        3424,
-        2192
+        3600,
+        1200
       ],
       "id": "ed26c2cb-77f0-445a-af98-9c25cdbff5f6",
-      "name": "Call 'gestionar_tramites'2"
+      "name": "Buscar_docs"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "L7eHu3wRpwDNcVCW",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/L7eHu3wRpwDNcVCW",
+          "cachedResultName": "gestionar_tramites"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "accion": "actualizar"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "accion",
+              "displayName": "accion",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "nombre_cliente",
+              "displayName": "nombre_cliente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "tipo_tramite",
+              "displayName": "tipo_tramite",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "pasaporte_nie",
+              "displayName": "pasaporte_nie",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "estado",
+              "displayName": "estado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "historial",
+              "displayName": "historial",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "fecha_inicio",
+              "displayName": "fecha_inicio",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "event_id",
+              "displayName": "event_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        4048,
+        1008
+      ],
+      "id": "73898fa8-768d-48be-9dbd-b51a9961349a",
+      "name": "Actualizar estado tramites"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a87e9601-3bc6-468f-ad3e-a71b7768809a",
+              "leftValue": "={{ $json.fecha_fin }}",
+              "rightValue": "={{ $now.format('dd-MM-yyyy') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "before"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3824,
+        1008
+      ],
+      "id": "2e86c275-a3b1-4f65-a7fb-b705f0b2f7e0",
+      "name": "Si la fecha fin es antes de hoy?"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Revisa los requisitos de documentos necesarios para hacer estos tramites:\n- Renovacion el NIE\n- Nacionalidad española\n- Arraigo familiar o socioformativo\n- Obtencion del NIE",
+        "tableName": {
+          "__rl": true,
+          "value": "gestoria_marco_documents",
+          "mode": "list",
+          "cachedResultName": "gestoria_marco_documents"
+        },
+        "includeDocumentMetadata": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        2496,
+        864
+      ],
+      "id": "33516a1d-eed3-4e7e-a441-5a4f016776ec",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "4viKc8Ym03FIbkYO",
+          "name": "SUPABASE SYNTIX AI"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2512,
+        1024
+      ],
+      "id": "5468d537-8c85-4d27-bda1-e1b8d9643fc3",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0CDHMUGTEZ",
+          "mode": "list",
+          "cachedResultName": "negociacion-leads"
+        },
+        "text": "=El documento encontrado es:  \n- {{ $json.nombre_documento }} \n- {{ $json.url_archivo }} \n- {{ $json.fecha_fin }} \n- {{ $json.fecha_inicio }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.7,
+      "position": [
+        3824,
+        1200
+      ],
+      "id": "7286fda8-0052-4e33-9e3b-12126e247f60",
+      "name": "Send a message",
+      "webhookId": "ca84ba88-92af-4fb6-bb0b-8635b9deca60",
+      "credentials": {
+        "slackApi": {
+          "id": "zSkgC26vJV8X1XUB",
+          "name": "Slack account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -8337,6 +8501,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-11-04T11:13:11.379Z",
-  "versionId": "c00025ff-4865-4688-91a6-5c3e797db338"
+  "updatedAt": "2026-11-04T20:41:12.294Z",
+  "versionId": "bb4b0a7e-246d-4bf9-b48e-3e8212308077"
 }
