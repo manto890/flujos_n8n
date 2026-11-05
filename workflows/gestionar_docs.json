@@ -1,7 +1,7 @@
 {
   "active": true,
   "activeVersion": {
-    "versionId": "3d609157-ce47-48e5-846d-72fd627f3442",
+    "versionId": "098e9e8c-4b2e-43f3-a103-62aeae3d2b75",
     "workflowId": "nGI9xB6lvLswREf9",
     "nodes": [
       {
@@ -267,37 +267,6 @@
       },
       {
         "parameters": {
-          "resource": "fileFolder",
-          "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
-          "returnAll": true,
-          "filter": {
-            "folderId": {
-              "__rl": true,
-              "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
-              "mode": "list",
-              "cachedResultName": "DOCUMENTOS CLIENTES",
-              "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
-            }
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          896,
-          672
-        ],
-        "id": "f65a88a1-99d4-46fa-b83a-faff1b84bcd1",
-        "name": "buscar_docs2",
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "cCQ1BE3aV6hQHIKK",
-            "name": "API de Google Drive"
-          }
-        }
-      },
-      {
-        "parameters": {
           "conditions": {
             "options": {
               "caseSensitive": true,
@@ -352,37 +321,6 @@
         ],
         "id": "6fdf5821-d110-493a-b420-ffaf6a5b6bd6",
         "name": "buscar_docs1",
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "cCQ1BE3aV6hQHIKK",
-            "name": "API de Google Drive"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "resource": "fileFolder",
-          "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
-          "returnAll": true,
-          "filter": {
-            "folderId": {
-              "__rl": true,
-              "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
-              "mode": "list",
-              "cachedResultName": "DOCUMENTOS CLIENTES",
-              "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
-            }
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          1344,
-          288
-        ],
-        "id": "b2f0fbc5-1599-464e-a521-5c5f2886394e",
-        "name": "buscar_docs3",
         "credentials": {
           "googleDriveOAuth2Api": {
             "id": "cCQ1BE3aV6hQHIKK",
@@ -463,7 +401,7 @@
         "type": "@n8n/n8n-nodes-langchain.agent",
         "typeVersion": 3.1,
         "position": [
-          3648,
+          3872,
           160
         ],
         "id": "5b90ea03-1987-4dba-b23e-c986a14ff800",
@@ -479,7 +417,7 @@
         "type": "n8n-nodes-base.extractFromFile",
         "typeVersion": 1,
         "position": [
-          3136,
+          3360,
           160
         ],
         "alwaysOutputData": true
@@ -510,7 +448,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          2912,
+          3136,
           288
         ],
         "credentials": {
@@ -527,8 +465,8 @@
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "typeVersion": 1.1,
         "position": [
-          3592,
-          392
+          3824,
+          400
         ],
         "id": "21af7a27-04ea-429d-92c2-22747535feca",
         "name": "Google Gemini Chat Model",
@@ -547,8 +485,8 @@
         "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
         "typeVersion": 1.4,
         "position": [
-          3720,
-          392
+          3952,
+          400
         ],
         "id": "bf54f7f8-b887-48a1-addd-d34fa84edb91",
         "name": "Postgres Chat Memory",
@@ -710,7 +648,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          2912,
+          3136,
           0
         ],
         "credentials": {
@@ -748,8 +686,8 @@
         "type": "n8n-nodes-base.googleDocsTool",
         "typeVersion": 2,
         "position": [
-          3848,
-          392
+          4080,
+          400
         ],
         "id": "a4c7f32b-b80b-467c-938f-05d4ce830063",
         "name": "Update a document in Google Docs",
@@ -835,20 +773,6 @@
       },
       {
         "parameters": {
-          "mode": "runOnceForEachItem",
-          "jsCode": "// Captura la URL o ID del archivo y el nombre provenientes del nodo anterior\nconst url = $json.url_archivo || \"\";\nconst nombreArchivo = $json.name || $json.nombre_documento || \"\";\n\n// Extrae el ID de la URL mediante Regex\nconst match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)/);\nconst fileId = match ? match[1] : url;\n\n// Retorna un objeto con ambos datos\nreturn {\n  fileId: fileId,\n  nombreArchivo: nombreArchivo\n};"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          1120,
-          288
-        ],
-        "id": "ac411e06-9f85-4e74-a562-de3cde183155",
-        "name": "Extraer datos archivo1"
-      },
-      {
-        "parameters": {
           "operation": "executeQuery",
           "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
           "options": {}
@@ -861,27 +785,6 @@
         ],
         "id": "ee01ebb8-d620-441d-a4c6-f882177ab16a",
         "name": "consultar_docs_id",
-        "credentials": {
-          "postgres": {
-            "id": "fn2ZPkKEjrJ6aNsv",
-            "name": "BBDD gestoria_extranjeria"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.7,
-        "position": [
-          896,
-          288
-        ],
-        "id": "a2c75927-7004-4626-a91e-7b822290e29f",
-        "name": "consultar_docs_id1",
         "credentials": {
           "postgres": {
             "id": "fn2ZPkKEjrJ6aNsv",
@@ -1396,7 +1299,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.1,
         "position": [
-          2912,
+          3136,
           480
         ],
         "credentials": {
@@ -1413,7 +1316,7 @@
               {
                 "id": "7ad83a8f-1d51-47f3-bf28-7e0a8c81d4c1",
                 "name": "text",
-                "value": "={{ $('Analizar imagen').item.json.text || $('Analizar imagen').item.json.output || $('Analizar imagen').item.json.content || '' }}",
+                "value": "={{ $('Analizar imagen1').item.json.text || $('Analizar imagen1').item.json.output || $('Analizar imagen1').item.json.content || '' }}",
                 "type": "string"
               }
             ]
@@ -1423,11 +1326,39 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.5,
         "position": [
-          3360,
+          3584,
           160
         ],
         "id": "068084ba-b2a0-4806-8de7-6553f70e7f89",
         "name": "Editar texto 3"
+      },
+      {
+        "parameters": {
+          "resource": "image",
+          "operation": "analyze",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3-flash-preview",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3-flash-preview"
+          },
+          "text": "Por favor extre informacion valiosa de las imagenes como datos perosnales: DNI, NIE, Pasaporte, Nombre, Direccion de domicilio, correo electrónico entre otras coas.",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.2,
+        "position": [
+          2912,
+          480
+        ],
+        "id": "a426153e-2390-402d-aa3e-a567b98ff10e",
+        "name": "Analizar imagen1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
       }
     ],
     "connections": {
@@ -1527,13 +1458,7 @@
               "index": 0
             }
           ],
-          [
-            {
-              "node": "buscar_docs2",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          []
         ]
       },
       "Si la carpeta existe? ": {
@@ -1545,27 +1470,10 @@
               "index": 0
             }
           ],
-          [
-            {
-              "node": "consultar_docs_id1",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          []
         ]
       },
       "buscar_docs1": {
-        "main": [
-          [
-            {
-              "node": "Establecer ID de Archivo",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "buscar_docs3": {
         "main": [
           [
             {
@@ -1730,28 +1638,6 @@
           ]
         ]
       },
-      "Extraer datos archivo1": {
-        "main": [
-          [
-            {
-              "node": "buscar_docs3",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "consultar_docs_id1": {
-        "main": [
-          [
-            {
-              "node": "Extraer datos archivo1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "consultar_docs_id": {
         "main": [
           [
@@ -1811,7 +1697,7 @@
         "main": [
           [
             {
-              "node": "Convertir a Google Docs1",
+              "node": "Analizar imagen1",
               "type": "main",
               "index": 0
             }
@@ -1936,17 +1822,28 @@
             }
           ]
         ]
+      },
+      "Analizar imagen1": {
+        "main": [
+          [
+            {
+              "node": "Convertir a Google Docs1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "nodeGroups": [],
     "authors": "Marco Antonio Martínez Guerrero",
-    "name": "Version 3d609157",
+    "name": "Version 098e9e8c",
     "description": "",
     "autosaved": true,
-    "createdAt": "2026-11-04T21:57:07.218Z",
-    "updatedAt": "2026-11-04T21:57:09.000Z"
+    "createdAt": "2026-11-05T10:07:49.496Z",
+    "updatedAt": "2026-11-05T10:30:36.000Z"
   },
-  "activeVersionId": "3d609157-ce47-48e5-846d-72fd627f3442",
+  "activeVersionId": "098e9e8c-4b2e-43f3-a103-62aeae3d2b75",
   "connections": {
     "Al ejecutar el flujo": {
       "main": [
@@ -2044,13 +1941,7 @@
             "index": 0
           }
         ],
-        [
-          {
-            "node": "buscar_docs2",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Si la carpeta existe? ": {
@@ -2062,27 +1953,10 @@
             "index": 0
           }
         ],
-        [
-          {
-            "node": "consultar_docs_id1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "buscar_docs1": {
-      "main": [
-        [
-          {
-            "node": "Establecer ID de Archivo",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "buscar_docs3": {
       "main": [
         [
           {
@@ -2247,28 +2121,6 @@
         ]
       ]
     },
-    "Extraer datos archivo1": {
-      "main": [
-        [
-          {
-            "node": "buscar_docs3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "consultar_docs_id1": {
-      "main": [
-        [
-          {
-            "node": "Extraer datos archivo1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "consultar_docs_id": {
       "main": [
         [
@@ -2328,7 +2180,7 @@
       "main": [
         [
           {
-            "node": "Convertir a Google Docs1",
+            "node": "Analizar imagen1",
             "type": "main",
             "index": 0
           }
@@ -2448,6 +2300,17 @@
         [
           {
             "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analizar imagen1": {
+      "main": [
+        [
+          {
+            "node": "Convertir a Google Docs1",
             "type": "main",
             "index": 0
           }
@@ -2727,37 +2590,6 @@
     },
     {
       "parameters": {
-        "resource": "fileFolder",
-        "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
-        "returnAll": true,
-        "filter": {
-          "folderId": {
-            "__rl": true,
-            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
-            "mode": "list",
-            "cachedResultName": "DOCUMENTOS CLIENTES",
-            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
-          }
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
-      "position": [
-        896,
-        672
-      ],
-      "id": "f65a88a1-99d4-46fa-b83a-faff1b84bcd1",
-      "name": "buscar_docs2",
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "cCQ1BE3aV6hQHIKK",
-          "name": "API de Google Drive"
-        }
-      }
-    },
-    {
-      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -2812,37 +2644,6 @@
       ],
       "id": "6fdf5821-d110-493a-b420-ffaf6a5b6bd6",
       "name": "buscar_docs1",
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "cCQ1BE3aV6hQHIKK",
-          "name": "API de Google Drive"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "fileFolder",
-        "queryString": "=name contains '={{ $json.pasaporte_nie }}' and name contains '={{ $json.asunto }}' and trashed = false",
-        "returnAll": true,
-        "filter": {
-          "folderId": {
-            "__rl": true,
-            "value": "1HSbo5MVioo_OIDhaK48BcXbM78yRC8it",
-            "mode": "list",
-            "cachedResultName": "DOCUMENTOS CLIENTES",
-            "cachedResultUrl": "https://drive.google.com/drive/folders/1HSbo5MVioo_OIDhaK48BcXbM78yRC8it"
-          }
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
-      "position": [
-        1344,
-        288
-      ],
-      "id": "b2f0fbc5-1599-464e-a521-5c5f2886394e",
-      "name": "buscar_docs3",
       "credentials": {
         "googleDriveOAuth2Api": {
           "id": "cCQ1BE3aV6hQHIKK",
@@ -2923,7 +2724,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 3.1,
       "position": [
-        3648,
+        3872,
         160
       ],
       "id": "5b90ea03-1987-4dba-b23e-c986a14ff800",
@@ -2939,7 +2740,7 @@
       "type": "n8n-nodes-base.extractFromFile",
       "typeVersion": 1,
       "position": [
-        3136,
+        3360,
         160
       ],
       "alwaysOutputData": true
@@ -2970,7 +2771,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2912,
+        3136,
         288
       ],
       "credentials": {
@@ -2987,8 +2788,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1.1,
       "position": [
-        3592,
-        392
+        3824,
+        400
       ],
       "id": "21af7a27-04ea-429d-92c2-22747535feca",
       "name": "Google Gemini Chat Model",
@@ -3007,8 +2808,8 @@
       "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
       "typeVersion": 1.4,
       "position": [
-        3720,
-        392
+        3952,
+        400
       ],
       "id": "bf54f7f8-b887-48a1-addd-d34fa84edb91",
       "name": "Postgres Chat Memory",
@@ -3170,7 +2971,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2912,
+        3136,
         0
       ],
       "credentials": {
@@ -3208,8 +3009,8 @@
       "type": "n8n-nodes-base.googleDocsTool",
       "typeVersion": 2,
       "position": [
-        3848,
-        392
+        4080,
+        400
       ],
       "id": "a4c7f32b-b80b-467c-938f-05d4ce830063",
       "name": "Update a document in Google Docs",
@@ -3295,20 +3096,6 @@
     },
     {
       "parameters": {
-        "mode": "runOnceForEachItem",
-        "jsCode": "// Captura la URL o ID del archivo y el nombre provenientes del nodo anterior\nconst url = $json.url_archivo || \"\";\nconst nombreArchivo = $json.name || $json.nombre_documento || \"\";\n\n// Extrae el ID de la URL mediante Regex\nconst match = url.match(/\\/d\\/([a-zA-Z0-9_-]+)/);\nconst fileId = match ? match[1] : url;\n\n// Retorna un objeto con ambos datos\nreturn {\n  fileId: fileId,\n  nombreArchivo: nombreArchivo\n};"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        1120,
-        288
-      ],
-      "id": "ac411e06-9f85-4e74-a562-de3cde183155",
-      "name": "Extraer datos archivo1"
-    },
-    {
-      "parameters": {
         "operation": "executeQuery",
         "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
         "options": {}
@@ -3321,27 +3108,6 @@
       ],
       "id": "ee01ebb8-d620-441d-a4c6-f882177ab16a",
       "name": "consultar_docs_id",
-      "credentials": {
-        "postgres": {
-          "id": "fn2ZPkKEjrJ6aNsv",
-          "name": "BBDD gestoria_extranjeria"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT d.id, d.url_archivo, d.nombre_documento \nFROM clientes c\nJOIN tramites t ON t.id_cliente = c.id\nJOIN documentos d ON d.id_tramite = t.id\nWHERE c.pasaporte_nie = '{{ $json.pasaporte_nie }}' \n  AND d.nombre_documento = '{{ $json.nombre_documento }}';",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.7,
-      "position": [
-        896,
-        288
-      ],
-      "id": "a2c75927-7004-4626-a91e-7b822290e29f",
-      "name": "consultar_docs_id1",
       "credentials": {
         "postgres": {
           "id": "fn2ZPkKEjrJ6aNsv",
@@ -3856,7 +3622,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.1,
       "position": [
-        2912,
+        3136,
         480
       ],
       "credentials": {
@@ -3873,7 +3639,7 @@
             {
               "id": "7ad83a8f-1d51-47f3-bf28-7e0a8c81d4c1",
               "name": "text",
-              "value": "={{ $('Analizar imagen').item.json.text || $('Analizar imagen').item.json.output || $('Analizar imagen').item.json.content || '' }}",
+              "value": "={{ $('Analizar imagen1').item.json.text || $('Analizar imagen1').item.json.output || $('Analizar imagen1').item.json.content || '' }}",
               "type": "string"
             }
           ]
@@ -3883,11 +3649,39 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        3360,
+        3584,
         160
       ],
       "id": "068084ba-b2a0-4806-8de7-6553f70e7f89",
       "name": "Editar texto 3"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-flash-preview"
+        },
+        "text": "Por favor extre informacion valiosa de las imagenes como datos perosnales: DNI, NIE, Pasaporte, Nombre, Direccion de domicilio, correo electrónico entre otras coas.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        2912,
+        480
+      ],
+      "id": "a426153e-2390-402d-aa3e-a567b98ff10e",
+      "name": "Analizar imagen1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -3907,6 +3701,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-11-04T21:57:07.210Z",
-  "versionId": "3d609157-ce47-48e5-846d-72fd627f3442"
+  "updatedAt": "2026-11-05T10:07:49.491Z",
+  "versionId": "098e9e8c-4b2e-43f3-a103-62aeae3d2b75"
 }
