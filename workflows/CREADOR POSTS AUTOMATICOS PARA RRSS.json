@@ -1,0 +1,358 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Extraer link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extraer link": {
+      "main": [
+        [
+          {
+            "node": "Obtener id del video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener id del video": {
+      "main": [
+        [
+          {
+            "node": "Transcribir video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribir video": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-05T20:10:39.183Z",
+  "id": "fZsqW3eGjiQONyje",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "CREADOR POSTS AUTOMATICOS PARA RRSS",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour",
+              "minute": 20
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1bjmqzlQstnOdYGlopRr7h3A1e1fUL-2NhJxvyuFBYZI",
+          "mode": "list",
+          "cachedResultName": "Hoja de cálculo sin título",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bjmqzlQstnOdYGlopRr7h3A1e1fUL-2NhJxvyuFBYZI/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Hoja 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bjmqzlQstnOdYGlopRr7h3A1e1fUL-2NhJxvyuFBYZI/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        16
+      ],
+      "id": "bac6c841-e1aa-4faf-8fd6-1105158417ae",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "1nneNIJr3T5FKcF6",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.URL }}",
+                    "rightValue": "https://www.youtube.com/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "01097c3e-a380-4af1-babf-ab356a34e6b4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "URL YouTube"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1e8bd0a1-6e37-40be-bbf5-c7d156a991b0",
+                    "leftValue": "={{ $json.URL }}",
+                    "rightValue": "https://x.com/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "URL X"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9c932ce3-8a98-44e7-9155-6c12d1c46d35",
+                    "leftValue": "={{ $json.URL }}",
+                    "rightValue": "https://www.linkedin.com/",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "URL Linkedln"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        0
+      ],
+      "id": "b9214c2c-ddfb-447b-8636-4dd5bc3ad074",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5903b48b-c9d8-4c81-a5ec-7df1042fc388",
+              "name": "link_youtube",
+              "value": "={{ $json.URL }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        448,
+        -112
+      ],
+      "id": "03369385-903f-4025-ab2b-647ec8781d5b",
+      "name": "Extraer link"
+    },
+    {
+      "parameters": {
+        "jsCode": "const url = $json.link_youtube;\n\nfunction getYouTubeVideoID(url) {\n  const regex = /[?&]v=([a-zA-Z0-9_-]{11})/;\n  const match = url.match(regex);\n  return match ? match[1] : null;\n}\n\nconst videoID = getYouTubeVideoID(url);\n\nreturn {videoID};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -112
+      ],
+      "id": "c3e275f2-3848-4262-bc76-072a7701b049",
+      "name": "Obtener id del video"
+    },
+    {
+      "parameters": {
+        "url": "https://youtube-video-summarizer-gpt-ai.p.rapidapi.com/api/v1/get-transcript-v2",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "video_id",
+              "value": "={{ $json.videoID }}"
+            },
+            {
+              "name": "platform",
+              "value": "youtube"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-host",
+              "value": "youtube-video-summarizer-gpt-ai.p.rapidapi.com"
+            },
+            {
+              "name": "x-rapidapi-key",
+              "value": "c1e0606af7msh60b1dd95f521556p12cb98jsn461e0e62035d"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        896,
+        -112
+      ],
+      "id": "3455a977-768a-49b4-acd0-0efa68a65b8a",
+      "name": "Transcribir video"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "20a9a3ba-c21e-439e-8eec-1fc5843d1bda",
+              "name": "data.transcripts",
+              "value": "={{ $json.data.transcripts }}",
+              "type": "object"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1120,
+        -112
+      ],
+      "id": "9c475d5a-a797-4d02-9380-0550a5f7d7bb",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "# Rol de Modelo\nEres un creador de contenido especializado en tecnologia y automatizacion de procesos con inteligencia artificial. Trabajas para Marco Martinez."
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1344,
+        -112
+      ],
+      "id": "f7597f2d-3d44-473b-9eb0-6e80eb0db6c6",
+      "name": "Message a model"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "fZsqW3eGjiQONyje",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-11-05T20:10:39.196Z",
+      "updatedAt": "2026-11-05T20:10:39.196Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-05T21:03:23.499Z",
+  "versionId": "18f3f82e-9991-449b-9986-bcca99d14cc4"
+}
