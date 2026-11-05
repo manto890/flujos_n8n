@@ -1,7 +1,7 @@
 {
   "active": true,
   "activeVersion": {
-    "versionId": "14f70a68-3ee2-4738-93f4-63ecb0caf07f",
+    "versionId": "956984f8-eee4-4471-a750-3b7146f1ac98",
     "workflowId": "k9e5IKWBV6MMq96I",
     "nodes": [
       {
@@ -3314,14 +3314,14 @@
             "mode": "list",
             "cachedResultName": "negociacion-leads"
           },
-          "text": "=El documento encontrado es:  \n- {{ $json.nombre_documento }} \n- {{ $json.url_archivo }} \n- {{ $json.fecha_fin }} \n- {{ $json.fecha_inicio }}",
+          "text": "=El documento encontrado es:  \n- {{ $json.nombre_documento }} \n- {{ $json.url_archivo }} \n- {{ $json.fecha_subida }}",
           "otherOptions": {}
         },
         "type": "n8n-nodes-base.slack",
         "typeVersion": 2.7,
         "position": [
-          3712,
-          1296
+          3856,
+          1264
         ],
         "id": "7286fda8-0052-4e33-9e3b-12126e247f60",
         "name": "Send a message",
@@ -3355,6 +3355,213 @@
           "evolutionApi": {
             "id": "cvPqkt8XAs3saTjV",
             "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "El tramite se ha finalizado sin problemas. ¿Quieres saber algo mas?",
+          "options_message": {
+            "linkPreview": false
+          }
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          4608,
+          1104
+        ],
+        "id": "a82d5f90-6f23-447a-9489-ebb3ebfc99aa",
+        "name": "Enviar mensaje2",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "=En este tramite, usted tiene estos documentos adjuntados:\n- {{ $json.nombre_documento }}\n- {{  $json.tipo_tramite }}\n- {{ $json.fecha_subida }}\n- {{ $json.url_archivo }} ",
+          "options_message": {
+            "linkPreview": false
+          }
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          3856,
+          1472
+        ],
+        "id": "bb00c66f-f49e-455a-abd5-60ce48619473",
+        "name": "Enviar mensaje3",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1OnfG1-_O7u4DnH-MJlrYWfEeQpMlCXrLspH0sLVMiLQ",
+            "mode": "list",
+            "cachedResultName": "GESTIÓN DE GESTORÍA EXTRANJERÍA MARCO",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OnfG1-_O7u4DnH-MJlrYWfEeQpMlCXrLspH0sLVMiLQ/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1617750968,
+            "mode": "list",
+            "cachedResultName": "Expedientes",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OnfG1-_O7u4DnH-MJlrYWfEeQpMlCXrLspH0sLVMiLQ/edit#gid=1617750968"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "FECHA_RESOLUCION": "={{ $json.fecha_fin }}",
+              "PRIORIDAD": "Nula"
+            },
+            "matchingColumns": [
+              "N_JUSTIFICANTE"
+            ],
+            "schema": [
+              {
+                "id": "N_JUSTIFICANTE",
+                "displayName": "N_JUSTIFICANTE",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "NOMBRE_CLIENTE",
+                "displayName": "NOMBRE_CLIENTE",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "DNI",
+                "displayName": "DNI",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "NIE",
+                "displayName": "NIE",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "PASAPORTE",
+                "displayName": "PASAPORTE",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "FECHA_RESOLUCION",
+                "displayName": "FECHA_RESOLUCION",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "FECHA_ENVIO",
+                "displayName": "FECHA_ENVIO",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "CATEGORÍA",
+                "displayName": "CATEGORÍA",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "ASUNTO",
+                "displayName": "ASUNTO",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "PRIORIDAD",
+                "displayName": "PRIORIDAD",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          4384,
+          1104
+        ],
+        "id": "cdec95ec-2d5c-4c9b-b0bf-0a6addb67dae",
+        "name": "Update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "T4O0cZndn7LJ8daH",
+            "name": "API Google Hoja Calculo"
           }
         }
       }
@@ -4213,6 +4420,11 @@
         "main": [
           [
             {
+              "node": "Enviar mensaje3",
+              "type": "main",
+              "index": 0
+            },
+            {
               "node": "Send a message",
               "type": "main",
               "index": 0
@@ -4268,17 +4480,39 @@
             }
           ]
         ]
+      },
+      "Actualizar estado tramites": {
+        "main": [
+          [
+            {
+              "node": "Update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update row in sheet": {
+        "main": [
+          [
+            {
+              "node": "Enviar mensaje2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "nodeGroups": [],
     "authors": "Marco Antonio Martínez Guerrero",
-    "name": "Version 14f70a68",
+    "name": "Version 956984f8",
     "description": "",
     "autosaved": true,
-    "createdAt": "2026-11-04T22:11:58.436Z",
-    "updatedAt": "2026-11-04T22:12:00.000Z"
+    "createdAt": "2026-11-05T09:44:01.796Z",
+    "updatedAt": "2026-11-05T09:44:25.000Z"
   },
-  "activeVersionId": "14f70a68-3ee2-4738-93f4-63ecb0caf07f",
+  "activeVersionId": "956984f8-eee4-4471-a750-3b7146f1ac98",
   "connections": {
     "Tipo de mensaje": {
       "main": [
@@ -5133,6 +5367,11 @@
       "main": [
         [
           {
+            "node": "Enviar mensaje3",
+            "type": "main",
+            "index": 0
+          },
+          {
             "node": "Send a message",
             "type": "main",
             "index": 0
@@ -5183,6 +5422,28 @@
         [
           {
             "node": "Si la fecha fin es antes de hoy?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar estado tramites": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Enviar mensaje2",
             "type": "main",
             "index": 0
           }
@@ -8509,14 +8770,14 @@
           "mode": "list",
           "cachedResultName": "negociacion-leads"
         },
-        "text": "=El documento encontrado es:  \n- {{ $json.nombre_documento }} \n- {{ $json.url_archivo }} \n- {{ $json.fecha_fin }} \n- {{ $json.fecha_inicio }}",
+        "text": "=El documento encontrado es:  \n- {{ $json.nombre_documento }} \n- {{ $json.url_archivo }} \n- {{ $json.fecha_subida }}",
         "otherOptions": {}
       },
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.7,
       "position": [
-        3712,
-        1296
+        3856,
+        1264
       ],
       "id": "7286fda8-0052-4e33-9e3b-12126e247f60",
       "name": "Send a message",
@@ -8552,6 +8813,213 @@
           "name": "API DE GESTORIA-MARCO"
         }
       }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "El tramite se ha finalizado sin problemas. ¿Quieres saber algo mas?",
+        "options_message": {
+          "linkPreview": false
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        4608,
+        1104
+      ],
+      "id": "a82d5f90-6f23-447a-9489-ebb3ebfc99aa",
+      "name": "Enviar mensaje2",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "=En este tramite, usted tiene estos documentos adjuntados:\n- {{ $json.nombre_documento }}\n- {{  $json.tipo_tramite }}\n- {{ $json.fecha_subida }}\n- {{ $json.url_archivo }} ",
+        "options_message": {
+          "linkPreview": false
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        3856,
+        1472
+      ],
+      "id": "bb00c66f-f49e-455a-abd5-60ce48619473",
+      "name": "Enviar mensaje3",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1OnfG1-_O7u4DnH-MJlrYWfEeQpMlCXrLspH0sLVMiLQ",
+          "mode": "list",
+          "cachedResultName": "GESTIÓN DE GESTORÍA EXTRANJERÍA MARCO",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OnfG1-_O7u4DnH-MJlrYWfEeQpMlCXrLspH0sLVMiLQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1617750968,
+          "mode": "list",
+          "cachedResultName": "Expedientes",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1OnfG1-_O7u4DnH-MJlrYWfEeQpMlCXrLspH0sLVMiLQ/edit#gid=1617750968"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "FECHA_RESOLUCION": "={{ $json.fecha_fin }}",
+            "PRIORIDAD": "Nula"
+          },
+          "matchingColumns": [
+            "N_JUSTIFICANTE"
+          ],
+          "schema": [
+            {
+              "id": "N_JUSTIFICANTE",
+              "displayName": "N_JUSTIFICANTE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "NOMBRE_CLIENTE",
+              "displayName": "NOMBRE_CLIENTE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "DNI",
+              "displayName": "DNI",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "NIE",
+              "displayName": "NIE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PASAPORTE",
+              "displayName": "PASAPORTE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "FECHA_RESOLUCION",
+              "displayName": "FECHA_RESOLUCION",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "FECHA_ENVIO",
+              "displayName": "FECHA_ENVIO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CATEGORÍA",
+              "displayName": "CATEGORÍA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ASUNTO",
+              "displayName": "ASUNTO",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "PRIORIDAD",
+              "displayName": "PRIORIDAD",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4384,
+        1104
+      ],
+      "id": "cdec95ec-2d5c-4c9b-b0bf-0a6addb67dae",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T4O0cZndn7LJ8daH",
+          "name": "API Google Hoja Calculo"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -8571,6 +9039,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-11-04T22:11:58.429Z",
-  "versionId": "14f70a68-3ee2-4738-93f4-63ecb0caf07f"
+  "updatedAt": "2026-11-05T09:44:01.789Z",
+  "versionId": "956984f8-eee4-4471-a750-3b7146f1ac98"
 }
