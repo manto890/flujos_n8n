@@ -1,7 +1,7 @@
 {
   "active": true,
   "activeVersion": {
-    "versionId": "3cbc6982-e3aa-4b76-88cb-b88a5c1a5461",
+    "versionId": "07251484-35f0-4f7b-a5b1-53bce57c43df",
     "workflowId": "L7eHu3wRpwDNcVCW",
     "nodes": [
       {
@@ -56,31 +56,6 @@
                 },
                 "renameOutput": true,
                 "outputKey": "Buscar_docs"
-              },
-              {
-                "conditions": {
-                  "options": {
-                    "caseSensitive": true,
-                    "leftValue": "",
-                    "typeValidation": "strict",
-                    "version": 3
-                  },
-                  "conditions": [
-                    {
-                      "id": "283d11b1-2b56-4cb4-8921-038321234afd",
-                      "leftValue": "={{ $json.accion }}",
-                      "rightValue": "actualizar",
-                      "operator": {
-                        "type": "string",
-                        "operation": "equals",
-                        "name": "filter.operator.equals"
-                      }
-                    }
-                  ],
-                  "combinator": "and"
-                },
-                "renameOutput": true,
-                "outputKey": "Actualizar"
               }
             ]
           },
@@ -90,7 +65,7 @@
         "typeVersion": 3.4,
         "position": [
           192,
-          -112
+          288
         ],
         "id": "111f3545-79a7-437a-9099-1f011d2ee832",
         "name": "Conmutar"
@@ -104,7 +79,7 @@
         "typeVersion": 1.2,
         "position": [
           -32,
-          -96
+          304
         ],
         "id": "88e81cac-c2cf-469f-bbad-5bbc7dec2bfc",
         "name": "Al ejecutar el flujo"
@@ -118,32 +93,11 @@
         "type": "n8n-nodes-base.postgres",
         "typeVersion": 2.7,
         "position": [
-          416,
-          -288
+          1264,
+          0
         ],
         "id": "20a04545-40d3-4747-b79d-d16540efd91f",
         "name": "Buscar tramites",
-        "credentials": {
-          "postgres": {
-            "id": "fn2ZPkKEjrJ6aNsv",
-            "name": "BBDD gestoria_extranjeria"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "executeQuery",
-          "query": "UPDATE tramites\nSET estado = '{{ $json.estado }}',\n    fecha_ultima_actualizacion = NOW()\nWHERE pasaporte_nie = '{{ $json.pasaporte_nie }}';",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.7,
-        "position": [
-          416,
-          96
-        ],
-        "id": "d47fd615-d704-4042-8fc7-dc558cb57429",
-        "name": "Actualizar estado",
         "credentials": {
           "postgres": {
             "id": "fn2ZPkKEjrJ6aNsv",
@@ -170,8 +124,8 @@
         "type": "n8n-nodes-base.googleDrive",
         "typeVersion": 3,
         "position": [
-          864,
-          0
+          1216,
+          592
         ],
         "id": "4dfa2f21-06f0-4df6-a61f-12a6dc791e93",
         "name": "buscar_docs2",
@@ -210,8 +164,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          640,
-          -96
+          928,
+          496
         ],
         "id": "23819d95-9cbb-4eea-8dc2-6b928d1095b4",
         "name": "Si la carpeta existe? 2"
@@ -236,7 +190,7 @@
         "typeVersion": 3,
         "position": [
           416,
-          -96
+          496
         ],
         "id": "11f266f0-d4d2-4eac-9740-e80e21f64d08",
         "name": "buscar_folder3",
@@ -264,8 +218,8 @@
         "type": "n8n-nodes-base.googleDrive",
         "typeVersion": 3,
         "position": [
-          864,
-          -192
+          1216,
+          352
         ],
         "id": "a97ab92c-f977-46a7-96fa-462becaaf9a2",
         "name": "buscar_docs4",
@@ -278,24 +232,64 @@
       },
       {
         "parameters": {
-          "operation": "executeQuery",
-          "query": "SELECT d.nombre_documento, d.ruta_archivo \nFROM tramites AS t\nJOIN documentos d ON t.pasaporte_nie = d.pasaporte_nie\nWHERE t.pasaporte_nie = '{{ $json.pasaporte_nie }}';",
+          "resource": "fileFolder",
+          "queryString": "=name contains '={{ $json.nombre_cliente}}' and name contains '={{ $json.nombre_documento}}' and trashed = false",
+          "returnAll": true,
+          "filter": {
+            "folderId": {
+              "__rl": true,
+              "value": "={{ $json.nombre_cliente }}",
+              "mode": "id"
+            }
+          },
           "options": {}
         },
-        "type": "n8n-nodes-base.postgres",
-        "typeVersion": 2.7,
+        "type": "n8n-nodes-base.googleDrive",
+        "typeVersion": 3,
         "position": [
-          1088,
-          -96
+          416,
+          16
         ],
-        "id": "16f56f96-e43c-42ca-a824-38955feb8e14",
-        "name": "Buscar docs",
+        "id": "9a44b22b-1f8f-46e7-8426-dd026c612a9b",
+        "name": "buscar_docs1",
         "credentials": {
-          "postgres": {
-            "id": "fn2ZPkKEjrJ6aNsv",
-            "name": "BBDD gestoria_extranjeria"
+          "googleDriveOAuth2Api": {
+            "id": "cCQ1BE3aV6hQHIKK",
+            "name": "API de Google Drive"
           }
         }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          784,
+          208
+        ],
+        "id": "7726a67b-0689-4c73-956d-99532f530309",
+        "name": "Google Gemini Chat Model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "PRaH3zgodzm6Pv1x",
+            "name": "Google Gemini Api"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+        "typeVersion": 1.2,
+        "position": [
+          640,
+          16
+        ],
+        "id": "24d14d4f-fb4e-4834-9169-7062de98ba00",
+        "name": "Information Extractor"
       }
     ],
     "connections": {
@@ -303,7 +297,7 @@
         "main": [
           [
             {
-              "node": "Buscar tramites",
+              "node": "buscar_docs1",
               "type": "main",
               "index": 0
             }
@@ -311,13 +305,6 @@
           [
             {
               "node": "buscar_folder3",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Actualizar estado",
               "type": "main",
               "index": 0
             }
@@ -366,42 +353,57 @@
       },
       "buscar_docs4": {
         "main": [
+          []
+        ]
+      },
+      "buscar_docs2": {
+        "main": [
+          []
+        ]
+      },
+      "buscar_docs1": {
+        "main": [
           [
             {
-              "node": "Buscar docs",
+              "node": "Information Extractor",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "buscar_docs2": {
-        "main": [
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
           [
             {
-              "node": "Buscar docs",
-              "type": "main",
+              "node": "Information Extractor",
+              "type": "ai_languageModel",
               "index": 0
             }
           ]
+        ]
+      },
+      "Information Extractor": {
+        "main": [
+          []
         ]
       }
     },
     "nodeGroups": [],
     "authors": "Marco Antonio Martínez Guerrero",
-    "name": "Version 3cbc6982",
+    "name": "Version 07251484",
     "description": "",
     "autosaved": true,
-    "createdAt": "2026-11-04T22:09:10.254Z",
-    "updatedAt": "2026-11-04T22:09:11.000Z"
+    "createdAt": "2026-11-05T10:33:13.696Z",
+    "updatedAt": "2026-11-05T10:33:20.000Z"
   },
-  "activeVersionId": "3cbc6982-e3aa-4b76-88cb-b88a5c1a5461",
+  "activeVersionId": "07251484-35f0-4f7b-a5b1-53bce57c43df",
   "connections": {
     "Conmutar": {
       "main": [
         [
           {
-            "node": "Buscar tramites",
+            "node": "buscar_docs1",
             "type": "main",
             "index": 0
           }
@@ -409,13 +411,6 @@
         [
           {
             "node": "buscar_folder3",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Actualizar estado",
             "type": "main",
             "index": 0
           }
@@ -464,24 +459,39 @@
     },
     "buscar_docs4": {
       "main": [
+        []
+      ]
+    },
+    "buscar_docs2": {
+      "main": [
+        []
+      ]
+    },
+    "buscar_docs1": {
+      "main": [
         [
           {
-            "node": "Buscar docs",
+            "node": "Information Extractor",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "buscar_docs2": {
-      "main": [
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
         [
           {
-            "node": "Buscar docs",
-            "type": "main",
+            "node": "Information Extractor",
+            "type": "ai_languageModel",
             "index": 0
           }
         ]
+      ]
+    },
+    "Information Extractor": {
+      "main": [
+        []
       ]
     }
   },
@@ -546,31 +556,6 @@
               },
               "renameOutput": true,
               "outputKey": "Buscar_docs"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "id": "283d11b1-2b56-4cb4-8921-038321234afd",
-                    "leftValue": "={{ $json.accion }}",
-                    "rightValue": "actualizar",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "Actualizar"
             }
           ]
         },
@@ -580,7 +565,7 @@
       "typeVersion": 3.4,
       "position": [
         192,
-        -112
+        288
       ],
       "id": "111f3545-79a7-437a-9099-1f011d2ee832",
       "name": "Conmutar"
@@ -594,7 +579,7 @@
       "typeVersion": 1.2,
       "position": [
         -32,
-        -96
+        304
       ],
       "id": "88e81cac-c2cf-469f-bbad-5bbc7dec2bfc",
       "name": "Al ejecutar el flujo"
@@ -608,32 +593,11 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.7,
       "position": [
-        416,
-        -288
+        1264,
+        0
       ],
       "id": "20a04545-40d3-4747-b79d-d16540efd91f",
       "name": "Buscar tramites",
-      "credentials": {
-        "postgres": {
-          "id": "fn2ZPkKEjrJ6aNsv",
-          "name": "BBDD gestoria_extranjeria"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE tramites\nSET estado = '{{ $json.estado }}',\n    fecha_ultima_actualizacion = NOW()\nWHERE pasaporte_nie = '{{ $json.pasaporte_nie }}';",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.7,
-      "position": [
-        416,
-        96
-      ],
-      "id": "d47fd615-d704-4042-8fc7-dc558cb57429",
-      "name": "Actualizar estado",
       "credentials": {
         "postgres": {
           "id": "fn2ZPkKEjrJ6aNsv",
@@ -660,8 +624,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        864,
-        0
+        1216,
+        592
       ],
       "id": "4dfa2f21-06f0-4df6-a61f-12a6dc791e93",
       "name": "buscar_docs2",
@@ -700,8 +664,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        640,
-        -96
+        928,
+        496
       ],
       "id": "23819d95-9cbb-4eea-8dc2-6b928d1095b4",
       "name": "Si la carpeta existe? 2"
@@ -726,7 +690,7 @@
       "typeVersion": 3,
       "position": [
         416,
-        -96
+        496
       ],
       "id": "11f266f0-d4d2-4eac-9740-e80e21f64d08",
       "name": "buscar_folder3",
@@ -754,8 +718,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        864,
-        -192
+        1216,
+        352
       ],
       "id": "a97ab92c-f977-46a7-96fa-462becaaf9a2",
       "name": "buscar_docs4",
@@ -768,24 +732,64 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "SELECT d.nombre_documento, d.ruta_archivo \nFROM tramites AS t\nJOIN documentos d ON t.pasaporte_nie = d.pasaporte_nie\nWHERE t.pasaporte_nie = '{{ $json.pasaporte_nie }}';",
+        "resource": "fileFolder",
+        "queryString": "=name contains '={{ $json.nombre_cliente}}' and name contains '={{ $json.nombre_documento}}' and trashed = false",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "={{ $json.nombre_cliente }}",
+            "mode": "id"
+          }
+        },
         "options": {}
       },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.7,
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
       "position": [
-        1088,
-        -96
+        416,
+        16
       ],
-      "id": "16f56f96-e43c-42ca-a824-38955feb8e14",
-      "name": "Buscar docs",
+      "id": "9a44b22b-1f8f-46e7-8426-dd026c612a9b",
+      "name": "buscar_docs1",
       "credentials": {
-        "postgres": {
-          "id": "fn2ZPkKEjrJ6aNsv",
-          "name": "BBDD gestoria_extranjeria"
+        "googleDriveOAuth2Api": {
+          "id": "cCQ1BE3aV6hQHIKK",
+          "name": "API de Google Drive"
         }
       }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        208
+      ],
+      "id": "7726a67b-0689-4c73-956d-99532f530309",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "PRaH3zgodzm6Pv1x",
+          "name": "Google Gemini Api"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [
+        640,
+        16
+      ],
+      "id": "24d14d4f-fb4e-4834-9169-7062de98ba00",
+      "name": "Information Extractor"
     }
   ],
   "pinData": {},
@@ -805,6 +809,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 0,
-  "updatedAt": "2026-11-04T22:09:10.251Z",
-  "versionId": "3cbc6982-e3aa-4b76-88cb-b88a5c1a5461"
+  "updatedAt": "2026-11-05T10:33:13.683Z",
+  "versionId": "07251484-35f0-4f7b-a5b1-53bce57c43df"
 }
