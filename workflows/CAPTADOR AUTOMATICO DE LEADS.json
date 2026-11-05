@@ -8081,7 +8081,10 @@
     }
   ],
   "staticData": {
-    "node:Typeform Trigger": {}
+    "node:Typeform Trigger": {
+      "webhookId": "n8n-xlcv4eawka",
+      "webhookSecret": "1224a3129214fc631f1b0bdcceef4e94f4a16826ba2da28989386fe8815a27e0"
+    }
   },
   "tags": [],
   "triggerCount": 3,
