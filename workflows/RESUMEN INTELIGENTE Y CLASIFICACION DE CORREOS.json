@@ -1895,14 +1895,14 @@
       }
     },
     "node:Envio correo Outlook": {
-      "lastTimeChecked": "2026-11-05T15:48:00.484-05:00"
+      "lastTimeChecked": "2026-11-06T11:23:42.788-05:00"
     },
     "node:Envio correo Gmail": {
       "Envio correo Gmail": {
-        "lastTimeChecked": 1793911661,
+        "lastTimeChecked": 1793982203,
         "pendingMessageIds": [],
         "possibleDuplicates": [
-          "1a1ad77a2ee18c1d"
+          "1a1b1ac15013e935"
         ]
       }
     }
