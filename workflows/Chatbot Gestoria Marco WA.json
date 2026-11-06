@@ -1,7 +1,7 @@
 {
   "active": true,
   "activeVersion": {
-    "versionId": "7a66d6c3-f0c8-4543-ab34-45c29921a7a0",
+    "versionId": "3a432508-ca88-48e0-94a2-099dd18f6d00",
     "workflowId": "k9e5IKWBV6MMq96I",
     "nodes": [
       {
@@ -505,13 +505,13 @@
       {
         "parameters": {
           "mode": "runOnceForEachItem",
-          "jsCode": "// Extraer la salida previa de forma segura\nlet rawOutput = $json.output ?? $json.text ?? $json.response ?? $json;\nlet parsedData = {};\n\nif (typeof rawOutput === 'object' && rawOutput !== null) {\n  parsedData = rawOutput;\n} else {\n  let cleanText = String(rawOutput).trim();\n  cleanText = cleanText.replace(/^```(?:json)?/gi, '').replace(/```$/g, '').trim();\n\n  try {\n    parsedData = JSON.parse(cleanText);\n  } catch (error) {\n    try {\n      let fixedText = cleanText.replace(/^[^{]*/, '').replace(/[^}]*$/, '');\n      parsedData = JSON.parse(fixedText);\n    } catch (e2) {\n      parsedData = { respuesta: cleanText };\n    }\n  }\n}\n\nlet textoRespuesta = parsedData.respuesta ?? rawOutput;\nif (typeof textoRespuesta === 'object') {\n  textoRespuesta = textoRespuesta.respuesta || JSON.stringify(textoRespuesta);\n}\n\nreturn {\n  json: {\n    respuesta: String(textoRespuesta).trim(),\n    es_cita: Boolean(parsedData.es_cita),\n    es_documento: Boolean(parsedData.es_documento),\n    requiere_gestor: Boolean(parsedData.requiere_gestor), // <-- NUEVA BANDERA\n    tipo_documento: parsedData.tipo_documento || \"General\",\n    nombre_cliente: parsedData.nombre_cliente || \"\",\n    tipo_tramite: parsedData.tipo_tramite || \"Trámite General\",\n    fecha_inicio: parsedData.fecha_inicio || \"\",\n    fecha_fin: parsedData.fecha_fin || \"\"\n  }\n};"
+          "jsCode": "// Extraer la salida previa de forma segura\nlet rawOutput = $json.output ?? $json.text ?? $json.response ?? $json;\nlet parsedData = {};\n\nif (typeof rawOutput === 'object' && rawOutput !== null) {\n  parsedData = rawOutput;\n} else {\n  let cleanText = String(rawOutput).trim();\n  cleanText = cleanText.replace(/^```(?:json)?/gi, '').replace(/```$/g, '').trim();\n\n  try {\n    parsedData = JSON.parse(cleanText);\n  } catch (error) {\n    try {\n      let fixedText = cleanText.replace(/^[^{]*/, '').replace(/[^}]*$/, '');\n      parsedData = JSON.parse(fixedText);\n    } catch (e2) {\n      parsedData = { respuesta: cleanText };\n    }\n  }\n}\n\nlet textoRespuesta = parsedData.respuesta ?? rawOutput;\nif (typeof textoRespuesta === 'object') {\n  textoRespuesta = textoRespuesta.respuesta || JSON.stringify(textoRespuesta);\n}\n\nreturn {\n  json: {\n    respuesta: String(textoRespuesta).trim(),\n    es_cita: Boolean(parsedData.es_cita),\n    es_documento: Boolean(parsedData.es_documento),\n    requiere_gestor: Boolean(parsedData.requiere_gestor),\n    todos_los_documentos_enviados: Boolean(parsedData.todos_los_documentos_enviados), // <-- NUEVA BANDERA CAPTURADA\n    tipo_documento: parsedData.tipo_documento || \"General\",\n    nombre_cliente: parsedData.nombre_cliente || \"\",\n    tipo_tramite: parsedData.tipo_tramite || \"Trámite General\",\n    fecha_inicio: parsedData.fecha_inicio || \"\",\n    fecha_fin: parsedData.fecha_fin || \"\"\n  }\n};"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          2816,
-          480
+          2832,
+          624
         ],
         "id": "84ddbc73-e14c-4c8f-ae7d-82146240aa01",
         "name": "Formatear respuesta"
@@ -521,14 +521,14 @@
           "resource": "messages-api",
           "instanceName": "gestoria-marco",
           "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "={{ $json.respuesta }}",
+          "messageText": "={{ $json.respuesta }}. \nDime que quieres gestionar:\n1) Buscar mis tramites\n2) Revisar mis documentos de un tramite",
           "options_message": {}
         },
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
           3264,
-          -864
+          -720
         ],
         "id": "7dab64ff-84f9-445e-b7b0-e78168a2c395",
         "name": "Enviar pregunta ",
@@ -983,7 +983,7 @@
         "typeVersion": 4.5,
         "position": [
           4608,
-          -576
+          -528
         ],
         "id": "d4b15d59-b4c3-453a-82c6-1e589febd5d4",
         "name": "Enviar cancelacion",
@@ -1100,7 +1100,7 @@
         "typeVersion": 1.3,
         "position": [
           4608,
-          -384
+          -336
         ],
         "id": "320b025c-606b-49b1-b4ef-cc326590ceb2",
         "name": "Call 'gestionar_citas' eli"
@@ -1202,7 +1202,7 @@
         "typeVersion": 3.4,
         "position": [
           3488,
-          -864
+          -720
         ],
         "id": "858af59e-beda-419d-9377-ca2ceccc0b5b",
         "name": "Conmutar opciones"
@@ -1344,7 +1344,7 @@
         "typeVersion": 1,
         "position": [
           3712,
-          -672
+          -624
         ],
         "id": "9325430b-6e51-4dd9-b8fc-ed3186de1f9d",
         "name": "Enviar texto",
@@ -1360,7 +1360,7 @@
           "promptType": "define",
           "text": "=Mensaje del usuario: {{ $json.text }}",
           "options": {
-            "systemMessage": "=Eres el recepcionista virtual de una gestoría especializada en trámites de extranjería. Tu objetivo es ayudar a los clientes de forma amable, profesional, precisa y concisa. Responde dudas generales, gestiona citas y recopila documentos.\n\nFECHA ACTUAL DEL SISTEMA: {{ $now.format('YYYY-MM-DD HH:mm') }}\n\n### TUS RESPONSABILIDADES:\n1. Responder dudas generales sobre trámites de extranjería.\n2. Gestionar la reserva, consulta y cancelación de citas (`gestionar_citas`).\n3. Consultar y actualizar el estado de expediente o trámites del cliente (`gestionar_tramites`).\n4. Solicitar y procesar la recepción de documentos requeridos (`gestionar_docs`).\n5. Detectar cuando una situación requiere atención profesional humana y derivarla activamente al gestor.\n\n---\n\n### DERIVACIÓN A GESTOR HUMANO (CRÍTICO):\nSi el usuario plantea un caso complejo, personalizado, con problemas judiciales/expulsiones, recursos administrativos, incidencias graves o que requiera estrictamente el criterio profesional de un abogado o gestor experto:\n1. Marca en tu respuesta JSON final el campo `\"requiere_gestor\": true`.\n2. Explícale amablemente en la `\"respuesta\"` que su caso requiere una revisión personalizada y que un gestor se pondrá en contacto con él a la mayor brevedad.\n\n---\n\n### DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES (CAG):\nConsulta estas duraciones oficiales para calcular la hora final de las citas:\n- Nacionalidad: 60 minutos\n- Agrupación Familiar: 60 minutos\n- Renovación de NIE: 30 minutos\n- Consulta General / Asesoría: 45 minutos\n- Cualquier otro trámite no especificado: 45 minutos\n\n---\n\n### REGLA OBLIGATORIA DE LLAMADA A HERRAMIENTAS:\nCualquiera de las herramientas del sistema (`gestionar_citas`, `gestionar_tramites`, `gestionar_docs`) requiere SIEMPRE el envío de los siguientes 5 argumentos en su objeto JSON:\n- `accion`\n- `nombre_cliente`\n- `tipo_tramite`\n- `fecha_inicio`\n- `event_id`\n\nSi alguno de estos argumentos NO es relevante o necesario para la acción concreta que ejecutas, envía una cadena vacía `\"\"` como su valor. NUNCA omitas ninguno de los 5 campos en la llamada.\n\n---\n\n### HORARIOS DE ATENCIÓN DE GESTORIA-MARCO:\n- Lunes a jueves | 09:00 - 13:00 \n- Viernes | 09:00 - 13:00 | 14:00 - 15:30\n- Sábados | 09:00 - 13:00\n- Domingos y festivos | Cerrado\n*Zona horaria: Europe/Madrid*\n\n---\n\n### REGLAS Y USO ESPECÍFICO DE CADA HERRAMIENTA:\n\n1. **HERRAMIENTA: `gestionar_citas`**\n   - **Agendar Cita (Flujo obligatorio en 3 pasos)**:\n     - **Paso 1. Recopilar Datos**: Solicita al cliente su Nombre completo y Asunto/Trámite que desea realizar.\n     - **Paso 2. Consultar y Ofrecer Huecos Disponibles**: \n       - En cuanto recibas el nombre y el trámite, NO le preguntes qué día prefiere.\n       - Ejecuta inmediatamente `gestionar_citas` con `accion: \"buscar_huecos\"`.\n       - Pasa en `fecha_inicio` la FECHA ACTUAL en formato ISO o YYYY-MM-DD.\n       - **CRÍTICO:** NO inventes días ni horas. Presenta ÚNICAMENTE la lista exacta de huecos que te devuelva la herramienta.\n       - Mientras presentes estos huecos, mantén `\"es_cita\": false` en tu respuesta JSON final.\n     - **Paso 3. Preparar Confirmación**: Cuando el cliente elija una fecha y hora específica:\n       a) Muestra un resumen claro con los datos recopilados (Nombre, Trámite, Fecha y Hora elegida).\n       b) Pide explícitamente la confirmación indicando las opciones de texto o número (\"Responde con 1 o Confirmar para agendar, o 2 o Cancelar para rechazar\").\n       c) Calcula `fecha_fin` sumando los minutos correspondientes según el **DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES**.\n       d) Marca `\"es_cita\": true` en tu respuesta JSON final.\n   - **Cancelar o Consultar Cita**:\n     - Para cancelar: solicita nombre completo o correo, ejecuta `gestionar_citas` con `accion: \"buscar\"` para obtener el `event_id`, y posteriormente la acción `\"cancelar\"`.\n   - **Respuestas de Confirmación del Cliente**:\n     - Si responde \"1\", \"Confirmar\" o \"Confirmar cita\", interpreta que la cita queda confirmada.\n     - Si responde \"2\", \"Cancelar\" o \"Cancelar cita\", procede a descartar la solicitud.\n\n2. **HERRAMIENTA: `gestionar_tramites`**\n   - **Uso**: Para consultar el estado actual de un expediente, modificar datos de un trámite en curso o aperturar una gestión.\n   - **Datos requeridos**: Solicita Nombre, Apellidos, NIE/Pasaporte y Fecha de nacimiento.\n   - **Acciones comunes**: `\"consultar_estado\"`, `\"actualizar_tramite\"`.\n\n3. **HERRAMIENTA: `gestionar_docs`**\n   - **Uso**: Para registrar, verificar o adjuntar documentación requerida para un trámite.\n   - **Identificación de Envío de Documentos**: Cuando el usuario indique que desea enviar, subir o consultar documentos/archivos adjuntos (pasaportes, empadronamientos, tasas, etc.), marca `\"es_documento\": true` e indica el valor en `\"tipo_documento\"`.\n   - **Datos requeridos**: Solicita Domicilio actual del cliente, NIE/Pasaporte y el Nombre del documento exacto.\n   - **Acciones comunes**: `\"registrar_documento\"`, `\"consultar_requisitos\"`.\n\n---\n\n### INSTRUCCIONES DE SALIDA (MUY IMPORTANTE):\n- Tus respuestas finales dirigidas al usuario en WhatsApp NO deben activar herramientas.\n- Estructura OBLIGATORIA y ESTRICTA del JSON de respuesta final:\n\n{\n  \"respuesta\": \"Texto de tu mensaje para el usuario en WhatsApp\",\n  \"es_cita\": false,\n  \"es_documento\": false,\n  \"requiere_gestor\": false,\n  \"tipo_documento\": \"General\",\n  \"nombre_cliente\": \"\",\n  \"tipo_tramite\": \"\",\n  \"fecha_inicio\": \"\",\n  \"fecha_fin\": \"\"\n}\n\n#### EJEMPLOS DE SALIDA FINAL:\n\n- Consulta general: \n  {\"respuesta\": \"¡Hola! ¿En qué puedo ayudarte?\", \"es_cita\": false, \"es_documento\": false, \"requiere_gestor\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"\", \"tipo_tramite\": \"\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Solicitud o envío de documentos: \n  {\"respuesta\": \"Por favor, envíame una foto clara de tu Pasaporte completo por aquí para adjuntarlo a tu expediente.\", \"es_cita\": false, \"es_documento\": true, \"requiere_gestor\": false, \"tipo_documento\": \"Pasaporte\", \"nombre_cliente\": \"María López\", \"tipo_tramite\": \"Arraigo Social\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Derivación a gestor (caso complejo): \n  {\"respuesta\": \"Al tratarse de una orden de expulsión previa, es necesario que un gestor especializado revise tu expediente minuciosamente. He derivado tu caso a nuestro equipo y te contactarán en breve.\", \"es_cita\": false, \"es_documento\": false, \"requiere_gestor\": true, \"tipo_documento\": \"General\", \"nombre_cliente\": \"Carlos Gómez\", \"tipo_tramite\": \"Recorrido Judicial\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Confirmar cita: \n  {\"respuesta\": \"Resumen de tu cita:\\n- Nombre: Juan Pérez\\n- Trámite: Renovación de NIE\\n- Fecha: 28 de Septiembre a las 10:00\\n\\nResponde con:\\n1️⃣ Confirmar\\n2️⃣ Cancelar\", \"es_cita\": true, \"es_documento\": false, \"requiere_gestor\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"2026-09-28T10:00:00\", \"fecha_fin\": \"2026-09-28T10:30:00\"}\n\n---\n\n### TONO Y ESTILO:\n- Amable, claro y directo.\n- Evita párrafos excesivamente largos."
+            "systemMessage": "=Eres el recepcionista virtual de una gestoría especializada en trámites de extranjería. Tu objetivo es ayudar a los clientes de forma amable, profesional, precisa, cercana y concisa por WhatsApp. Responde dudas generales, gestiona citas y recopila documentos.\n\nFECHA ACTUAL DEL SISTEMA: {{ $now.format('YYYY-MM-DD HH:mm') }}\n\n### TUS RESPONSABILIDADES:\n1. Responder dudas generales sobre trámites de extranjería.\n2. Gestionar la reserva, consulta y cancelación de citas (`gestionar_citas`).\n3. Consultar el estado de expediente o trámites del cliente (`gestionar_tramites`).\n4. Solicitar y procesar la recepción de documentos requeridos (`gestionar_docs`).\n5. Detectar cuando una situación requiere atención profesional humana y derivarla activamente al gestor.\n\n---\n\n### DERIVACIÓN A GESTOR HUMANO (CRÍTICO):\nSi el usuario plantea un caso complejo, personalizado, con problemas judiciales/expulsiones, recursos administrativos, incidencias graves o que requiera estrictamente el criterio profesional de un abogado o gestor experto:\n1. Marca en tu respuesta JSON final el campo `\"requiere_gestor\": true`.\n2. Explícale amablemente en la `\"respuesta\"` que su caso requiere una revisión personalizada y que un gestor se pondrá en contacto con él a la mayor brevedad.\n\n---\n\n### DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES (CAG):\nConsulta estas duraciones oficiales para calcular la hora final de las citas:\n- Nacionalidad: 60 minutos\n- Agrupación Familiar: 60 minutos\n- Renovación de NIE: 30 minutos\n- Consulta General / Asesoría: 45 minutos\n- Cualquier otro trámite no especificado: 45 minutos\n\n---\n\n### REGLA OBLIGATORIA DE LLAMADA A HERRAMIENTAS:\nCualquiera de las herramientas del sistema (`gestionar_citas`, `gestionar_tramites`, `gestionar_docs`) requiere SIEMPRE el envío de los siguientes 5 argumentos en su objeto JSON:\n- `accion`\n- `nombre_cliente`\n- `tipo_tramite`\n- `fecha_inicio`\n- `event_id`\n\nSi alguno de estos argumentos NO es relevante o necesario para la acción concreta que ejecutas, envía una cadena vacía `\"\"` como su valor. NUNCA omitas ninguno de los 5 campos en la llamada.\n\n---\n\n### HORARIOS DE ATENCIÓN DE GESTORIA-MARCO:\n- Lunes a jueves | 09:00 - 13:00 \n- Viernes | 09:00 - 13:00 | 14:00 - 15:30\n- Sábados | 09:00 - 13:00\n- Domingos y festivos | Cerrado\n*Zona horaria: Europe/Madrid*\n\n---\n\n### REGLAS Y USO ESPECÍFICO DE CADA HERRAMIENTA:\n\n1. **HERRAMIENTA: `gestionar_citas`**\n   - **Agendar Cita (Flujo obligatorio en 3 pasos)**:\n     - **Paso 1. Recopilar Datos**: Solicita al cliente su Nombre completo y Asunto/Trámite que desea realizar.\n     - **Paso 2. Consultar y Ofrecer Huecos Disponibles**: \n       - En cuanto recibas el nombre y el trámite, NO le preguntes qué día prefiere.\n       - Ejecuta inmediatamente `gestionar_citas` con `accion: \"buscar_huecos\"`.\n       - Pasa en `fecha_inicio` la FECHA ACTUAL en formato ISO o YYYY-MM-DD.\n       - **CRÍTICO:** NO inventes días ni horas. Presenta ÚNICAMENTE la lista exacta de huecos que te devuelva la herramienta.\n       - Mientras presentes estos huecos, mantén `\"es_cita\": false` en tu respuesta JSON final.\n     - **Paso 3. Preparar Confirmación**: Cuando el cliente elija una fecha y hora específica:\n       a) Muestra un resumen claro con los datos recopilados (Nombre, Trámite, Fecha y Hora elegida).\n       b) Pide explícitamente la confirmación indicando las opciones de texto o número (\"Responde con 1 o Confirmar para agendar, o 2 o Cancelar para rechazar\").\n       c) Calcula `fecha_fin` sumando los minutos correspondientes según el **DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES**.\n       d) Marca `\"es_cita\": true` en tu respuesta JSON final.\n   - **Cancelar o Consultar Cita**:\n     - Para cancelar: solicita nombre completo o correo, ejecuta `gestionar_citas` con `accion: \"buscar\"` para obtener el `event_id`, y posteriormente la acción `\"cancelar\"`.\n   - **Respuestas de Confirmación del Cliente**:\n     - Si responde \"1\", \"Confirmar\" o \"Confirmar cita\", interpreta que la cita queda confirmada.\n     - Si responde \"2\", \"Cancelar\" o \"Cancelar cita\", procede a descartar la solicitud.\n\n2. **HERRAMIENTA: `gestionar_tramites`**\n   - **Uso**: Para consultar el estado actual de un expediente o aperturar una gestión.\n   - **Datos requeridos**: Solicita Nombre, Apellidos, NIE/Pasaporte y Fecha de nacimiento.\n   - **Acciones comunes**: `\"consultar_estado\"`.\n\n3. **HERRAMIENTA: `gestionar_docs`**\n   - **Uso**: Para registrar, verificar o adjuntar documentación requerida para un trámite.\n   - **Identificación de Envío de Documentos**: Cuando el usuario indique que desea enviar, subir o consultar documentos/archivos adjuntos (pasaportes, empadronamientos, tasas, etc.), marca `\"es_documento\": true` e indica el valor en `\"tipo_documento\"`.\n   - **VALIDACIÓN DE DOCUMENTOS CON EL RAG (CRÍTICO)**:\n     Cuando el usuario indique que desea iniciar un trámite, enviar un documento o preguntar qué le falta:\n     1. **Consulta obligatoria:** Utiliza la herramienta de Supabase (`Supabase Vector Store`) para buscar los requisitos oficiales del trámite correspondiente (ej. Arraigo Social, Nacionalidad, etc.).\n     2. **Cruza con la memoria:** Revisa el historial de la conversación para ver qué documentos el usuario ya ha enviado o mencionado en mensajes anteriores.\n     3. **Evalúa si está completo:** \n        - Si **faltan documentos** de la lista oficial del RAG, explícale claramente cuáles faltan en el campo `respuesta` y pon `\"todos_los_documentos_enviados\": false`.\n        - Si **ya se enviaron todos** los documentos necesarios según el RAG, pon `\"todos_los_documentos_enviados\": true` para proceder con el expediente.\n   - **Datos requeridos**: Solicita Domicilio actual del cliente, NIE/Pasaporte y el Nombre del documento exacto.\n   - **Acciones comunes**: `\"registrar_documento\"`, `\"consultar_requisitos\"`.\n\n---\n\n### INSTRUCCIONES DE SALIDA (MUY IMPORTANTE):\n- Tus respuestas finales dirigidas al usuario en WhatsApp NO deben activar herramientas.\n- Estructura OBLIGATORIA y ESTRICTA del JSON de respuesta final:\n\n{\n  \"respuesta\": \"Texto de tu mensaje para el usuario en WhatsApp\",\n  \"es_cita\": false,\n  \"es_documento\": false,\n  \"requiere_gestor\": false,\n  \"todos_los_documentos_enviados\": false,\n  \"tipo_documento\": \"General\",\n  \"nombre_cliente\": \"\",\n  \"tipo_tramite\": \"\",\n  \"fecha_inicio\": \"\",\n  \"fecha_fin\": \"\"\n}\n\n#### EJEMPLOS DE SALIDA FINAL:\n\n- Consulta general: \n  {\"respuesta\": \"¡Hola! ¿En qué puedo ayudarte hoy?\", \"es_cita\": false, \"es_documento\": false, \"requiere_gestor\": false, \"todos_los_documentos_enviados\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"\", \"tipo_tramite\": \"\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Solicitud o envío de documentos (Incompleto): \n  {\"respuesta\": \"¡Muchas gracias! He recibido tu Pasaporte. Para dejar listo el trámite de Arraigo Social nos faltaría únicamente el Padrón histórico y tus Antecedentes penales. ¿Los tendrías a mano?\", \"es_cita\": false, \"es_documento\": true, \"requiere_gestor\": false, \"todos_los_documentos_enviados\": false, \"tipo_documento\": \"Pasaporte\", \"nombre_cliente\": \"María López\", \"tipo_tramite\": \"Arraigo Social\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Envío de documentos (Completo): \n  {\"respuesta\": \"¡Genial! Con este último archivo ya tenemos toda la documentación necesaria para tu Arraigo Social. Pasamos tu expediente a revisión.\", \"es_cita\": false, \"es_documento\": true, \"requiere_gestor\": false, \"todos_los_documentos_enviados\": true, \"tipo_documento\": \"Padrón\", \"nombre_cliente\": \"María López\", \"tipo_tramite\": \"Arraigo Social\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Derivación a gestor (caso complejo): \n  {\"respuesta\": \"Al tratarse de una orden de expulsión previa, es necesario que un gestor especializado revise tu caso detalladamente. Le he pasado la nota a nuestro equipo y se pondrán en contacto contigo muy pronto.\", \"es_cita\": false, \"es_documento\": false, \"requiere_gestor\": true, \"todos_los_documentos_enviados\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"Carlos Gómez\", \"tipo_tramite\": \"Recorrido Judicial\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Confirmar cita: \n  {\"respuesta\": \"Aquí tienes el resumen de tu cita:\\n- Nombre: Juan Pérez\\n- Trámite: Renovación de NIE\\n- Fecha: 28 de Septiembre a las 10:00\\n\\nResponde con:\\n1️⃣ Confirmar\\n2️⃣ Cancelar\", \"es_cita\": true, \"es_documento\": false, \"requiere_gestor\": false, \"todos_los_documentos_enviados\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"2026-09-28T10:00:00\", \"fecha_fin\": \"2026-09-28T10:30:00\"}\n\n---\n\n### TONO Y ESTILO (HUMANO Y NATURAL):\n- Comunícate como un asistente de gestoría cercano, amable y empático en WhatsApp.\n- Evita sonar como un robot burocrático o mandar listas frías y secas. Saluda con calidez y redacta las respuestas de forma fluida y natural.\n- Sé claro, conciso y evita párrafos largos que dificulten la lectura en el móvil."
           }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
@@ -1452,7 +1452,7 @@
               {
                 "id": "3110b0dc-8201-47b1-be9b-5dc3de2fa254",
                 "leftValue": "={{ $('Webhook').item.json.body.data.message.conversation.trim() }}",
-                "rightValue": "^(1|cambiar a otro dia|cambiar|no me va bien el dia)$",
+                "rightValue": "^(1|cambiar a otro dia|cambiar|reagendar|reprogramar)$",
                 "operator": {
                   "type": "string",
                   "operation": "regex"
@@ -1467,7 +1467,7 @@
         "typeVersion": 2.3,
         "position": [
           3936,
-          -672
+          -624
         ],
         "id": "52b7a557-f6ef-4348-bb3d-ee6ba47a6b6b",
         "name": "Quieres reprogramar la cita?"
@@ -1477,7 +1477,7 @@
           "resource": "messages-api",
           "instanceName": "gestoria-marco",
           "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "=Cuando te vendria bien agendar la cita?",
+          "messageText": "¿Cuando te vendria bien agendar la cita?",
           "options_message": {}
         },
         "type": "n8n-nodes-evolution-api.evolutionApi",
@@ -1708,7 +1708,7 @@
         "typeVersion": 1.3,
         "position": [
           4608,
-          -768
+          -720
         ],
         "id": "c50f38ed-1f1d-4239-a168-ea954d3b9249",
         "name": "Call 'gestionar_citas' b"
@@ -1842,7 +1842,7 @@
           "resource": "messages-api",
           "instanceName": "gestoria-marco",
           "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "Tenemos hueco para ese dia y esa hora. Asi que te agendaremos una cita en tu calendario",
+          "messageText": "Tenemos hueco para ese dia y esa hora. Asi que te agendaremos una cita en tu calendario.",
           "options_message": {}
         },
         "type": "n8n-nodes-evolution-api.evolutionApi",
@@ -1888,7 +1888,7 @@
         "typeVersion": 2.3,
         "position": [
           4608,
-          -960
+          -912
         ],
         "id": "4c2fd36d-529d-48f7-a9b8-b5508053f582",
         "name": "Hay hueco en ese dia para cita?"
@@ -2247,8 +2247,8 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          4160,
-          48
+          4496,
+          240
         ],
         "id": "a2b625c5-2c27-4a9b-baab-0fc9a4913813",
         "name": "Call 'gestionar_docs'"
@@ -2260,8 +2260,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          3936,
-          -48
+          4272,
+          144
         ],
         "id": "57e5881f-2b2b-4a02-a1ed-26b6b53d5a6e",
         "name": "Bucle1"
@@ -2277,8 +2277,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          4384,
-          -240
+          4720,
+          -48
         ],
         "id": "e649f744-2209-4fb6-9856-63012af61a3e",
         "name": "Enviar texto7",
@@ -2318,7 +2318,7 @@
         "typeVersion": 2.3,
         "position": [
           3264,
-          720
+          912
         ],
         "id": "6276ff72-331c-4dae-a453-1e05acf9f87f",
         "name": "Es mejor que contacte con gestor?"
@@ -2335,7 +2335,7 @@
         "typeVersion": 1,
         "position": [
           3488,
-          720
+          816
         ],
         "id": "697b8bcc-dfef-4f4f-9474-f80fb046e597",
         "name": "Enviar texto8",
@@ -2360,7 +2360,7 @@
         "typeVersion": 1,
         "position": [
           3488,
-          912
+          1008
         ],
         "id": "64f6abb5-c3eb-462c-b127-65ad299a3b37",
         "name": "Enviar mensaje",
@@ -2399,8 +2399,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          4160,
-          -144
+          4496,
+          48
         ],
         "id": "fbcc01a7-b733-4d09-ac80-5119aeaee1da",
         "name": "Si se ha subido todos los docs?"
@@ -2416,8 +2416,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          4384,
-          -48
+          4720,
+          144
         ],
         "id": "7c6416bd-5efb-4523-aa3d-32891e2dcb69",
         "name": "Enviar texto9",
@@ -2433,14 +2433,14 @@
           "resource": "messages-api",
           "instanceName": "gestoria-marco",
           "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+          "messageText": "={{ $json.respuesta }}",
           "options_message": {}
         },
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
           3488,
-          -48
+          48
         ],
         "id": "615ef17e-4d1f-47bd-9ad2-4a75d64a2ba6",
         "name": "Enviar texto6",
@@ -2456,14 +2456,14 @@
           "resource": "messages-api",
           "instanceName": "gestoria-marco",
           "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+          "messageText": "={{ $json.respuesta }}",
           "options_message": {}
         },
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
           3488,
-          144
+          240
         ],
         "id": "0d28b3ef-ce2c-40d3-b899-668f0575f040",
         "name": "Enviar texto10",
@@ -2479,14 +2479,14 @@
           "resource": "messages-api",
           "instanceName": "gestoria-marco",
           "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+          "messageText": "={{ $json.respuesta }}",
           "options_message": {}
         },
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
           3488,
-          336
+          432
         ],
         "id": "b749ced0-bfce-49da-a274-1324a0b9c2dd",
         "name": "Enviar texto11",
@@ -2502,14 +2502,14 @@
           "resource": "messages-api",
           "instanceName": "gestoria-marco",
           "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.\n\n- {{ $json.nombre_documento }}",
+          "messageText": "={{ $json.respuesta }}",
           "options_message": {}
         },
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
           3488,
-          528
+          624
         ],
         "id": "520b7768-7836-4bcb-bc68-581deae93bb5",
         "name": "Enviar texto12",
@@ -2551,14 +2551,14 @@
           "resource": "messages-api",
           "instanceName": "gestoria-marco",
           "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-          "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+          "messageText": "={{ $json.respuesta }}",
           "options_message": {}
         },
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
           3488,
-          -240
+          -144
         ],
         "id": "284c393e-5bba-4b2b-8fa3-886ff3aeb829",
         "name": "Enviar texto13",
@@ -2579,8 +2579,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3712,
-          -48
+          4048,
+          144
         ],
         "id": "4555746f-2fa6-4068-bb20-22655a0d94b8",
         "name": "Descargar documento",
@@ -2703,7 +2703,7 @@
         "typeVersion": 3.4,
         "position": [
           3040,
-          448
+          592
         ],
         "id": "e585e0ee-b6cd-4862-ba45-69343c7aec46",
         "name": "Conmutar tema"
@@ -2844,7 +2844,7 @@
         "typeVersion": 3.4,
         "position": [
           3264,
-          144
+          192
         ],
         "id": "f3667209-1a2d-4cf8-9e2e-16c06bf355d4",
         "name": "Conmutar tipo tramite"
@@ -2909,7 +2909,7 @@
         "typeVersion": 3.4,
         "position": [
           3488,
-          1104
+          1248
         ],
         "id": "27dd1d3a-f51e-46d7-abb7-b38249c2de0d",
         "name": "Conmutar opciones 2"
@@ -3022,8 +3022,8 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          3984,
-          1056
+          4048,
+          1008
         ],
         "id": "c5edc455-11ea-46f2-ac63-27a1f8860008",
         "name": "Buscar_tramites"
@@ -3134,8 +3134,8 @@
         "type": "n8n-nodes-base.executeWorkflow",
         "typeVersion": 1.3,
         "position": [
-          4368,
-          1424
+          4048,
+          1392
         ],
         "id": "ed26c2cb-77f0-445a-af98-9c25cdbff5f6",
         "name": "Buscar_docs"
@@ -3197,8 +3197,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          3984,
-          864
+          4048,
+          816
         ],
         "id": "032a331b-22a4-4c46-ade4-a24be15439d8",
         "name": "Enviar mensaje1",
@@ -3222,8 +3222,8 @@
         "type": "n8n-nodes-evolution-api.evolutionApi",
         "typeVersion": 1,
         "position": [
-          4368,
-          1152
+          4048,
+          1200
         ],
         "id": "bb00c66f-f49e-455a-abd5-60ce48619473",
         "name": "Enviar mensaje3",
@@ -3246,7 +3246,7 @@
         "typeVersion": 1,
         "position": [
           3264,
-          1104
+          1248
         ],
         "id": "b60f3345-1f93-487c-841c-4ea9dd7b692c",
         "name": "Enviar pregunta 2",
@@ -3264,8 +3264,8 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          3760,
-          1008
+          3824,
+          912
         ],
         "id": "fca5c42b-7127-4bc4-a326-6d4f2c9d8da6",
         "name": "Bucle2"
@@ -3277,11 +3277,67 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          3984,
-          1280
+          3824,
+          1344
         ],
         "id": "8e5bfa35-4f96-42f7-aae3-a31df9dd4373",
         "name": "Bucle3"
+      },
+      {
+        "parameters": {
+          "resource": "messages-api",
+          "instanceName": "gestoria-marco",
+          "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+          "messageText": "A ver faltan documentos para iniciar el tramite. Faltan estos documentos",
+          "options_message": {}
+        },
+        "type": "n8n-nodes-evolution-api.evolutionApi",
+        "typeVersion": 1,
+        "position": [
+          4048,
+          480
+        ],
+        "id": "df35aec3-ee45-442e-8420-eb8540fde3c6",
+        "name": "Enviar texto14",
+        "credentials": {
+          "evolutionApi": {
+            "id": "cvPqkt8XAs3saTjV",
+            "name": "API DE GESTORIA-MARCO"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "5ffd6762-04d7-4f99-b7f8-9db6822d2832",
+                "leftValue": "={{ $json.todos_los_documentos_enviados }}",
+                "rightValue": "=true",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          3824,
+          240
+        ],
+        "id": "7d5cf275-2c71-4340-ba1c-b0d39c10b09d",
+        "name": "Se han enviado todos los docs?"
       }
     ],
     "connections": {
@@ -3956,7 +4012,7 @@
         "main": [
           [
             {
-              "node": "Descargar documento",
+              "node": "Se han enviado todos los docs?",
               "type": "main",
               "index": 0
             }
@@ -3967,7 +4023,7 @@
         "main": [
           [
             {
-              "node": "Descargar documento",
+              "node": "Se han enviado todos los docs?",
               "type": "main",
               "index": 0
             }
@@ -3978,7 +4034,7 @@
         "main": [
           [
             {
-              "node": "Descargar documento",
+              "node": "Se han enviado todos los docs?",
               "type": "main",
               "index": 0
             }
@@ -3989,7 +4045,7 @@
         "main": [
           [
             {
-              "node": "Descargar documento",
+              "node": "Se han enviado todos los docs?",
               "type": "main",
               "index": 0
             }
@@ -4011,7 +4067,7 @@
         "main": [
           [
             {
-              "node": "Descargar documento",
+              "node": "Se han enviado todos los docs?",
               "type": "main",
               "index": 0
             }
@@ -4218,17 +4274,45 @@
             }
           ]
         ]
+      },
+      "Se han enviado todos los docs?": {
+        "main": [
+          [
+            {
+              "node": "Descargar documento",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Enviar texto14",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append row in sheet1": {
+        "main": [
+          []
+        ]
+      },
+      "Enviar texto8": {
+        "main": [
+          []
+        ]
       }
     },
     "nodeGroups": [],
     "authors": "Marco Antonio Martínez Guerrero",
-    "name": "Version 7a66d6c3",
+    "name": "Version 3a432508",
     "description": "",
     "autosaved": true,
-    "createdAt": "2026-11-05T16:00:37.103Z",
-    "updatedAt": "2026-11-05T16:28:58.000Z"
+    "createdAt": "2026-11-06T16:37:17.866Z",
+    "updatedAt": "2026-11-06T16:37:45.000Z"
   },
-  "activeVersionId": "7a66d6c3-f0c8-4543-ab34-45c29921a7a0",
+  "activeVersionId": "3a432508-ca88-48e0-94a2-099dd18f6d00",
   "connections": {
     "Tipo de mensaje": {
       "main": [
@@ -4901,7 +4985,7 @@
       "main": [
         [
           {
-            "node": "Descargar documento",
+            "node": "Se han enviado todos los docs?",
             "type": "main",
             "index": 0
           }
@@ -4912,7 +4996,7 @@
       "main": [
         [
           {
-            "node": "Descargar documento",
+            "node": "Se han enviado todos los docs?",
             "type": "main",
             "index": 0
           }
@@ -4923,7 +5007,7 @@
       "main": [
         [
           {
-            "node": "Descargar documento",
+            "node": "Se han enviado todos los docs?",
             "type": "main",
             "index": 0
           }
@@ -4934,7 +5018,7 @@
       "main": [
         [
           {
-            "node": "Descargar documento",
+            "node": "Se han enviado todos los docs?",
             "type": "main",
             "index": 0
           }
@@ -4956,7 +5040,7 @@
       "main": [
         [
           {
-            "node": "Descargar documento",
+            "node": "Se han enviado todos los docs?",
             "type": "main",
             "index": 0
           }
@@ -5162,6 +5246,34 @@
             "index": 0
           }
         ]
+      ]
+    },
+    "Se han enviado todos los docs?": {
+      "main": [
+        [
+          {
+            "node": "Descargar documento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        []
+      ]
+    },
+    "Enviar texto8": {
+      "main": [
+        []
       ]
     }
   },
@@ -5675,13 +5787,13 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Extraer la salida previa de forma segura\nlet rawOutput = $json.output ?? $json.text ?? $json.response ?? $json;\nlet parsedData = {};\n\nif (typeof rawOutput === 'object' && rawOutput !== null) {\n  parsedData = rawOutput;\n} else {\n  let cleanText = String(rawOutput).trim();\n  cleanText = cleanText.replace(/^```(?:json)?/gi, '').replace(/```$/g, '').trim();\n\n  try {\n    parsedData = JSON.parse(cleanText);\n  } catch (error) {\n    try {\n      let fixedText = cleanText.replace(/^[^{]*/, '').replace(/[^}]*$/, '');\n      parsedData = JSON.parse(fixedText);\n    } catch (e2) {\n      parsedData = { respuesta: cleanText };\n    }\n  }\n}\n\nlet textoRespuesta = parsedData.respuesta ?? rawOutput;\nif (typeof textoRespuesta === 'object') {\n  textoRespuesta = textoRespuesta.respuesta || JSON.stringify(textoRespuesta);\n}\n\nreturn {\n  json: {\n    respuesta: String(textoRespuesta).trim(),\n    es_cita: Boolean(parsedData.es_cita),\n    es_documento: Boolean(parsedData.es_documento),\n    requiere_gestor: Boolean(parsedData.requiere_gestor), // <-- NUEVA BANDERA\n    tipo_documento: parsedData.tipo_documento || \"General\",\n    nombre_cliente: parsedData.nombre_cliente || \"\",\n    tipo_tramite: parsedData.tipo_tramite || \"Trámite General\",\n    fecha_inicio: parsedData.fecha_inicio || \"\",\n    fecha_fin: parsedData.fecha_fin || \"\"\n  }\n};"
+        "jsCode": "// Extraer la salida previa de forma segura\nlet rawOutput = $json.output ?? $json.text ?? $json.response ?? $json;\nlet parsedData = {};\n\nif (typeof rawOutput === 'object' && rawOutput !== null) {\n  parsedData = rawOutput;\n} else {\n  let cleanText = String(rawOutput).trim();\n  cleanText = cleanText.replace(/^```(?:json)?/gi, '').replace(/```$/g, '').trim();\n\n  try {\n    parsedData = JSON.parse(cleanText);\n  } catch (error) {\n    try {\n      let fixedText = cleanText.replace(/^[^{]*/, '').replace(/[^}]*$/, '');\n      parsedData = JSON.parse(fixedText);\n    } catch (e2) {\n      parsedData = { respuesta: cleanText };\n    }\n  }\n}\n\nlet textoRespuesta = parsedData.respuesta ?? rawOutput;\nif (typeof textoRespuesta === 'object') {\n  textoRespuesta = textoRespuesta.respuesta || JSON.stringify(textoRespuesta);\n}\n\nreturn {\n  json: {\n    respuesta: String(textoRespuesta).trim(),\n    es_cita: Boolean(parsedData.es_cita),\n    es_documento: Boolean(parsedData.es_documento),\n    requiere_gestor: Boolean(parsedData.requiere_gestor),\n    todos_los_documentos_enviados: Boolean(parsedData.todos_los_documentos_enviados), // <-- NUEVA BANDERA CAPTURADA\n    tipo_documento: parsedData.tipo_documento || \"General\",\n    nombre_cliente: parsedData.nombre_cliente || \"\",\n    tipo_tramite: parsedData.tipo_tramite || \"Trámite General\",\n    fecha_inicio: parsedData.fecha_inicio || \"\",\n    fecha_fin: parsedData.fecha_fin || \"\"\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2816,
-        480
+        2832,
+        624
       ],
       "id": "84ddbc73-e14c-4c8f-ae7d-82146240aa01",
       "name": "Formatear respuesta"
@@ -5691,14 +5803,14 @@
         "resource": "messages-api",
         "instanceName": "gestoria-marco",
         "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "={{ $json.respuesta }}",
+        "messageText": "={{ $json.respuesta }}. \nDime que quieres gestionar:\n1) Buscar mis tramites\n2) Revisar mis documentos de un tramite",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
         3264,
-        -864
+        -720
       ],
       "id": "7dab64ff-84f9-445e-b7b0-e78168a2c395",
       "name": "Enviar pregunta ",
@@ -6153,7 +6265,7 @@
       "typeVersion": 4.5,
       "position": [
         4608,
-        -576
+        -528
       ],
       "id": "d4b15d59-b4c3-453a-82c6-1e589febd5d4",
       "name": "Enviar cancelacion",
@@ -6270,7 +6382,7 @@
       "typeVersion": 1.3,
       "position": [
         4608,
-        -384
+        -336
       ],
       "id": "320b025c-606b-49b1-b4ef-cc326590ceb2",
       "name": "Call 'gestionar_citas' eli"
@@ -6372,7 +6484,7 @@
       "typeVersion": 3.4,
       "position": [
         3488,
-        -864
+        -720
       ],
       "id": "858af59e-beda-419d-9377-ca2ceccc0b5b",
       "name": "Conmutar opciones"
@@ -6514,7 +6626,7 @@
       "typeVersion": 1,
       "position": [
         3712,
-        -672
+        -624
       ],
       "id": "9325430b-6e51-4dd9-b8fc-ed3186de1f9d",
       "name": "Enviar texto",
@@ -6530,7 +6642,7 @@
         "promptType": "define",
         "text": "=Mensaje del usuario: {{ $json.text }}",
         "options": {
-          "systemMessage": "=Eres el recepcionista virtual de una gestoría especializada en trámites de extranjería. Tu objetivo es ayudar a los clientes de forma amable, profesional, precisa y concisa. Responde dudas generales, gestiona citas y recopila documentos.\n\nFECHA ACTUAL DEL SISTEMA: {{ $now.format('YYYY-MM-DD HH:mm') }}\n\n### TUS RESPONSABILIDADES:\n1. Responder dudas generales sobre trámites de extranjería.\n2. Gestionar la reserva, consulta y cancelación de citas (`gestionar_citas`).\n3. Consultar y actualizar el estado de expediente o trámites del cliente (`gestionar_tramites`).\n4. Solicitar y procesar la recepción de documentos requeridos (`gestionar_docs`).\n5. Detectar cuando una situación requiere atención profesional humana y derivarla activamente al gestor.\n\n---\n\n### DERIVACIÓN A GESTOR HUMANO (CRÍTICO):\nSi el usuario plantea un caso complejo, personalizado, con problemas judiciales/expulsiones, recursos administrativos, incidencias graves o que requiera estrictamente el criterio profesional de un abogado o gestor experto:\n1. Marca en tu respuesta JSON final el campo `\"requiere_gestor\": true`.\n2. Explícale amablemente en la `\"respuesta\"` que su caso requiere una revisión personalizada y que un gestor se pondrá en contacto con él a la mayor brevedad.\n\n---\n\n### DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES (CAG):\nConsulta estas duraciones oficiales para calcular la hora final de las citas:\n- Nacionalidad: 60 minutos\n- Agrupación Familiar: 60 minutos\n- Renovación de NIE: 30 minutos\n- Consulta General / Asesoría: 45 minutos\n- Cualquier otro trámite no especificado: 45 minutos\n\n---\n\n### REGLA OBLIGATORIA DE LLAMADA A HERRAMIENTAS:\nCualquiera de las herramientas del sistema (`gestionar_citas`, `gestionar_tramites`, `gestionar_docs`) requiere SIEMPRE el envío de los siguientes 5 argumentos en su objeto JSON:\n- `accion`\n- `nombre_cliente`\n- `tipo_tramite`\n- `fecha_inicio`\n- `event_id`\n\nSi alguno de estos argumentos NO es relevante o necesario para la acción concreta que ejecutas, envía una cadena vacía `\"\"` como su valor. NUNCA omitas ninguno de los 5 campos en la llamada.\n\n---\n\n### HORARIOS DE ATENCIÓN DE GESTORIA-MARCO:\n- Lunes a jueves | 09:00 - 13:00 \n- Viernes | 09:00 - 13:00 | 14:00 - 15:30\n- Sábados | 09:00 - 13:00\n- Domingos y festivos | Cerrado\n*Zona horaria: Europe/Madrid*\n\n---\n\n### REGLAS Y USO ESPECÍFICO DE CADA HERRAMIENTA:\n\n1. **HERRAMIENTA: `gestionar_citas`**\n   - **Agendar Cita (Flujo obligatorio en 3 pasos)**:\n     - **Paso 1. Recopilar Datos**: Solicita al cliente su Nombre completo y Asunto/Trámite que desea realizar.\n     - **Paso 2. Consultar y Ofrecer Huecos Disponibles**: \n       - En cuanto recibas el nombre y el trámite, NO le preguntes qué día prefiere.\n       - Ejecuta inmediatamente `gestionar_citas` con `accion: \"buscar_huecos\"`.\n       - Pasa en `fecha_inicio` la FECHA ACTUAL en formato ISO o YYYY-MM-DD.\n       - **CRÍTICO:** NO inventes días ni horas. Presenta ÚNICAMENTE la lista exacta de huecos que te devuelva la herramienta.\n       - Mientras presentes estos huecos, mantén `\"es_cita\": false` en tu respuesta JSON final.\n     - **Paso 3. Preparar Confirmación**: Cuando el cliente elija una fecha y hora específica:\n       a) Muestra un resumen claro con los datos recopilados (Nombre, Trámite, Fecha y Hora elegida).\n       b) Pide explícitamente la confirmación indicando las opciones de texto o número (\"Responde con 1 o Confirmar para agendar, o 2 o Cancelar para rechazar\").\n       c) Calcula `fecha_fin` sumando los minutos correspondientes según el **DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES**.\n       d) Marca `\"es_cita\": true` en tu respuesta JSON final.\n   - **Cancelar o Consultar Cita**:\n     - Para cancelar: solicita nombre completo o correo, ejecuta `gestionar_citas` con `accion: \"buscar\"` para obtener el `event_id`, y posteriormente la acción `\"cancelar\"`.\n   - **Respuestas de Confirmación del Cliente**:\n     - Si responde \"1\", \"Confirmar\" o \"Confirmar cita\", interpreta que la cita queda confirmada.\n     - Si responde \"2\", \"Cancelar\" o \"Cancelar cita\", procede a descartar la solicitud.\n\n2. **HERRAMIENTA: `gestionar_tramites`**\n   - **Uso**: Para consultar el estado actual de un expediente, modificar datos de un trámite en curso o aperturar una gestión.\n   - **Datos requeridos**: Solicita Nombre, Apellidos, NIE/Pasaporte y Fecha de nacimiento.\n   - **Acciones comunes**: `\"consultar_estado\"`, `\"actualizar_tramite\"`.\n\n3. **HERRAMIENTA: `gestionar_docs`**\n   - **Uso**: Para registrar, verificar o adjuntar documentación requerida para un trámite.\n   - **Identificación de Envío de Documentos**: Cuando el usuario indique que desea enviar, subir o consultar documentos/archivos adjuntos (pasaportes, empadronamientos, tasas, etc.), marca `\"es_documento\": true` e indica el valor en `\"tipo_documento\"`.\n   - **Datos requeridos**: Solicita Domicilio actual del cliente, NIE/Pasaporte y el Nombre del documento exacto.\n   - **Acciones comunes**: `\"registrar_documento\"`, `\"consultar_requisitos\"`.\n\n---\n\n### INSTRUCCIONES DE SALIDA (MUY IMPORTANTE):\n- Tus respuestas finales dirigidas al usuario en WhatsApp NO deben activar herramientas.\n- Estructura OBLIGATORIA y ESTRICTA del JSON de respuesta final:\n\n{\n  \"respuesta\": \"Texto de tu mensaje para el usuario en WhatsApp\",\n  \"es_cita\": false,\n  \"es_documento\": false,\n  \"requiere_gestor\": false,\n  \"tipo_documento\": \"General\",\n  \"nombre_cliente\": \"\",\n  \"tipo_tramite\": \"\",\n  \"fecha_inicio\": \"\",\n  \"fecha_fin\": \"\"\n}\n\n#### EJEMPLOS DE SALIDA FINAL:\n\n- Consulta general: \n  {\"respuesta\": \"¡Hola! ¿En qué puedo ayudarte?\", \"es_cita\": false, \"es_documento\": false, \"requiere_gestor\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"\", \"tipo_tramite\": \"\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Solicitud o envío de documentos: \n  {\"respuesta\": \"Por favor, envíame una foto clara de tu Pasaporte completo por aquí para adjuntarlo a tu expediente.\", \"es_cita\": false, \"es_documento\": true, \"requiere_gestor\": false, \"tipo_documento\": \"Pasaporte\", \"nombre_cliente\": \"María López\", \"tipo_tramite\": \"Arraigo Social\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Derivación a gestor (caso complejo): \n  {\"respuesta\": \"Al tratarse de una orden de expulsión previa, es necesario que un gestor especializado revise tu expediente minuciosamente. He derivado tu caso a nuestro equipo y te contactarán en breve.\", \"es_cita\": false, \"es_documento\": false, \"requiere_gestor\": true, \"tipo_documento\": \"General\", \"nombre_cliente\": \"Carlos Gómez\", \"tipo_tramite\": \"Recorrido Judicial\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Confirmar cita: \n  {\"respuesta\": \"Resumen de tu cita:\\n- Nombre: Juan Pérez\\n- Trámite: Renovación de NIE\\n- Fecha: 28 de Septiembre a las 10:00\\n\\nResponde con:\\n1️⃣ Confirmar\\n2️⃣ Cancelar\", \"es_cita\": true, \"es_documento\": false, \"requiere_gestor\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"2026-09-28T10:00:00\", \"fecha_fin\": \"2026-09-28T10:30:00\"}\n\n---\n\n### TONO Y ESTILO:\n- Amable, claro y directo.\n- Evita párrafos excesivamente largos."
+          "systemMessage": "=Eres el recepcionista virtual de una gestoría especializada en trámites de extranjería. Tu objetivo es ayudar a los clientes de forma amable, profesional, precisa, cercana y concisa por WhatsApp. Responde dudas generales, gestiona citas y recopila documentos.\n\nFECHA ACTUAL DEL SISTEMA: {{ $now.format('YYYY-MM-DD HH:mm') }}\n\n### TUS RESPONSABILIDADES:\n1. Responder dudas generales sobre trámites de extranjería.\n2. Gestionar la reserva, consulta y cancelación de citas (`gestionar_citas`).\n3. Consultar el estado de expediente o trámites del cliente (`gestionar_tramites`).\n4. Solicitar y procesar la recepción de documentos requeridos (`gestionar_docs`).\n5. Detectar cuando una situación requiere atención profesional humana y derivarla activamente al gestor.\n\n---\n\n### DERIVACIÓN A GESTOR HUMANO (CRÍTICO):\nSi el usuario plantea un caso complejo, personalizado, con problemas judiciales/expulsiones, recursos administrativos, incidencias graves o que requiera estrictamente el criterio profesional de un abogado o gestor experto:\n1. Marca en tu respuesta JSON final el campo `\"requiere_gestor\": true`.\n2. Explícale amablemente en la `\"respuesta\"` que su caso requiere una revisión personalizada y que un gestor se pondrá en contacto con él a la mayor brevedad.\n\n---\n\n### DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES (CAG):\nConsulta estas duraciones oficiales para calcular la hora final de las citas:\n- Nacionalidad: 60 minutos\n- Agrupación Familiar: 60 minutos\n- Renovación de NIE: 30 minutos\n- Consulta General / Asesoría: 45 minutos\n- Cualquier otro trámite no especificado: 45 minutos\n\n---\n\n### REGLA OBLIGATORIA DE LLAMADA A HERRAMIENTAS:\nCualquiera de las herramientas del sistema (`gestionar_citas`, `gestionar_tramites`, `gestionar_docs`) requiere SIEMPRE el envío de los siguientes 5 argumentos en su objeto JSON:\n- `accion`\n- `nombre_cliente`\n- `tipo_tramite`\n- `fecha_inicio`\n- `event_id`\n\nSi alguno de estos argumentos NO es relevante o necesario para la acción concreta que ejecutas, envía una cadena vacía `\"\"` como su valor. NUNCA omitas ninguno de los 5 campos en la llamada.\n\n---\n\n### HORARIOS DE ATENCIÓN DE GESTORIA-MARCO:\n- Lunes a jueves | 09:00 - 13:00 \n- Viernes | 09:00 - 13:00 | 14:00 - 15:30\n- Sábados | 09:00 - 13:00\n- Domingos y festivos | Cerrado\n*Zona horaria: Europe/Madrid*\n\n---\n\n### REGLAS Y USO ESPECÍFICO DE CADA HERRAMIENTA:\n\n1. **HERRAMIENTA: `gestionar_citas`**\n   - **Agendar Cita (Flujo obligatorio en 3 pasos)**:\n     - **Paso 1. Recopilar Datos**: Solicita al cliente su Nombre completo y Asunto/Trámite que desea realizar.\n     - **Paso 2. Consultar y Ofrecer Huecos Disponibles**: \n       - En cuanto recibas el nombre y el trámite, NO le preguntes qué día prefiere.\n       - Ejecuta inmediatamente `gestionar_citas` con `accion: \"buscar_huecos\"`.\n       - Pasa en `fecha_inicio` la FECHA ACTUAL en formato ISO o YYYY-MM-DD.\n       - **CRÍTICO:** NO inventes días ni horas. Presenta ÚNICAMENTE la lista exacta de huecos que te devuelva la herramienta.\n       - Mientras presentes estos huecos, mantén `\"es_cita\": false` en tu respuesta JSON final.\n     - **Paso 3. Preparar Confirmación**: Cuando el cliente elija una fecha y hora específica:\n       a) Muestra un resumen claro con los datos recopilados (Nombre, Trámite, Fecha y Hora elegida).\n       b) Pide explícitamente la confirmación indicando las opciones de texto o número (\"Responde con 1 o Confirmar para agendar, o 2 o Cancelar para rechazar\").\n       c) Calcula `fecha_fin` sumando los minutos correspondientes según el **DOCUMENTO OFICIAL DE TRÁMITES Y DURACIONES**.\n       d) Marca `\"es_cita\": true` en tu respuesta JSON final.\n   - **Cancelar o Consultar Cita**:\n     - Para cancelar: solicita nombre completo o correo, ejecuta `gestionar_citas` con `accion: \"buscar\"` para obtener el `event_id`, y posteriormente la acción `\"cancelar\"`.\n   - **Respuestas de Confirmación del Cliente**:\n     - Si responde \"1\", \"Confirmar\" o \"Confirmar cita\", interpreta que la cita queda confirmada.\n     - Si responde \"2\", \"Cancelar\" o \"Cancelar cita\", procede a descartar la solicitud.\n\n2. **HERRAMIENTA: `gestionar_tramites`**\n   - **Uso**: Para consultar el estado actual de un expediente o aperturar una gestión.\n   - **Datos requeridos**: Solicita Nombre, Apellidos, NIE/Pasaporte y Fecha de nacimiento.\n   - **Acciones comunes**: `\"consultar_estado\"`.\n\n3. **HERRAMIENTA: `gestionar_docs`**\n   - **Uso**: Para registrar, verificar o adjuntar documentación requerida para un trámite.\n   - **Identificación de Envío de Documentos**: Cuando el usuario indique que desea enviar, subir o consultar documentos/archivos adjuntos (pasaportes, empadronamientos, tasas, etc.), marca `\"es_documento\": true` e indica el valor en `\"tipo_documento\"`.\n   - **VALIDACIÓN DE DOCUMENTOS CON EL RAG (CRÍTICO)**:\n     Cuando el usuario indique que desea iniciar un trámite, enviar un documento o preguntar qué le falta:\n     1. **Consulta obligatoria:** Utiliza la herramienta de Supabase (`Supabase Vector Store`) para buscar los requisitos oficiales del trámite correspondiente (ej. Arraigo Social, Nacionalidad, etc.).\n     2. **Cruza con la memoria:** Revisa el historial de la conversación para ver qué documentos el usuario ya ha enviado o mencionado en mensajes anteriores.\n     3. **Evalúa si está completo:** \n        - Si **faltan documentos** de la lista oficial del RAG, explícale claramente cuáles faltan en el campo `respuesta` y pon `\"todos_los_documentos_enviados\": false`.\n        - Si **ya se enviaron todos** los documentos necesarios según el RAG, pon `\"todos_los_documentos_enviados\": true` para proceder con el expediente.\n   - **Datos requeridos**: Solicita Domicilio actual del cliente, NIE/Pasaporte y el Nombre del documento exacto.\n   - **Acciones comunes**: `\"registrar_documento\"`, `\"consultar_requisitos\"`.\n\n---\n\n### INSTRUCCIONES DE SALIDA (MUY IMPORTANTE):\n- Tus respuestas finales dirigidas al usuario en WhatsApp NO deben activar herramientas.\n- Estructura OBLIGATORIA y ESTRICTA del JSON de respuesta final:\n\n{\n  \"respuesta\": \"Texto de tu mensaje para el usuario en WhatsApp\",\n  \"es_cita\": false,\n  \"es_documento\": false,\n  \"requiere_gestor\": false,\n  \"todos_los_documentos_enviados\": false,\n  \"tipo_documento\": \"General\",\n  \"nombre_cliente\": \"\",\n  \"tipo_tramite\": \"\",\n  \"fecha_inicio\": \"\",\n  \"fecha_fin\": \"\"\n}\n\n#### EJEMPLOS DE SALIDA FINAL:\n\n- Consulta general: \n  {\"respuesta\": \"¡Hola! ¿En qué puedo ayudarte hoy?\", \"es_cita\": false, \"es_documento\": false, \"requiere_gestor\": false, \"todos_los_documentos_enviados\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"\", \"tipo_tramite\": \"\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Solicitud o envío de documentos (Incompleto): \n  {\"respuesta\": \"¡Muchas gracias! He recibido tu Pasaporte. Para dejar listo el trámite de Arraigo Social nos faltaría únicamente el Padrón histórico y tus Antecedentes penales. ¿Los tendrías a mano?\", \"es_cita\": false, \"es_documento\": true, \"requiere_gestor\": false, \"todos_los_documentos_enviados\": false, \"tipo_documento\": \"Pasaporte\", \"nombre_cliente\": \"María López\", \"tipo_tramite\": \"Arraigo Social\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Envío de documentos (Completo): \n  {\"respuesta\": \"¡Genial! Con este último archivo ya tenemos toda la documentación necesaria para tu Arraigo Social. Pasamos tu expediente a revisión.\", \"es_cita\": false, \"es_documento\": true, \"requiere_gestor\": false, \"todos_los_documentos_enviados\": true, \"tipo_documento\": \"Padrón\", \"nombre_cliente\": \"María López\", \"tipo_tramite\": \"Arraigo Social\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Derivación a gestor (caso complejo): \n  {\"respuesta\": \"Al tratarse de una orden de expulsión previa, es necesario que un gestor especializado revise tu caso detalladamente. Le he pasado la nota a nuestro equipo y se pondrán en contacto contigo muy pronto.\", \"es_cita\": false, \"es_documento\": false, \"requiere_gestor\": true, \"todos_los_documentos_enviados\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"Carlos Gómez\", \"tipo_tramite\": \"Recorrido Judicial\", \"fecha_inicio\": \"\", \"fecha_fin\": \"\"}\n\n- Confirmar cita: \n  {\"respuesta\": \"Aquí tienes el resumen de tu cita:\\n- Nombre: Juan Pérez\\n- Trámite: Renovación de NIE\\n- Fecha: 28 de Septiembre a las 10:00\\n\\nResponde con:\\n1️⃣ Confirmar\\n2️⃣ Cancelar\", \"es_cita\": true, \"es_documento\": false, \"requiere_gestor\": false, \"todos_los_documentos_enviados\": false, \"tipo_documento\": \"General\", \"nombre_cliente\": \"Juan Pérez\", \"tipo_tramite\": \"Renovación de NIE\", \"fecha_inicio\": \"2026-09-28T10:00:00\", \"fecha_fin\": \"2026-09-28T10:30:00\"}\n\n---\n\n### TONO Y ESTILO (HUMANO Y NATURAL):\n- Comunícate como un asistente de gestoría cercano, amable y empático en WhatsApp.\n- Evita sonar como un robot burocrático o mandar listas frías y secas. Saluda con calidez y redacta las respuestas de forma fluida y natural.\n- Sé claro, conciso y evita párrafos largos que dificulten la lectura en el móvil."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -6622,7 +6734,7 @@
             {
               "id": "3110b0dc-8201-47b1-be9b-5dc3de2fa254",
               "leftValue": "={{ $('Webhook').item.json.body.data.message.conversation.trim() }}",
-              "rightValue": "^(1|cambiar a otro dia|cambiar|no me va bien el dia)$",
+              "rightValue": "^(1|cambiar a otro dia|cambiar|reagendar|reprogramar)$",
               "operator": {
                 "type": "string",
                 "operation": "regex"
@@ -6637,7 +6749,7 @@
       "typeVersion": 2.3,
       "position": [
         3936,
-        -672
+        -624
       ],
       "id": "52b7a557-f6ef-4348-bb3d-ee6ba47a6b6b",
       "name": "Quieres reprogramar la cita?"
@@ -6647,7 +6759,7 @@
         "resource": "messages-api",
         "instanceName": "gestoria-marco",
         "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "=Cuando te vendria bien agendar la cita?",
+        "messageText": "¿Cuando te vendria bien agendar la cita?",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
@@ -6878,7 +6990,7 @@
       "typeVersion": 1.3,
       "position": [
         4608,
-        -768
+        -720
       ],
       "id": "c50f38ed-1f1d-4239-a168-ea954d3b9249",
       "name": "Call 'gestionar_citas' b"
@@ -7012,7 +7124,7 @@
         "resource": "messages-api",
         "instanceName": "gestoria-marco",
         "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "Tenemos hueco para ese dia y esa hora. Asi que te agendaremos una cita en tu calendario",
+        "messageText": "Tenemos hueco para ese dia y esa hora. Asi que te agendaremos una cita en tu calendario.",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
@@ -7058,7 +7170,7 @@
       "typeVersion": 2.3,
       "position": [
         4608,
-        -960
+        -912
       ],
       "id": "4c2fd36d-529d-48f7-a9b8-b5508053f582",
       "name": "Hay hueco en ese dia para cita?"
@@ -7417,8 +7529,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        4160,
-        48
+        4496,
+        240
       ],
       "id": "a2b625c5-2c27-4a9b-baab-0fc9a4913813",
       "name": "Call 'gestionar_docs'"
@@ -7430,8 +7542,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        3936,
-        -48
+        4272,
+        144
       ],
       "id": "57e5881f-2b2b-4a02-a1ed-26b6b53d5a6e",
       "name": "Bucle1"
@@ -7447,8 +7559,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        4384,
-        -240
+        4720,
+        -48
       ],
       "id": "e649f744-2209-4fb6-9856-63012af61a3e",
       "name": "Enviar texto7",
@@ -7488,7 +7600,7 @@
       "typeVersion": 2.3,
       "position": [
         3264,
-        720
+        912
       ],
       "id": "6276ff72-331c-4dae-a453-1e05acf9f87f",
       "name": "Es mejor que contacte con gestor?"
@@ -7505,7 +7617,7 @@
       "typeVersion": 1,
       "position": [
         3488,
-        720
+        816
       ],
       "id": "697b8bcc-dfef-4f4f-9474-f80fb046e597",
       "name": "Enviar texto8",
@@ -7530,7 +7642,7 @@
       "typeVersion": 1,
       "position": [
         3488,
-        912
+        1008
       ],
       "id": "64f6abb5-c3eb-462c-b127-65ad299a3b37",
       "name": "Enviar mensaje",
@@ -7569,8 +7681,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        4160,
-        -144
+        4496,
+        48
       ],
       "id": "fbcc01a7-b733-4d09-ac80-5119aeaee1da",
       "name": "Si se ha subido todos los docs?"
@@ -7586,8 +7698,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        4384,
-        -48
+        4720,
+        144
       ],
       "id": "7c6416bd-5efb-4523-aa3d-32891e2dcb69",
       "name": "Enviar texto9",
@@ -7603,14 +7715,14 @@
         "resource": "messages-api",
         "instanceName": "gestoria-marco",
         "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+        "messageText": "={{ $json.respuesta }}",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
         3488,
-        -48
+        48
       ],
       "id": "615ef17e-4d1f-47bd-9ad2-4a75d64a2ba6",
       "name": "Enviar texto6",
@@ -7626,14 +7738,14 @@
         "resource": "messages-api",
         "instanceName": "gestoria-marco",
         "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+        "messageText": "={{ $json.respuesta }}",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
         3488,
-        144
+        240
       ],
       "id": "0d28b3ef-ce2c-40d3-b899-668f0575f040",
       "name": "Enviar texto10",
@@ -7649,14 +7761,14 @@
         "resource": "messages-api",
         "instanceName": "gestoria-marco",
         "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+        "messageText": "={{ $json.respuesta }}",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
         3488,
-        336
+        432
       ],
       "id": "b749ced0-bfce-49da-a274-1324a0b9c2dd",
       "name": "Enviar texto11",
@@ -7672,14 +7784,14 @@
         "resource": "messages-api",
         "instanceName": "gestoria-marco",
         "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.\n\n- {{ $json.nombre_documento }}",
+        "messageText": "={{ $json.respuesta }}",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
         3488,
-        528
+        624
       ],
       "id": "520b7768-7836-4bcb-bc68-581deae93bb5",
       "name": "Enviar texto12",
@@ -7721,14 +7833,14 @@
         "resource": "messages-api",
         "instanceName": "gestoria-marco",
         "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
-        "messageText": "=Para hacer el tramite {{ $json.tipo_tramite }}. Es necesario que envies estos documentos, por favor.",
+        "messageText": "={{ $json.respuesta }}",
         "options_message": {}
       },
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
         3488,
-        -240
+        -144
       ],
       "id": "284c393e-5bba-4b2b-8fa3-886ff3aeb829",
       "name": "Enviar texto13",
@@ -7749,8 +7861,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3712,
-        -48
+        4048,
+        144
       ],
       "id": "4555746f-2fa6-4068-bb20-22655a0d94b8",
       "name": "Descargar documento",
@@ -7873,7 +7985,7 @@
       "typeVersion": 3.4,
       "position": [
         3040,
-        448
+        592
       ],
       "id": "e585e0ee-b6cd-4862-ba45-69343c7aec46",
       "name": "Conmutar tema"
@@ -8014,7 +8126,7 @@
       "typeVersion": 3.4,
       "position": [
         3264,
-        144
+        192
       ],
       "id": "f3667209-1a2d-4cf8-9e2e-16c06bf355d4",
       "name": "Conmutar tipo tramite"
@@ -8079,7 +8191,7 @@
       "typeVersion": 3.4,
       "position": [
         3488,
-        1104
+        1248
       ],
       "id": "27dd1d3a-f51e-46d7-abb7-b38249c2de0d",
       "name": "Conmutar opciones 2"
@@ -8192,8 +8304,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        3984,
-        1056
+        4048,
+        1008
       ],
       "id": "c5edc455-11ea-46f2-ac63-27a1f8860008",
       "name": "Buscar_tramites"
@@ -8304,8 +8416,8 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        4368,
-        1424
+        4048,
+        1392
       ],
       "id": "ed26c2cb-77f0-445a-af98-9c25cdbff5f6",
       "name": "Buscar_docs"
@@ -8367,8 +8479,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        3984,
-        864
+        4048,
+        816
       ],
       "id": "032a331b-22a4-4c46-ade4-a24be15439d8",
       "name": "Enviar mensaje1",
@@ -8392,8 +8504,8 @@
       "type": "n8n-nodes-evolution-api.evolutionApi",
       "typeVersion": 1,
       "position": [
-        4368,
-        1152
+        4048,
+        1200
       ],
       "id": "bb00c66f-f49e-455a-abd5-60ce48619473",
       "name": "Enviar mensaje3",
@@ -8416,7 +8528,7 @@
       "typeVersion": 1,
       "position": [
         3264,
-        1104
+        1248
       ],
       "id": "b60f3345-1f93-487c-841c-4ea9dd7b692c",
       "name": "Enviar pregunta 2",
@@ -8434,8 +8546,8 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        3760,
-        1008
+        3824,
+        912
       ],
       "id": "fca5c42b-7127-4bc4-a326-6d4f2c9d8da6",
       "name": "Bucle2"
@@ -8447,11 +8559,67 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        3984,
-        1280
+        3824,
+        1344
       ],
       "id": "8e5bfa35-4f96-42f7-aae3-a31df9dd4373",
       "name": "Bucle3"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "A ver faltan documentos para iniciar el tramite. Faltan estos documentos",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        4048,
+        480
+      ],
+      "id": "df35aec3-ee45-442e-8420-eb8540fde3c6",
+      "name": "Enviar texto14",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5ffd6762-04d7-4f99-b7f8-9db6822d2832",
+              "leftValue": "={{ $json.todos_los_documentos_enviados }}",
+              "rightValue": "=true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3824,
+        240
+      ],
+      "id": "7d5cf275-2c71-4340-ba1c-b0d39c10b09d",
+      "name": "Se han enviado todos los docs?"
     }
   ],
   "pinData": {},
@@ -8471,6 +8639,6 @@
   "staticData": null,
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2026-11-05T16:00:37.096Z",
-  "versionId": "7a66d6c3-f0c8-4543-ab34-45c29921a7a0"
+  "updatedAt": "2026-11-06T16:37:17.861Z",
+  "versionId": "3a432508-ca88-48e0-94a2-099dd18f6d00"
 }
