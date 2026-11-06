@@ -1,0 +1,354 @@
+{
+  "active": false,
+  "activeVersion": null,
+  "activeVersionId": null,
+  "connections": {
+    "Enviar texto15": {
+      "main": [
+        [
+          {
+            "node": "SI el gestor respondio?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto17": {
+      "main": [
+        [
+          {
+            "node": "Si escribio hora dentro del horario?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SI el gestor respondio?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Enviar texto17",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Si escribio hora dentro del horario?": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto18",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Si escribio hora dentro de horario del viernes?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto15",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Si escribio hora dentro de horario del viernes?": {
+      "main": [
+        [
+          {
+            "node": "Enviar texto20",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto19",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2026-11-06T16:23:00.377Z",
+  "id": "PGfr8RKtOdJxKkEN",
+  "isArchived": false,
+  "meta": null,
+  "name": "Gestor de atencion gestor a clientes",
+  "nodeGroups": [],
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n  \"horario\": \"{{$json.horario}}\",\n  \"hora\": [10,11,12,13,14,15],\n  \"thisFieldAcceptsAnyType\": null,\n  \"anArray\": []\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "2e5e37bb-1993-4a6c-9739-e6c92c2b4383",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "34602373397",
+        "messageText": "Hola, buenas Marco. Hay un cliente que tiene un asunto por resolver complejo y con contexto extraordinario. Por lo que necesita tu ayuda.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        352,
+        0
+      ],
+      "id": "0516e98d-704f-492c-b398-3a3d7d65e490",
+      "name": "Enviar texto15",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "Lo siento pero ahora el gestor no te atender. Dime cuando te puede atender.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        768,
+        96
+      ],
+      "id": "6eb7fc04-9797-45ad-9810-41a44befd1b1",
+      "name": "Enviar texto17",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "dfb0ae41-cbc3-468d-ae57-fdb6722bed04",
+              "leftValue": "={{ $('Enviar texto15').item.json.body.data.message.conversation.trim() }}",
+              "rightValue": "(Ahora puedo atenderle, pasame con el contacto)",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        528,
+        0
+      ],
+      "id": "4c29007f-fbc6-4996-b7fd-03a4531924d4",
+      "name": "SI el gestor respondio?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "37ef5557-3a6b-4cb5-8128-8fefa1b496d8",
+              "leftValue": "={{ $('Enviar texto17').item.json.body.data.message.conversation.trim() }}",
+              "rightValue": "^(10|11|12|13|14)$",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "7707659f-375b-4e40-8b06-b1e165015f1b",
+              "leftValue": "={{ $('Enviar texto17').item.json.body.data.message.conversation.trim() }}",
+              "rightValue": "^(Lunes|Martes|Miercoles|Jueves)$",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        944,
+        96
+      ],
+      "id": "f9ce1594-7bf2-473e-ad47-1a0c6eb3d7ff",
+      "name": "Si escribio hora dentro del horario?"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "Lo siento pero ahora el gestor no te atender. Dime cuando te puede atender.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        48
+      ],
+      "id": "31bfbd56-16ef-44e1-a6ce-b34188da6f1f",
+      "name": "Enviar texto18",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "Lo siento pero ahora el gestor no te atender. Dime cuando te puede atender.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        240
+      ],
+      "id": "773828e2-9069-4cee-9dd3-5b67eedbdc5c",
+      "name": "Enviar texto19",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "gestoria-marco",
+        "remoteJid": "={{ $('Webhook').item.json.body.data.key.remoteJid }}",
+        "messageText": "Lo siento pero ahora el gestor no te atender. Dime cuando te puede atender.",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        1456,
+        112
+      ],
+      "id": "c0b12250-aa2a-4073-af9a-ffd461f28c62",
+      "name": "Enviar texto20",
+      "credentials": {
+        "evolutionApi": {
+          "id": "cvPqkt8XAs3saTjV",
+          "name": "API DE GESTORIA-MARCO"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "29fb1f71-3214-495f-973b-06feed6145a6",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1168,
+        192
+      ],
+      "id": "0cf5f462-abf4-4770-98a6-2241b95f4a58",
+      "name": "Si escribio hora dentro de horario del viernes?"
+    }
+  ],
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "shared": [
+    {
+      "role": "workflow:owner",
+      "workflowId": "PGfr8RKtOdJxKkEN",
+      "projectId": "XkepGCLcgeL5VZJo",
+      "createdAt": "2026-11-06T16:23:00.394Z",
+      "updatedAt": "2026-11-06T16:23:00.394Z"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2026-11-06T16:29:09.181Z",
+  "versionId": "4fb9d513-e6b0-4890-a455-9a8f85dbc032"
+}
